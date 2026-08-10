@@ -1,191 +1,198 @@
-#Fase 5 — Redes de Computadores
+import tkinter as tk
+from tkinter import messagebox
 
-'''Pergunta: Qual serviço é responsável por traduzir nomes de domínio (ex: site.com) para endereços IP?
+# --- CONFIGURAÇÃO DE CORES (TEMA HACKER ÉTICO) ---
+COLOR_BG = "#0B132B"         # Fundo azul bem escuro
+COLOR_CARD = "#1C2541"       # Fundo da caixa da pergunta
+COLOR_BTN = "#00B4D8"        # Botões (Azul Neon)
+COLOR_TEXT = "#FFFFFF"       # Texto branco
+COLOR_HEALTH = "#06D6A0"     # Barra de vida (Verde/Ciano)
+COLOR_RIGHT = "#4BB543"      # Feedback de acerto (Verde)
+COLOR_WRONG = "#D9534F"      # Feedback de erro (Vermelho)
 
-A) DHCP ❌
-
-Por que está errada: O DHCP distribui automaticamente endereços IP para os dispositivos da rede.
-
-💡 Dica: DHCP = Distribuição de IPs na rede local.
-
-B) Firewall ❌
-
-Por que está errada: O firewall filtra e controla o tráfego de rede com base em regras de segurança.
-
-💡 Dica: Firewall = Controle e bloqueio de acessos.
-
-C) DNS ✅
-
-Por que está correta: O DNS funciona como a "agenda telefônica" da internet, traduzindo URLs legíveis em endereços IP.
-
-D) HTTP ❌
-
-Por que está errada: O HTTP é o protocolo de transferência para carregar páginas web.
-
-💡 Dica: HTTP = Transporte de páginas web.'''
-import time
-
-# Estrutura de dados contendo o simulado de Redes de Computadores
-questoes = [
+# --- DADOS DO QUIZ INTEGRADOS (6 PERGUNTAS) ---
+# Os índices das respostas corretas seguem a lógica: A=0, B=1, C=2, D=3
+QUESTIONS = [
     {
-        "topico": "Modelo OSI",
-        "pergunta": "Qual é a principal função da Camada de Rede (Camada 3) no modelo OSI?",
-        "opcoes": {
-            "A": "Transmissão de bits brutos pelo meio físico.",
-            "B": "Estabelecimento, manutenção e encerramento de sessões entre aplicações.",
-            "C": "Determinação do melhor caminho e roteamento de pacotes.",
-            "D": "Formatação, criptografia e compressão de dados."
-        },
-        "correta": "C",
-        "explicações": {
-            "A": "Incorreta. Esta é a função da Camada Física (Camada 1), e não da Camada de Rede.",
-            "B": "Incorreta. Esta é a responsabilidade da Camada de Sessão (Camada 5).",
-            "C": "Correta! A Camada de Rede é responsável pelo roteamento e por determinar o melhor caminho para os dados alcançarem o destino.",
-            "D": "Incorreta. Estas são as funções principais da Camada de Apresentação (Camada 6)."
-        },
-        "dica": "Pense em como os dados encontram o caminho através da internet global, de um roteador para outro."
+        "category": "🌐 SERVIÇOS DE REDE",
+        "question": "Qual serviço é responsável por traduzir nomes de domínio (ex: site.com) para endereços IP?",
+        "options": ["DHCP", "Firewall", "DNS", "HTTP"],
+        "answer": 2
     },
     {
-        "topico": "Endereçamento IP",
-        "pergunta": "Quantos bits compõem um endereço IPv4 padrão?",
-        "opcoes": {
-            "A": "32 bits",
-            "B": "64 bits",
-            "C": "128 bits",
-            "D": "256 bits"
-        },
-        "correta": "A",
-        "explicações": {
-            "A": "Correta! O endereço IPv4 é formado por 32 bits, geralmente divididos em 4 octetos de 8 bits cada.",
-            "B": "Incorreta. Os endereços IPv4 não utilizam 64 bits. Esse tamanho é mais comum em outras tecnologias de rede.",
-            "C": "Incorreta. Este é o tamanho de um endereço IPv6, que foi criado para substituir o IPv4.",
-            "D": "Incorreta. Não existem endereços IP com tamanho de 256 bits no padrão atual da internet."
-        },
-        "dica": "Lembre-se de que o IPv4 é representado por 4 números decimais separados por pontos (ex: 192.168.1.1)."
+        "category": "📦 MODELO OSI",
+        "question": "Qual é a principal função da Camada de Rede (Camada 3) no modelo OSI?",
+        "options": [
+            "Transmissão de bits brutos pelo meio físico.",
+            "Estabelecimento, manutenção e encerramento de sessões entre aplicações.",
+            "Determinação do melhor caminho e roteamento de pacotes.",
+            "Formatação, criptografia e compressão de dados."
+        ],
+        "answer": 2
     },
     {
-        "topico": "Protocolos de Transporte",
-        "pergunta": "Qual dos seguintes protocolos pertence à camada de Transporte, é orientado à conexão e garante a entrega dos dados?",
-        "opcoes": {
-            "A": "UDP",
-            "B": "IP",
-            "C": "TCP",
-            "D": "ICMP"
-        },
-        "correta": "C",
-        "explicações": {
-            "A": "Incorreta. O UDP é muito rápido, mas não é orientado à conexão e não garante a entrega dos pacotes.",
-            "B": "Incorreta. O protocolo IP pertence à Camada de Rede, não à Camada de Transporte.",
-            "C": "Correta! O TCP (Transmission Control Protocol) garante que os dados sejam entregues de forma confiável e em ordem.",
-            "D": "Incorreta. O ICMP é utilizado para diagnósticos e controle de erros, como no caso do comando 'ping'."
-        },
-        "dica": "Pense em um protocolo que verifica se todos os pacotes chegaram e, se algum foi perdido, solicita o reenvio."
+        "category": "🔢 ENDEREÇAMENTO IP",
+        "question": "Quantos bits compõem um endereço IPv4 padrão?",
+        "options": ["32 bits", "64 bits", "128 bits", "256 bits"],
+        "answer": 0
     },
     {
-        "topico": "Protocolos de Aplicação",
-        "pergunta": "Qual é a principal diferença entre os protocolos HTTP e HTTPS?",
-        "opcoes": {
-            "A": "O HTTP é usado apenas para arquivos de áudio, enquanto o HTTPS é para imagens.",
-            "B": "O HTTPS utiliza criptografia, tornando a transmissão de dados mais segura.",
-            "C": "O HTTPS é uma versão desatualizada e mais lenta do protocolo HTTP.",
-            "D": "O HTTP permite acesso a redes privadas, e o HTTPS é exclusivo para a internet pública."
-        },
-        "correta": "B",
-        "explicações": {
-            "A": "Incorreta. Ambos são usados para transferir dados de páginas web, independentemente do tipo de mídia.",
-            "B": "Correta! O HTTPS adiciona uma camada de segurança (SSL/TLS) ao HTTP, criptografando os dados trocados.",
-            "C": "Incorreta. Pelo contrário, o HTTPS é a versão moderna e padrão de segurança atual.",
-            "D": "Incorreta. Ambos podem ser utilizados tanto em redes locais quanto na internet pública."
-        },
-        "dica": "O 'S' no final do nome da sigla frequentemente remete à palavra em inglês para 'Segurança' (Security)."
+        "category": "🚀 PROTOCOLOS DE TRANSPORTE",
+        "question": "Qual dos seguintes protocolos pertence à camada de Transporte, é orientado à conexão e garante a entrega dos dados?",
+        "options": ["UDP", "IP", "TCP", "ICMP"],
+        "answer": 2
     },
     {
-        "topico": "Segurança de Rede",
-        "pergunta": "Qual é o principal objetivo de um Firewall em uma rede de computadores?",
-        "opcoes": {
-            "A": "Fornecer e gerenciar automaticamente os endereços IP dos dispositivos.",
-            "B": "Filtrar e controlar o tráfego de rede com base em regras de segurança.",
-            "C": "Traduzir nomes de sites (URLs) em endereços IP legíveis.",
-            "D": "Ampliar o alcance do sinal de Wi-Fi em grandes empresas."
-        },
-        "correta": "B",
-        "explicações": {
-            "A": "Incorreta. Esta é a principal função do protocolo DHCP.",
-            "B": "Correta! O Firewall atua como uma barreira que monitora e filtra o tráfego de entrada e saída.",
-            "C": "Incorreta. A tradução de nomes de domínio para endereços IP é a função do serviço DNS.",
-            "D": "Incorreta. Equipamentos como repetidores ou Access Points são usados para ampliar o sinal de Wi-Fi."
-        },
-        "dica": "Imagine um guarda de segurança na porta de um evento. Ele verifica as credenciais de quem entra e sai."
+        "category": "🌐 PROTOCOLOS DE APLICAÇÃO",
+        "question": "Qual é a principal diferença entre os protocolos HTTP e HTTPS?",
+        "options": [
+            "O HTTP é usado apenas para arquivos de áudio, enquanto o HTTPS é para imagens.",
+            "O HTTPS utiliza criptografia, tornando a transmissão de dados mais segura.",
+            "O HTTPS é uma versão desatualizada e mais lenta do protocolo HTTP.",
+            "O HTTP permite acesso a redes privadas, e o HTTPS é exclusivo para a internet pública."
+        ],
+        "answer": 1
+    },
+    {
+        "category": "🛡️ SEGURANÇA DE REDE",
+        "question": "Qual é o principal objetivo de um Firewall em uma rede de computadores?",
+        "options": [
+            "Fornecer e gerenciar automaticamente os endereços IP dos dispositivos.",
+            "Filtrar e controlar o tráfego de rede com base em regras de segurança.",
+            "Traduzir nomes de sites (URLs) em endereços IP legíveis.",
+            "Ampliar o alcance do sinal de Wi-Fi em grandes empresas."
+        ],
+        "answer": 1
     }
 ]
 
-def executar_quiz():
-    pontuacao = 0
-    total_questoes = len(questoes)
-    
-    print("=" * 60)
-    print("      SIMULADO INTERATIVO: FASE 5 — REDES DE COMPUTADORES      ")
-    print("=" * 60)
-    print("Digite a letra correspondente à opção (A, B, C ou D).")
-    print("Digite 'DICA' se precisar de uma ajuda extra.\n")
-    time.sleep(1)
+class CyberQuizApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("CyberShield: Ethical Hacker Quiz")
+        self.root.geometry("650x550")
+        self.root.configure(bg=COLOR_BG)
 
-    for i, q in enumerate(questoes, 1):
-        print(f"\nQuestão {i}/{total_questoes} [Tópico: {q['topico']}]")
-        print(f"-> {q['pergunta']}\n")
-        
-        for letra, texto in q['opcoes'].items():
-            print(f"  {letra}) {texto}")
-        print()
+        self.current_q = 0
+        self.lives = 3
+        self.score = 0
 
-        encontrou_resposta = False
-        usou_dica = False
-        
-        while not encontrou_resposta:
-            resposta = input("Sua resposta: ").strip().upper()
+        self.setup_ui()
+        self.load_question()
+
+    def setup_ui(self):
+        # Header / Status Bar
+        self.status_frame = tk.Frame(self.root, bg=COLOR_BG)
+        self.status_frame.pack(fill="x", padx=20, pady=15)
+
+        self.lbl_firewall = tk.Label(
+            self.status_frame, 
+            text=f"🛡️ FIREWALL: {'█ ' * self.lives}", 
+            font=("Consolas", 14, "bold"), 
+            fg=COLOR_HEALTH, 
+            bg=COLOR_BG
+        )
+        self.lbl_firewall.pack(side="left")
+
+        self.lbl_score = tk.Label(
+            self.status_frame, 
+            text=f"SCORE: {self.score}", 
+            font=("Consolas", 14, "bold"), 
+            fg=COLOR_TEXT, 
+            bg=COLOR_BG
+        )
+        self.lbl_score.pack(side="right")
+
+        # Painel da Pergunta
+        self.card_frame = tk.Frame(self.root, bg=COLOR_CARD, bd=2, relief="groove")
+        self.card_frame.pack(fill="both", expand=True, padx=20, pady=10)
+
+        self.lbl_category = tk.Label(
+            self.card_frame, 
+            text="", 
+            font=("Helvetica", 11, "bold"), 
+            fg=COLOR_BTN, 
+            bg=COLOR_CARD
+        )
+        self.lbl_category.pack(anchor="w", padx=15, pady=(15, 5))
+
+        self.lbl_question = tk.Label(
+            self.card_frame, 
+            text="", 
+            font=("Helvetica", 12, "bold"), 
+            fg=COLOR_TEXT, 
+            bg=COLOR_CARD, 
+            wraplength=550, 
+            justify="left"
+        )
+        self.lbl_question.pack(anchor="w", padx=15, pady=10)
+
+        # Botões de Resposta
+        self.btn_frame = tk.Frame(self.card_frame, bg=COLOR_CARD)
+        self.btn_frame.pack(fill="x", padx=15, pady=15)
+
+        self.buttons = []
+        for i in range(4):
+            btn = tk.Button(
+                self.btn_frame, 
+                text="", 
+                font=("Helvetica", 11), 
+                bg=COLOR_BTN, 
+                fg="#000000", 
+                activebackground="#48CAE4",
+                relief="flat",
+                cursor="hand2",
+                command=lambda idx=i: self.check_answer(idx)
+            )
+            btn.pack(fill="x", pady=5)
+            self.buttons.append(btn)
+
+    def load_question(self):
+        if self.current_q < len(QUESTIONS):
+            q_data = QUESTIONS[self.current_q]
+            self.lbl_category.config(text=q_data["category"])
+            self.lbl_question.config(text=q_data["question"])
             
-            if resposta == "DICA":
-                if not usou_dica:
-                    print(f"💡 Dica: {q['dica']}\n")
-                    usou_dica = True
-                else:
-                    print("Você já visualizou a dica para esta questão!\n")
-                continue
-                
-            if resposta in ["A", "B", "C", "D"]:
-                encontrou_resposta = True
-                print("\n" + "-" * 40)
-                
-                # Exibe o feedback visual baseado no gabarito
-                if resposta == q['correta']:
-                    print(f"Opção {resposta} ✅")
-                    print(f"Por que está correta: {q['explicações'][resposta]}")
-                    pontuacao += 1
-                else:
-                    print(f"Opção {resposta} ❌ (Incorreta)")
-                    print(f"Por que está errada: {q['explicações'][resposta]}")
-                    print(f"\nA resposta correta era a alternativa {q['correta']}:")
-                    print(f"-> {q['explicações'][q['correta']]}")
-                
-                print("-" * 40)
-                time.sleep(1.5)
-            else:
-                print("Entrada inválida! Digite A, B, C, D ou DICA.")
+            for i, opt in enumerate(q_data["options"]):
+                self.buttons[i].config(
+                    text=f"[ {chr(65+i)} ]  {opt}",
+                    bg=COLOR_BTN,
+                    fg="#000000",
+                    state="normal"
+                )
+        else:
+            messagebox.showinfo("Vitória!", f"Você protegeu o sistema!\nPontuação final: {self.score}")
+            self.root.destroy()
 
-    # Resultado Final
-    print("\n" + "=" * 60)
-    print("                      FIM DO SIMULADO                      ")
-    print("=" * 60)
-    porcentagem = (pontuacao / total_questoes) * 100
-    print(f"Você acertou {pontuacao} de {total_questoes} questões ({porcentagem:.1f}%).")
-    
-    if porcentagem == 100:
-        print("Excelente! Você dominou os conceitos de Redes da Fase 5! 🚀")
-    elif porcentagem >= 70:
-        print("Muito bom! Ótimo conhecimento técnico demonstrado. 👍")
-    else:
-        print("Vale a pena revisar os tópicos errados para fixar bem a matéria! 📚")
-    print("=" * 60)
+    def check_answer(self, selected_idx):
+        correct_idx = QUESTIONS[self.current_q]["answer"]
+        
+        # Desabilita botões temporariamente para evitar cliques duplos
+        for btn in self.buttons:
+            btn.config(state="disabled")
+
+        if selected_idx == correct_idx:
+            self.score += 100
+            self.lbl_score.config(text=f"SCORE: {self.score}")
+            self.buttons[selected_idx].config(bg=COLOR_RIGHT, fg=COLOR_TEXT)
+        else:
+            self.lives -= 1
+            self.lbl_firewall.config(text=f"🛡️ FIREWALL: {'█ ' * self.lives}")
+            self.buttons[selected_idx].config(bg=COLOR_WRONG, fg=COLOR_TEXT)
+            self.buttons[correct_idx].config(bg=COLOR_RIGHT, fg=COLOR_TEXT)
+
+            if self.lives == 0:
+                self.root.after(1000, self.game_over)
+                return
+
+        self.current_q += 1
+        self.root.after(1000, self.load_question)
+
+    def game_over(self):
+        messagebox.showerror("Game Over", "O sistema foi hackeado! Tente novamente.")
+        self.root.destroy()
 
 if __name__ == "__main__":
-    executar_quiz()
+    root = tk.Tk()
+    app = CyberQuizApp(root)
+    root.mainloop()
