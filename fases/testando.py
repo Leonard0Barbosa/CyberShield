@@ -16,4 +16,4 @@ while rodando:
 
     pygame.display.update()
 
-pygame.quit()
+pygame.quit() 
