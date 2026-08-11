@@ -1,55 +1,150 @@
-#Fase 1 — Fundamentos & Tríade CIA
+import tkinter as tk
+from tkinter import messagebox
 
-def fase1(resposta,correta,info):
-    
-    while True:
-        
-        info = ['Dica: Falou em sistema fora do ar ou inacessível? Pense em Disponibilidade.' ,  'Dica: Se alguém apenas leu/viu dados sem permissão, pense em Confidencialidade.' , 'Por que está correta: A integridade garante que os dados permaneçam exatos, completos e sem alterações indevidas.'
-        ,   ' Dica: Falou em confirmar quem é o usuário? Pense em Autenticação.'    ]
+# --- CONFIGURAÇÃO DE CORES (TEMA HACKER ÉTICO) ---
+COLOR_BG = "#0B132B"         # Fundo azul bem escuro
+COLOR_CARD = "#1C2541"       # Fundo da caixa da pergunta
+COLOR_BTN = "#00B4D8"        # Botões (Azul Neon)
+COLOR_TEXT = "#FFFFFF"       # Texto branco
+COLOR_HEALTH = "#06D6A0"     # Barra de vida (Verde/Ciano)
 
-        resposta = str(input('pinto'))[0]
+# --- DADOS DO QUIZ ---
+QUESTIONS = [
+    {
+        "category": "🛡️ PRINCÍPIOS DE SEGURANÇA",
+        "question": "Um arquivo importante foi alterado sem autorização. Qual princípio da segurança foi afetado?",
+        "options": [
+            "Disponibilidade",
+            "Confidencialidade",
+            "Integridade",
+            "Autenticação"
+        ],
+        "answer": 2,  # Índice 2 corresponde a 'Integridade' (Opção C)
+        "explanations": [
+            "A disponibilidade garante que o sistema esteja acessível. O arquivo continuou lá, porém alterado.\n\n💡 Dica: Falou em sistema fora do ar? Pense em Disponibilidade.",
+            "A confidencialidade protege contra acesso não autorizado (vazamento). O foco aqui foi a alteração.\n\n💡 Dica: Apenas leu dados sem permissão? Pense em Confidencialidade.",
+            "A integridade garante que os dados permaneçam exatos, completos e sem alterações indevidas.",
+            "A autenticação verifica a identidade de quem acessa, mas não o conteúdo do arquivo.\n\n💡 Dica: Confirmar quem é o usuário? Pense em Autenticação."
+        ]
+    }
+]
 
-        if resposta in 'Aa' or resposta in '1':
-            print(info[0])
+class CyberQuizApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("CyberShield: Ethical Hacker Quiz")
+        self.root.geometry("640x550")
+        self.root.configure(bg=COLOR_BG)
 
-        if resposta in 'Bb' or resposta in '2':
-            print(info[1])  
+        self.current_q = 0
+        self.lives = 3
+        self.score = 0
 
-        if resposta in 'Cc' or resposta in '3':
-            print(info[2])   
+        self.setup_ui()
+        self.load_question()
 
-        if resposta in 'Dd' or resposta in '4':
-            print(info[3])
-        if correta == resposta:
-            print('Parabéns! Você acertou a questão!')
-            break
+    def setup_ui(self):
+        # Header / Status Bar
+        self.status_frame = tk.Frame(self.root, bg=COLOR_BG)
+        self.status_frame.pack(fill="x", padx=20, pady=15)
 
+        self.lbl_firewall = tk.Label(
+            self.status_frame, 
+            text=f"🛡️ FIREWALL: {'█ ' * self.lives}", 
+            font=("Consolas", 14, "bold"), 
+            fg=COLOR_HEALTH, 
+            bg=COLOR_BG
+        )
+        self.lbl_firewall.pack(side="left")
 
-correta = 'C'
-pergunta = str(input('Um arquivo importante foi alterado sem autorização. Qual princípio da segurança foi afetado?\n\nA) Disponibilidade\nB) Confidencialidade\nC) Integridade\nD) Autenticação\n\nDigite a letra correspondente à sua resposta: '))
-print(fase1(pergunta, correta))
+        self.lbl_score = tk.Label(
+            self.status_frame, 
+            text=f"SCORE: {self.score}", 
+            font=("Consolas", 14, "bold"), 
+            fg=COLOR_TEXT, 
+            bg=COLOR_BG
+        )
+        self.lbl_score.pack(side="right")
 
+        # Painel da Pergunta
+        self.card_frame = tk.Frame(self.root, bg=COLOR_CARD, bd=2, relief="groove")
+        self.card_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-'''Pergunta: Um arquivo importante foi alterado sem autorização. Qual princípio da segurança foi afetado?
+        self.lbl_category = tk.Label(
+            self.card_frame, 
+            text="", 
+            font=("Helvetica", 11, "bold"), 
+            fg=COLOR_BTN, 
+            bg=COLOR_CARD
+        )
+        self.lbl_category.pack(anchor="w", padx=15, pady=(15, 5))
 
-A) Disponibilidade ❌
+        self.lbl_question = tk.Label(
+            self.card_frame, 
+            text="", 
+            font=("Helvetica", 13), 
+            fg=COLOR_TEXT, 
+            bg=COLOR_CARD, 
+            wraplength=550, 
+            justify="left"
+        )
+        self.lbl_question.pack(anchor="w", padx=15, pady=10)
 
-Por que está errada: A disponibilidade garante que dados e sistemas estejam acessíveis quando necessários. O arquivo continuou acessível, porém modificado.
+        # Botões de Resposta
+        self.btn_frame = tk.Frame(self.card_frame, bg=COLOR_CARD)
+        self.btn_frame.pack(fill="x", padx=15, pady=15)
 
-💡 Dica: Falou em sistema fora do ar ou inacessível? Pense em Disponibilidade.
+        self.buttons = []
+        for i in range(4):
+            btn = tk.Button(
+                self.btn_frame, 
+                text="", 
+                font=("Helvetica", 11), 
+                bg=COLOR_BTN, 
+                fg="#000000", 
+                activebackground="#48CAE4",
+                relief="flat",
+                cursor="hand2",
+                command=lambda idx=i: self.check_answer(idx)
+            )
+            btn.pack(fill="x", pady=5)
+            self.buttons.append(btn)
 
-B) Confidencialidade ❌
+    def load_question(self):
+        if self.current_q < len(QUESTIONS):
+            q_data = QUESTIONS[self.current_q]
+            self.lbl_category.config(text=q_data["category"])
+            self.lbl_question.config(text=q_data["question"])
+            
+            for i, opt in enumerate(q_data["options"]):
+                self.buttons[i].config(text=f"[ {chr(65+i)} ]  {opt}")
+        else:
+            messagebox.showinfo("Vitória!", f"Você protegeu o sistema!\nPontuação final: {self.score}")
+            self.root.destroy()
 
-Por que está errada: A confidencialidade protege as informações contra acesso não autorizado (vazamento). O foco da questão foi a alteração do conteúdo.
+    def check_answer(self, selected_idx):
+        q_data = QUESTIONS[self.current_q]
+        correct_idx = q_data["answer"]
+        explanation = q_data["explanations"][selected_idx]
 
-💡 Dica: Se alguém apenas leu/viu dados sem permissão, pense em Confidencialidade.
+        if selected_idx == correct_idx:
+            self.score += 100
+            self.lbl_score.config(text=f"SCORE: {self.score}")
+            messagebox.showinfo("Resposta Correta! ✅", f"Parabéns! Você acertou!\n\n{explanation}")
+        else:
+            self.lives -= 1
+            self.lbl_firewall.config(text=f"🛡️ FIREWALL: {'█ ' * self.lives}")
+            messagebox.showwarning("Resposta Incorreta! ❌", f"{explanation}")
+            
+            if self.lives == 0:
+                messagebox.showerror("Game Over", "O sistema foi hackeado! Tente novamente.")
+                self.root.destroy()
+                return
 
-C) 2Integridade ✅
+        self.current_q += 1
+        self.load_question()
 
-Por que está correta: A integridade garante que os dados permaneçam exatos, completos e sem alterações indevidas.
-
-D) Autenticação ❌
-
-Por que está errada: A autenticação verifica a identidade de quem acessa, mas não garante que o arquivo permaneça inalterado.
-
-💡 Dica: Falou em confirmar quem é o usuário? Pense em Autenticação.'''
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = CyberQuizApp(root)
+    root.mainloop()
