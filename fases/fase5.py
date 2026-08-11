@@ -11,7 +11,6 @@ COLOR_RIGHT = "#4BB543"      # Feedback de acerto (Verde)
 COLOR_WRONG = "#D9534F"      # Feedback de erro (Vermelho)
 
 # --- DADOS DO QUIZ INTEGRADOS (6 PERGUNTAS) ---
-# Os índices das respostas corretas seguem a lógica: A=0, B=1, C=2, D=3
 QUESTIONS = [
     {
         "category": "🌐 SERVIÇOS DE REDE",
@@ -167,7 +166,6 @@ class CyberQuizApp:
     def check_answer(self, selected_idx):
         correct_idx = QUESTIONS[self.current_q]["answer"]
         
-        # Desabilita botões temporariamente para evitar cliques duplos
         for btn in self.buttons:
             btn.config(state="disabled")
 
@@ -194,5 +192,15 @@ class CyberQuizApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    
+    # Centraliza a janela na tela do usuário
+    window_width = 650
+    window_height = 550
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    position_right = int(screen_width/2 - window_width/2)
+    position_top = int(screen_height/2 - window_height/2)
+    root.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
+    
     app = CyberQuizApp(root)
     root.mainloop()
