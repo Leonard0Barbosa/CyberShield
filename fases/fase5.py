@@ -1,11 +1,7 @@
-import os
-import time
-import string
-import itertools
-import hmac
-import hashlib
+import tkinter as tk
+from tkinter import messagebox
+import html
 
-<<<<<<< HEAD
 # ==============================================================================
 # --- PADRÃO DE DESIGN (CYBER NETWORK - AZUL SUAVE & CIANO NEON) ---
 # ==============================================================================
@@ -18,105 +14,135 @@ COLOR_BTN_BG = "#0F3356"       # Azul suave para botões
 COLOR_BTN_HOVER = "#0077B6"    # Azul de navegação ao passar o mouse
 COLOR_TEXT_MAIN = "#FFFFFF"    # Texto branco principal
 COLOR_TEXT_MUTED = "#8ECAE6"   # Texto secundário suave
-COLOR_HEALTH = "#00F5D4"       # Verde/Ciano Neon (Barra de Vida)
+COLOR_HEALTH = "#00F5D4"       # Verde/Ciano Neon
 COLOR_CORRECT = "#00E676"      # Verde vibrante para acerto
 COLOR_INCORRECT = "#FF3366"    # Vermelho/Rosa Neon para erro
+COLOR_WARNING = "#FFD166"      # Amarelo/Laranja para alertas
 
 # ==============================================================================
-# --- DADOS DO QUIZ INTEGRADOS (6 PERGUNTAS) ---
+# --- BANCO DE PERGUNTAS DA FASE 5: SEGURANÇA WEB & APLICAÇÕES ---
 # ==============================================================================
-=======
-# Tenta importar o tkinter de forma segura. Se não tiver, o jogo avisa em vez de travar.
-try:
-    import tkinter as tk
-    from tkinter import messagebox
-    TKINTER_DISPONIVEL = True
-except ImportError:
-    TKINTER_DISPONIVEL = False
-
-# ===================================================================== #
-# CONFIGURAÇÕES DA INTERFACE GRÁFICA (SE DISPONÍVEL)                    #
-# ===================================================================== #
-COLOR_BG = "#0B132B"         
-COLOR_CARD = "#1C2541"       
-COLOR_BTN = "#00B4D8"        
-COLOR_TEXT = "#FFFFFF"       
-COLOR_HEALTH = "#06D6A0"     
-
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
-QUESTIONS = [
+QUIZ_FASE_5 = [
     {
-        "category": "🔒 SENHAS SEGURAS",
-        "question": "Qual das alternativas abaixo representa uma senha forte?",
-        "options": ["12345678", "admin2026", "K#9vP!x2$Lq", "senhasecreta"],
-        "answer": 2
+        "category": "🌐 OWASP TOP 10 — CROSS-SITE SCRIPTING (XSS)",
+        "question": "Qual é a principal causa de uma vulnerabilidade de Stored XSS e a melhor forma de mitigá-la na aplicação?",
+        "options": [
+            "A) Falta de firewall no servidor; mitiga-se bloqueando conexões UDP",
+            "B) Renderização de scripts fornecidos por usuários sem sanitização; mitiga-se com Context-Aware Output Encoding",
+            "C) Uso de senhas fracas no banco de dados; mitiga-se alterando para senhas de 16 caracteres",
+            "D) Transmissão de dados sem HTTPS; mitiga-se comprando um certificado SSL"
+        ],
+        "answer": 1,
+        "explanations": [
+            "❌ INCORRETO: XSS é uma vulnerabilidade na camada de aplicação web, não de protocolos de transporte como UDP.",
+            "✅ CORRETO! O XSS ocorre quando entradas do usuário são tratadas como código pelo navegador. O Encoding correto desativa a execução de tags como <script>.",
+            "❌ INCORRETO: Força de senhas não impede que scripts maliciosos sejam injetados em páginas HTML.",
+            "❌ INCORRETO: O HTTPS criptografa o tráfego, mas não previne que a aplicação renderize código malicioso injetado."
+        ],
+        "tip": "💡 Dica: Nunca confie em entradas de usuários. Trate todo texto exibido no HTML como dado puro usando encoding!"
     },
     {
-        "category": "✉️ PHISHING",
-        "question": "Você recebe um e-mail urgente do seu banco pedindo para clicar num link. O que fazer?",
+        "category": "🔒 MITIGAÇÃO DE CSRF & SEGURANÇA DE COOKIES",
+        "question": "Como o mecanismo de Anti-CSRF Token previne ataques de Cross-Site Request Forgery em formulários web?",
         "options": [
-            "Clicar imediatamente",
-            "Ignorar e verificar o remetente / canal oficial",
-            "Encaminhar para todos os amigos",
-            "Responder fornecendo sua senha"
+            "A) Criptografando o banco de dados para impedir a leitura de registros de usuários",
+            "B) Exigindo um valor secreto e imprevisível gerado pela sessão do usuário que sites terceiros não conseguem ler ou adivinhar",
+            "C) Bloqueando qualquer requisição que venha de um endereço IP externo",
+            "D) Forçando o usuário a resolver um CAPTCHA a cada clique dentro da aplicação"
         ],
-        "answer": 1
+        "answer": 1,
+        "explanations": [
+            "❌ INCORRETO: O CSRF não explora o banco de dados diretamente, mas sim a confiança que a aplicação tem no navegador do usuário.",
+            "✅ CORRETO! O token Anti-CSRF valida se a requisição partiu legitimamente da própria aplicação, já que sites maliciosos não conseguem ler o token devido à Same-Origin Policy (SOP).",
+            "❌ INCORRETO: Bloquear IPs inviabilizaria o acesso remoto dos usuários à aplicação.",
+            "❌ INCORRETO: CAPTCHAs funcionam contra bots, mas tornariam a usabilidade inviável se usados para cada ação."
+        ],
+        "tip": "💡 Dica: O atributo SameSite=Strict/Lax em cookies também é uma excelente defesa complementar contra CSRF!"
+    },
+    {
+        "category": "🛡️ CABEÇALHOS DE SEGURANÇA (SECURITY HEADERS)",
+        "question": "Qual é a função do cabeçalho Content-Security-Policy (CSP) nas respostas HTTP de uma aplicação web?",
+        "options": [
+            "A) Comprimir imagens para acelerar o carregamento da página",
+            "B) Restringir quais origens e tipos de recursos (scripts, estilos, conexões) o navegador tem permissão de carregar",
+            "C) Redirecionar automaticamente todas as requisições para o protocolo HTTP simples",
+            "D) Ocultar a versão do servidor Apache ou Nginx nas respostas da API"
+        ],
+        "answer": 1,
+        "explanations": [
+            "❌ INCORRETO: Compressão de assets é tratada por cabeçalhos como Content-Encoding: gzip.",
+            "✅ CORRETO! O CSP atua como uma 'whitelist' no navegador, impedindo a execução de scripts inline não autorizados e reduzindo drasticamente o impacto de vulnerabilidades XSS.",
+            "❌ INCORRETO: O recomendado é forçar HTTPS através do cabeçalho HSTS, nunca regressar para HTTP.",
+            "❌ INCORRETO: Esconder a versão do servidor é feito removendo o cabeçalho 'Server', não via CSP."
+        ],
+        "tip": "💡 Dica: Um CSP forte pode bloquear scripts maliciosos injetados mesmo se a aplicação tiver falhas de sanitização XSS."
+    },
+    {
+        "category": "🔐 PROTOCOLOS SEGUROS & HTTPS",
+        "question": "Por que o uso do protocolo HTTPS (HTTP sobre TLS/SSL) é indispensável para a segurança de aplicações web modernas?",
+        "options": [
+            "A) Porque ele impede automaticamente qualquer ataque de SQL Injection ou XSS no servidor",
+            "B) Porque ele garante Confidencialidade (criptografia do tráfego) e Autenticidade (certificado do servidor), prevenindo Man-in-the-Middle (MitM)",
+            "C) Porque ele torna a aplicação imune a ataques de negação de serviço (DDoS)",
+            "D) Porque ele dispensa a necessidade de autenticação por usuário e senha"
+        ],
+        "answer": 1,
+        "explanations": [
+            "❌ INCORRETO: O HTTPS protege os dados em trânsito, mas não corrige falhas de programação no backend.",
+            "✅ CORRETO! Sem HTTPS, dados sensíveis (senhas, cookies de sessão) trafegam em texto puro pela rede e podem ser interceptados por qualquer um no caminho.",
+            "❌ INCORRETO: O HTTPS não bloqueia ataques volumétricos de negação de serviço (DDoS).",
+            "❌ INCORRETO: A autenticação do usuário continua sendo necessária para controlar o acesso individual."
+        ],
+        "tip": "💡 Dica: Sempre utilize a flag 'Secure' em cookies para garantir que só sejam transmitidos via HTTPS!"
     }
 ]
 
-class CyberQuizApp:
+
+class Phase5App:
     def __init__(self, root):
         self.root = root
-        self.root.title("CyberShield: Ethical Hacker Quiz")
-<<<<<<< HEAD
-        self.root.geometry("680x600")
+        self.root.title("CyberShield: Fase 5 — Segurança Web & Aplicações")
+        self.root.geometry("700x640")
         self.root.resizable(False, False)
 
-=======
-        self.root.geometry("600x500")
-        self.root.configure(bg=COLOR_BG)
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
         self.current_q = 0
-        self.lives = 3
-        self.score = 0
+
+        # Atributos para o Simulador CSRF
+        self.csrf_token_enabled = None
+        self.csrf_samesite_enabled = None
+
         self.setup_ui()
-        self.load_question()
+        self.load_step_xss_lab()
 
     def setup_ui(self):
-<<<<<<< HEAD
-        # --- CANVAS DE FUNDO (DEGRADÊ + DETALHES DE CIRCUITO) ---
-        self.bg_canvas = tk.Canvas(self.root, width=680, height=600, highlightthickness=0)
+        # --- CANVAS DE FUNDO ---
+        self.bg_canvas = tk.Canvas(self.root, width=700, height=640, highlightthickness=0)
         self.bg_canvas.pack(fill="both", expand=True)
         self.draw_cyber_background()
 
         # --- HEADER DE STATUS ---
         self.status_frame = tk.Frame(self.bg_canvas, bg=COLOR_BG_TOP)
-        self.bg_canvas.create_window(340, 35, window=self.status_frame, width=640)
-=======
-        self.status_frame = tk.Frame(self.root, bg=COLOR_BG)
-        self.status_frame.pack(fill="x", padx=20, pady=15)
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
+        self.bg_canvas.create_window(350, 35, window=self.status_frame, width=660)
 
-        self.lbl_firewall = tk.Label(
+        self.lbl_header = tk.Label(
             self.status_frame, 
-            text=f"🛡️ FIREWALL: {'█ ' * self.lives}", 
-            font=("Consolas", 12, "bold"), 
+            text="🛡️ FASE 5: SEGURANÇA WEB & APLICAÇÕES", 
+            font=("Consolas", 11, "bold"), 
             fg=COLOR_HEALTH, 
             bg=COLOR_BG_TOP
         )
-        self.lbl_firewall.pack(side="left")
+        self.lbl_header.pack(side="left")
 
-        self.lbl_score = tk.Label(
+        self.lbl_mode = tk.Label(
             self.status_frame, 
-            text=f"SCORE: {self.score}", 
-            font=("Consolas", 12, "bold"), 
+            text="ETAPA 1/3", 
+            font=("Consolas", 11, "bold"), 
             fg=COLOR_CYAN_GLOW, 
             bg=COLOR_BG_TOP
         )
-        self.lbl_score.pack(side="right")
+        self.lbl_mode.pack(side="right")
 
-<<<<<<< HEAD
-        # --- CARD PRINCIPAL DE CONTEÚDO ---
+        # --- CARD PRINCIPAL ---
         self.card_frame = tk.Frame(
             self.bg_canvas, 
             bg=COLOR_CARD_BG, 
@@ -124,77 +150,13 @@ class CyberQuizApp:
             highlightthickness=2,
             bd=0
         )
-        self.bg_canvas.create_window(340, 310, window=self.card_frame, width=640, height=470)
-=======
-        self.card_frame = tk.Frame(self.root, bg=COLOR_CARD, bd=2, relief="groove")
-        self.card_frame.pack(fill="both", expand=True, padx=20, pady=10)
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
-
-        self.lbl_category = tk.Label(
-            self.card_frame, 
-            text="", 
-            font=("Segoe UI", 10, "bold"), 
-            fg=COLOR_CYAN_GLOW, 
-            bg=COLOR_CARD_BG
-        )
-        self.lbl_category.pack(anchor="w", padx=20, pady=(15, 5))
-
-        self.lbl_question = tk.Label(
-            self.card_frame, 
-            text="", 
-<<<<<<< HEAD
-            font=("Segoe UI", 11), 
-            fg=COLOR_TEXT_MAIN, 
-            bg=COLOR_CARD_BG, 
-            wraplength=580, 
-=======
-            font=("Helvetica", 13), 
-            fg=COLOR_TEXT, 
-            bg=COLOR_CARD, 
-            wraplength=500, 
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
-            justify="left"
-        )
-        self.lbl_question.pack(anchor="w", padx=20, pady=10)
-
-<<<<<<< HEAD
-        # --- CONTAINER DOS BOTÕES ---
-        self.btn_frame = tk.Frame(self.card_frame, bg=COLOR_CARD_BG)
-        self.btn_frame.pack(fill="both", expand=True, padx=20, pady=(5, 15))
-=======
-        self.btn_frame = tk.Frame(self.card_frame, bg=COLOR_CARD)
-        self.btn_frame.pack(fill="x", padx=15, pady=15)
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
-
-        self.buttons = []
-        for i in range(4):
-            btn = tk.Button(
-                self.btn_frame, 
-                text="", 
-                font=("Segoe UI", 9, "bold"), 
-                bg=COLOR_BTN_BG, 
-                fg=COLOR_TEXT_MUTED, 
-                activebackground=COLOR_BTN_HOVER,
-                activeforeground=COLOR_TEXT_MAIN,
-                relief="flat",
-                cursor="hand2",
-                anchor="w",
-                padx=15,
-                bd=1,
-                highlightbackground=COLOR_CARD_BORDER,
-                command=lambda idx=i: self.check_answer(idx)
-            )
-            btn.pack(fill="x", pady=5, ipady=4)
-            btn.bind("<Enter>", lambda e, b=btn: self.on_hover_enter(b))
-            btn.bind("<Leave>", lambda e, b=btn: self.on_hover_leave(b))
-            self.buttons.append(btn)
+        self.bg_canvas.create_window(350, 330, window=self.card_frame, width=660, height=520)
 
     def draw_cyber_background(self):
-        width, height = 680, 600
+        width, height = 700, 640
         r1, g1, b1 = self.hex_to_rgb(COLOR_BG_TOP)
         r2, g2, b2 = self.hex_to_rgb(COLOR_BG_BOTTOM)
         
-        # Gradiente suave
         for y in range(height):
             r = int(r1 + (r2 - r1) * (y / height))
             g = int(g1 + (g2 - g1) * (y / height))
@@ -202,21 +164,43 @@ class CyberQuizApp:
             color = f"#{r:02x}{g:02x}{b:02x}"
             self.bg_canvas.create_line(0, y, width, y, fill=color)
 
-        # Linhas de circuito cibernético
         line_color = "#0B3254"
         glow_dot = COLOR_CYAN_GLOW
 
-        self.bg_canvas.create_line(30, 25, 180, 25, 230, 50, 450, 50, fill=line_color, width=1.5)
+        self.bg_canvas.create_line(30, 25, 180, 25, 230, 50, 480, 50, fill=line_color, width=1.5)
         self.bg_canvas.create_oval(177, 22, 183, 28, fill=glow_dot, outline="")
-        self.bg_canvas.create_oval(447, 47, 453, 53, fill=glow_dot, outline="")
+        self.bg_canvas.create_oval(477, 47, 483, 53, fill=glow_dot, outline="")
 
-        self.bg_canvas.create_line(50, 570, 200, 570, 250, 550, 520, 550, fill=line_color, width=1.5)
-        self.bg_canvas.create_oval(247, 547, 253, 553, fill=glow_dot, outline="")
+        self.bg_canvas.create_line(50, 610, 200, 610, 250, 590, 550, 590, fill=line_color, width=1.5)
+        self.bg_canvas.create_oval(247, 587, 253, 593, fill=glow_dot, outline="")
 
     @staticmethod
     def hex_to_rgb(hex_str):
         hex_str = hex_str.lstrip('#')
         return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
+
+    def clear_card(self):
+        for widget in self.card_frame.winfo_children():
+            widget.destroy()
+
+    def create_custom_button(self, parent, text, command):
+        btn = tk.Button(
+            parent,
+            text=text,
+            font=("Segoe UI", 10, "bold"),
+            bg=COLOR_BTN_BG,
+            fg=COLOR_TEXT_MUTED,
+            activebackground=COLOR_BTN_HOVER,
+            activeforeground=COLOR_TEXT_MAIN,
+            relief="flat",
+            cursor="hand2",
+            bd=1,
+            highlightbackground=COLOR_CARD_BORDER,
+            command=command
+        )
+        btn.bind("<Enter>", lambda e, b=btn: self.on_hover_enter(b))
+        btn.bind("<Leave>", lambda e, b=btn: self.on_hover_leave(b))
+        return btn
 
     def on_hover_enter(self, btn):
         if btn["state"] == "normal":
@@ -226,177 +210,345 @@ class CyberQuizApp:
         if btn["state"] == "normal":
             btn.config(bg=COLOR_BTN_BG, fg=COLOR_TEXT_MUTED)
 
-    def load_question(self):
-        if self.current_q < len(QUESTIONS):
-            q_data = QUESTIONS[self.current_q]
-            self.lbl_category.config(text=q_data["category"])
-            self.lbl_question.config(text=q_data["question"])
-            for i, opt in enumerate(q_data["options"]):
-<<<<<<< HEAD
-                self.buttons[i].config(
-                    text=f"[ {chr(65+i)} ]  {opt}",
-                    bg=COLOR_BTN_BG,
-                    fg=COLOR_TEXT_MUTED,
-                    state="normal"
-                )
-=======
-                self.buttons[i].config(text=f"[ {chr(65+i)} ]  {opt}")
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
-        else:
-            messagebox.showinfo("Vitória! 🏆", f"Você protegeu a rede com sucesso!\n\nPontuação Final: {self.score}")
-            self.root.destroy()
+    # ==========================================================================
+    # --- ETAPA 1: LABORATÓRIO DE XSS (CROSS-SITE SCRIPTING) ---
+    # ==========================================================================
+    def load_step_xss_lab(self):
+        self.clear_card()
+        self.lbl_mode.config(text="ETAPA 1/3 — LABORATÓRIO DE XSS")
 
-    def check_answer(self, selected_idx):
-        correct_idx = QUESTIONS[self.current_q]["answer"]
-<<<<<<< HEAD
+        lbl_title = tk.Label(
+            self.card_frame, 
+            text="💉 LABORATÓRIO DE INJEÇÃO XSS (SANITIÇÃO DE OUTPUT)", 
+            font=("Segoe UI", 10, "bold"), 
+            fg=COLOR_CYAN_GLOW, 
+            bg=COLOR_CARD_BG
+        )
+        lbl_title.pack(anchor="w", padx=20, pady=(12, 4))
+
+        lbl_desc = tk.Label(
+            self.card_frame, 
+            text="Digite um comentário. Experimente usar tags HTML/JavaScript como <script>alert('Hack')</script> para comparar a renderização vulnerável com a segura (encoded):", 
+            font=("Segoe UI", 9), 
+            fg=COLOR_TEXT_MAIN, 
+            bg=COLOR_CARD_BG, 
+            wraplength=610, 
+            justify="left"
+        )
+        lbl_desc.pack(anchor="w", padx=20, pady=2)
+
+        # Campo de entrada
+        frame_input = tk.Frame(self.card_frame, bg=COLOR_CARD_BG)
+        frame_input.pack(fill="x", padx=20, pady=5)
+
+        tk.Label(frame_input, text="Entrada de Comentário:", font=("Segoe UI", 9, "bold"), fg=COLOR_TEXT_MUTED, bg=COLOR_CARD_BG).pack(anchor="w")
+
+        self.entry_xss_input = tk.Entry(
+            frame_input, 
+            font=("Segoe UI", 10), 
+            bg=COLOR_BG_TOP, 
+            fg=COLOR_TEXT_MAIN, 
+            insertbackground=COLOR_TEXT_MAIN,
+            bd=1,
+            relief="solid"
+        )
+        self.entry_xss_input.insert(0, "<script>alert('XSS_COOKIE_ROUBO')</script>")
+        self.entry_xss_input.pack(fill="x", pady=2)
+        self.entry_xss_input.bind("<KeyRelease>", self.update_live_xss)
+
+        # Botão rápido para inserir Payload de Teste
+        btn_quick_payload = tk.Button(
+            frame_input,
+            text="⚡ Inserir Payload XSS: <script>alert('XSS')</script>",
+            font=("Segoe UI", 8, "bold"),
+            bg="#1B3B6F",
+            fg=COLOR_CYAN_GLOW,
+            activebackground=COLOR_BTN_HOVER,
+            activeforeground=COLOR_TEXT_MAIN,
+            relief="flat",
+            cursor="hand2",
+            command=self.insert_xss_payload
+        )
+        btn_quick_payload.pack(anchor="e", pady=2)
+
+        # Saída 1: Renderização Vulnerável
+        tk.Label(self.card_frame, text="1. Renderização Vulnerável (Interpretação Direta do Navegador):", font=("Segoe UI", 9, "bold"), fg=COLOR_INCORRECT, bg=COLOR_CARD_BG).pack(anchor="w", padx=20, pady=(4, 1))
         
-        for btn in self.buttons:
+        self.lbl_vuln_xss = tk.Label(
+            self.card_frame, 
+            text="", 
+            font=("Consolas", 8, "bold"), 
+            fg=COLOR_WARNING, 
+            bg=COLOR_BG_TOP, 
+            bd=1, 
+            relief="solid", 
+            wraplength=600, 
+            justify="center", 
+            pady=6
+        )
+        self.lbl_vuln_xss.pack(fill="x", padx=20, pady=2)
+
+        # Saída 2: Renderização Segura (HTML Entity Encoding)
+        tk.Label(self.card_frame, text="2. Renderização Segura (HTML Entity Encoding / Output Sanitizado):", font=("Segoe UI", 9, "bold"), fg=COLOR_CORRECT, bg=COLOR_CARD_BG).pack(anchor="w", padx=20, pady=(4, 1))
+
+        self.lbl_safe_xss = tk.Label(
+            self.card_frame, 
+            text="", 
+            font=("Consolas", 8, "bold"), 
+            fg=COLOR_HEALTH, 
+            bg=COLOR_BG_TOP, 
+            bd=1, 
+            relief="solid", 
+            wraplength=600, 
+            justify="center", 
+            pady=6
+        )
+        self.lbl_safe_xss.pack(fill="x", padx=20, pady=2)
+
+        self.lbl_xss_status = tk.Label(
+            self.card_frame, 
+            text="", 
+            font=("Segoe UI", 9, "bold"), 
+            bg=COLOR_CARD_BG
+        )
+        self.lbl_xss_status.pack(anchor="w", padx=20, pady=4)
+
+        self.update_live_xss()
+
+        btn_next1 = self.create_custom_button(self.card_frame, "Avançar para o Simulador Anti-CSRF ➔", self.load_step_csrf_lab)
+        btn_next1.pack(fill="x", padx=20, pady=(6, 12))
+
+    def insert_xss_payload(self):
+        self.entry_xss_input.delete(0, tk.END)
+        self.entry_xss_input.insert(0, "<script>alert('XSS_COOKIE_ROUBO')</script>")
+        self.update_live_xss()
+
+    def update_live_xss(self, event=None):
+        user_in = self.entry_xss_input.get()
+        
+        # Simulação Vulnerável
+        vuln_out = f"<div>Comentário exibido: {user_in}</div>"
+        self.lbl_vuln_xss.config(text=vuln_out)
+
+        # Simulação Segura (HTML Escape)
+        safe_encoded = html.escape(user_in)
+        safe_out = f"<div>Comentário exibido: {safe_encoded}</div>"
+        self.lbl_safe_xss.config(text=safe_out)
+
+        if "<script>" in user_in.lower() or "javascript:" in user_in.lower() or "onerror=" in user_in.lower() or "onload=" in user_in.lower():
+            self.lbl_xss_status.config(
+                text="⚠️ ALERTA: Script malicioso detectado! Na versão vulnerável, o código seria executado no navegador do vítima!",
+                fg=COLOR_INCORRECT
+            )
+        else:
+            self.lbl_xss_status.config(
+                text="✅ Entrada tratada como texto comum. Sem tags ativas de script.",
+                fg=COLOR_HEALTH
+            )
+
+    # ==========================================================================
+    # --- ETAPA 2: SIMULADOR DE PROTEÇÃO ANTI-CSRF ---
+    # ==========================================================================
+    def load_step_csrf_lab(self):
+        self.clear_card()
+        self.lbl_mode.config(text="ETAPA 2/3 — PROTEÇÃO CONTRA CSRF")
+
+        lbl_title = tk.Label(
+            self.card_frame, 
+            text="🕹️ SIMULADOR DE TRANSFERÊNCIA BANCÁRIA (DEFESA CSRF)", 
+            font=("Segoe UI", 10, "bold"), 
+            fg=COLOR_CYAN_GLOW, 
+            bg=COLOR_CARD_BG
+        )
+        lbl_title.pack(anchor="w", padx=20, pady=(10, 2))
+
+        lbl_desc = tk.Label(
+            self.card_frame, 
+            text="Um site malicioso tenta forjar uma transferência bancária silenciosa ($1.000) usando sua sessão ativa. Ative os mecanismos de defesa para verificar o bloqueio:", 
+            font=("Segoe UI", 9), 
+            fg=COLOR_TEXT_MAIN, 
+            bg=COLOR_CARD_BG, 
+            wraplength=610, 
+            justify="left"
+        )
+        lbl_desc.pack(anchor="w", padx=20, pady=2)
+
+        # Opções de Defesa
+        opts_frame = tk.Frame(self.card_frame, bg=COLOR_CARD_BG)
+        opts_frame.pack(fill="x", padx=20, pady=8)
+
+        self.csrf_token_enabled = tk.BooleanVar(value=False)
+        chk_token = tk.Checkbutton(
+            opts_frame,
+            text="Habilitar Token Anti-CSRF (Único e Imprevisível por Formulário)",
+            variable=self.csrf_token_enabled,
+            font=("Segoe UI", 9, "bold"),
+            fg=COLOR_TEXT_MAIN,
+            bg=COLOR_CARD_BG,
+            selectcolor=COLOR_BG_TOP,
+            activebackground=COLOR_CARD_BG,
+            activeforeground=COLOR_CYAN_GLOW
+        )
+        chk_token.pack(anchor="w", pady=4)
+
+        self.csrf_samesite_enabled = tk.BooleanVar(value=False)
+        chk_samesite = tk.Checkbutton(
+            opts_frame,
+            text="Habilitar Cookie SameSite=Strict (Impede envio de cookie cross-site)",
+            variable=self.csrf_samesite_enabled,
+            font=("Segoe UI", 9, "bold"),
+            fg=COLOR_TEXT_MAIN,
+            bg=COLOR_CARD_BG,
+            selectcolor=COLOR_BG_TOP,
+            activebackground=COLOR_CARD_BG,
+            activeforeground=COLOR_CYAN_GLOW
+        )
+        chk_samesite.pack(anchor="w", pady=4)
+
+        btn_simulate = self.create_custom_button(self.card_frame, "🚨 Simular Requisição Forjada (Ataque Cross-Site)", self.evaluate_csrf_attack)
+        btn_simulate.pack(fill="x", padx=20, pady=8)
+
+        self.lbl_csrf_result = tk.Label(
+            self.card_frame, 
+            text="Status do Banco: Aguardando Tentativa de Requisição Cross-Site", 
+            font=("Consolas", 9, "bold"), 
+            fg=COLOR_WARNING, 
+            bg=COLOR_BG_TOP, 
+            bd=1, 
+            relief="solid", 
+            pady=8
+        )
+        self.lbl_csrf_result.pack(fill="x", padx=20, pady=4)
+
+        self.btn_next2 = self.create_custom_button(self.card_frame, "Ir para o Quiz de Segurança Web ➔", self.load_quiz_mode)
+        self.btn_next2.pack(fill="x", padx=20, pady=(8, 12))
+        self.btn_next2.config(state="disabled")
+
+    def evaluate_csrf_attack(self):
+        token_active = self.csrf_token_enabled.get()
+        samesite_active = self.csrf_samesite_enabled.get()
+
+        if token_active or samesite_active:
+            reasons = []
+            if token_active:
+                reasons.append("• Token Anti-CSRF ausente/inválido na requisição forjada pelo site malicioso.")
+            if samesite_active:
+                reasons.append("• Cookie de sessão bloqueado pelo navegador por ser uma requisição Cross-Site (SameSite=Strict).")
+
+            reasons_str = "\n".join(reasons)
+            messagebox.showinfo(
+                "ATAQUE CSRF BLOQUEADO! 🛡️",
+                f"As defesas configuradas impediram a transferência forjada com sucesso!\n\nMotivo(s) do Bloqueio:\n{reasons_str}"
+            )
+            self.lbl_csrf_result.config(text="✅ DECISÃO: TRANSFERÊNCIA BLOQUEADA (MECANISMO DE DEFESA ATIVO)", fg=COLOR_HEALTH)
+            self.btn_next2.config(state="normal")
+        else:
+            messagebox.showerror(
+                "ATAQUE BEM SUCEDIDO! 🚫",
+                "TRANSFERÊNCIA DE $1.000 REALIZADA COM SUCESSO!\n\nSem Token Anti-CSRF e sem SameSite no Cookie, o navegador enviou automaticamente seus cookies de sessão autênticos ao responder à requisição do site malicioso."
+            )
+            self.lbl_csrf_result.config(text="❌ DECISÃO: TRANSFERÊNCIA FORJADA EXECUTADA COM SUCESSO!", fg=COLOR_INCORRECT)
+
+    # ==========================================================================
+    # --- ETAPA 3: QUIZ EDUCATIVO DA FASE 5 ---
+    # ==========================================================================
+    def load_quiz_mode(self):
+        self.clear_card()
+        self.lbl_mode.config(text=f"ETAPA 3/3 — QUIZ ({self.current_q + 1}/{len(QUIZ_FASE_5)})")
+
+        q_data = QUIZ_FASE_5[self.current_q]
+
+        lbl_cat = tk.Label(
+            self.card_frame, 
+            text=q_data["category"], 
+            font=("Segoe UI", 10, "bold"), 
+            fg=COLOR_CYAN_GLOW, 
+            bg=COLOR_CARD_BG
+        )
+        lbl_cat.pack(anchor="w", padx=20, pady=(15, 5))
+
+        lbl_q = tk.Label(
+            self.card_frame, 
+            text=q_data["question"], 
+            font=("Segoe UI", 10), 
+            fg=COLOR_TEXT_MAIN, 
+            bg=COLOR_CARD_BG, 
+            wraplength=600, 
+            justify="left"
+        )
+        lbl_q.pack(anchor="w", padx=20, pady=10)
+
+        self.quiz_buttons = []
+        for i, opt in enumerate(q_data["options"]):
+            btn = tk.Button(
+                self.card_frame,
+                text=opt,
+                font=("Segoe UI", 9, "bold"),
+                bg=COLOR_BTN_BG,
+                fg=COLOR_TEXT_MUTED,
+                activebackground=COLOR_BTN_HOVER,
+                activeforeground=COLOR_TEXT_MAIN,
+                relief="flat",
+                cursor="hand2",
+                anchor="w",
+                padx=15,
+                bd=1,
+                highlightbackground=COLOR_CARD_BORDER,
+                command=lambda idx=i: self.check_quiz_answer(idx)
+            )
+            btn.pack(fill="x", padx=20, pady=5, ipady=4)
+            btn.bind("<Enter>", lambda e, b=btn: self.on_hover_enter(b))
+            btn.bind("<Leave>", lambda e, b=btn: self.on_hover_leave(b))
+            self.quiz_buttons.append(btn)
+
+    def check_quiz_answer(self, selected_idx):
+        for btn in self.quiz_buttons:
             btn.config(state="disabled")
 
-        if selected_idx == correct_idx:
-            self.score += 100
-            self.lbl_score.config(text=f"SCORE: {self.score}")
-            self.buttons[selected_idx].config(bg=COLOR_CORRECT, fg="#000000")
-        else:
-            self.lives -= 1
-            self.lbl_firewall.config(text=f"🛡️ FIREWALL: {'█ ' * self.lives}")
-            self.buttons[selected_idx].config(bg=COLOR_INCORRECT, fg=COLOR_TEXT_MAIN)
-            self.buttons[correct_idx].config(bg=COLOR_CORRECT, fg="#000000")
+        q_data = QUIZ_FASE_5[self.current_q]
+        correct_idx = q_data["answer"]
+        selected_btn = self.quiz_buttons[selected_idx]
 
-=======
         if selected_idx == correct_idx:
-            self.score += 100
-            self.lbl_score.config(text=f"SCORE: {self.score}")
-        else:
-            self.lives -= 1
-            self.lbl_firewall.config(text=f"🛡️ FIREWALL: {'█ ' * self.lives}")
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
-            if self.lives == 0:
-                messagebox.showerror("Game Over", "O sistema foi hackeado! Tente novamente.")
+            selected_btn.config(bg=COLOR_CORRECT, fg="#000000")
+            self.root.update()
+            
+            messagebox.showinfo(
+                "Resposta Correta! 🎯", 
+                f"{q_data['explanations'][selected_idx]}\n\n{q_data['tip']}"
+            )
+            
+            self.current_q += 1
+            if self.current_q < len(QUIZ_FASE_5):
+                self.load_quiz_mode()
+            else:
+                messagebox.showinfo(
+                    "Fase 5 Concluída com Sucesso! 🏆", 
+                    "Parabéns! Você dominou os principais conceitos de Segurança Web: Prevenção contra XSS, Defesas Anti-CSRF, HTTPS e Cabeçalhos de Segurança como CSP!"
+                )
                 self.root.destroy()
-                return
-        self.current_q += 1
-<<<<<<< HEAD
-        self.root.after(1200, self.load_question)
+        else:
+            selected_btn.config(bg=COLOR_INCORRECT, fg="#FFFFFF")
+            self.quiz_buttons[correct_idx].config(bg=COLOR_CORRECT, fg="#000000")
+            self.root.update()
+            
+            messagebox.showerror(
+                "Resposta Incorreta! ⚠️", 
+                f"{q_data['explanations'][selected_idx]}\n\n{q_data['tip']}"
+            )
+            self.load_quiz_mode()  # Tenta novamente a mesma questão
 
-    def game_over(self):
-        messagebox.showerror("Game Over ⚠️", "O firewall caiu e o sistema foi comprometido!\n\nTente novamente.")
-        self.root.destroy()
-=======
-        self.load_question()
-
-# ===================================================================== #
-# SIMULAÇÕES VIA TERMINAL                                               #
-# ===================================================================== #
-def rodar_simulacao_terminal():
-    print("\n" + "=" * 60)
-    print("MODO SIMULAÇÃO TÉCNICA ATIVADO")
-    print("=" * 60)
-    
-    print("\n[PASSO 1] Testando vulnerabilidades de armazenamento e reuso.")
-    senha_usuario = input("Digite uma senha simples para salvar no arquivo (ex: 12345): ")
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
-
-    with open("senhas.txt", "w", encoding="utf-8") as f:
-        f.write(senha_usuario)
-    print(f"[D] Arquivo 'senhas.txt' criado.")
-    input("[Aperte ENTER para o Malware agir...]")
-
-    if os.path.exists("senhas.txt"):
-        with open("senhas.txt", "r", encoding="utf-8") as f:
-            senha_roubada = f.read().strip()
-        print(f"[❌] MALWARE: Senha capturada do arquivo: '{senha_roubada}'")
-        os.remove("senhas.txt")
-
-    input("\n[Aperte ENTER para testar Credential Stuffing...]")
-    contas_alvo = ["E-mail Principal", "Internet Banking", "Rede Social"]
-    for conta in contas_alvo:
-        print(f"[❌] INVASÃO BEM-SUCEDIDA no site: {conta}")
-    print("-" * 50)
-
-    print("\n[PASSO 2] Quebra de senha curta.")
-    senha_curta = input("Digite uma senha curta de até 4 letras (ex: gato): ").lower()
-    print("[!] Quebrando por Força Bruta automatizada...")
-    
-    caracteres = string.ascii_lowercase
-    inicio = time.time()
-    tentativas = 0
-    descoberta = None
-
-    for comp in range(1, len(senha_curta) + 1):
-        for comb in itertools.product(caracteres, repeat=comp):
-            tentativas += 1
-            if "".join(comb) == senha_curta:
-                descoberta = "".join(comb)
-                break
-        if descoberta: break
-
-    print(f"[❌] SENHA QUEBRADA: '{descoberta}' em {time.time() - inicio:.4f} segundos ({tentativas} testes).")
-    print("-" * 50)
-
-    print("\n[PASSO 3] Teste de MFA (Token Celular).")
-    print("Gerando token dinâmico de 30 segundos baseado em tempo...")
-    
-    passo_tempo = int(time.time() // 30)
-    msg = passo_tempo.to_bytes(8, byteorder='big')
-    hash_hmac = hmac.new(b"CHAVE_123", msg=msg, digestmod=hashlib.sha256).digest()
-    codigo_real = str(int.from_bytes(hash_hmac[-4:], byteorder='big') % 1000000).zfill(6)
-
-    chute = input("Tente adivinhar o token de 6 dígitos agora: ")
-    print(f"[*] Seu palpite: {chute} | Token Real do Sistema: {codigo_real}")
-    
-    if chute == codigo_real:
-        print("[❌] Inacreditável! Você burlou o token.")
-    else:
-        print("[✅] DEFESA TOTAL: Token incorreto. O sistema barrou o acesso do hacker.")
-    
-    input("\n[Simulação concluída. Aperte ENTER para voltar ao menu]")
-
-# ===================================================================== #
-# MENU PRINCIPAL DE EXECUÇÃO                                            #
-# ===================================================================== #
 if __name__ == "__main__":
-<<<<<<< HEAD
     root = tk.Tk()
     
-    # Centralização da janela na tela
-    window_width = 680
-    window_height = 600
+    # Centralização da Janela
+    window_width = 700
+    window_height = 640
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     position_right = int(screen_width/2 - window_width/2)
     position_top = int(screen_height/2 - window_height/2)
     root.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
-    
-    app = CyberQuizApp(root)
+
+    app = Phase5App(root)
     root.mainloop()
-=======
-    while True:
-        print("\n" + "=" * 50)
-        print("         PAINEL DE SEGURANÇA DIGITAL            ")
-        print("=" * 50)
-        print("1. Rodar Simulação de Ataques (Via Terminal)")
-        print("2. Abrir o Jogo CyberShield Quiz (Interface Gráfica)")
-        print("3. Sair")
-        print("=" * 50)
-        
-        opcao = input("Escolha uma opção (1, 2 ou 3): ").strip()
-        
-        if opcao == "1":
-            rodar_simulacao_terminal()
-        elif opcao == "2":
-            if not TKINTER_DISPONIVEL:
-                print("\n[⚠️ ERRO] A interface gráfica (Tkinter) não está instalada no seu Python.")
-                print("Se você usa Linux Ubuntu/Debian, instale rodando: sudo apt-get install python3-tk")
-                input("\nPressione ENTER para voltar.")
-            else:
-                print("\nAbrindo janela do Quiz na tela...")
-                root = tk.Tk()
-                app = CyberQuizApp(root)
-                root.mainloop()
-        elif opcao == "3":
-            print("\nEncerrando simulador.")
-            break
-        else:
-            print("\nOpção inválida! Escolha 1, 2 ou 3.")
->>>>>>> 619d68e0d4299beee6ca457452ce8d648260d936
