@@ -1,0 +1,94 @@
+
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title>CyberShield: Ethical Hacker Quiz</title>
+        <style>
+            body {
+                background-color: #0B132B;
+                color: #FFFFFF;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+            }
+            .container {
+                background-color: #1C2541;
+                border: 2px solid #00B4D8;
+                border-radius: 8px;
+                padding: 30px;
+                width: 550px;
+                box-shadow: 0px 0px 20px rgba(0, 180, 216, 0.3);
+            }
+            .header {
+                display: flex;
+                justify-content: space-between;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+            .firewall { color: #06D6A0; }
+            .score { color: #FFFFFF; }
+            .category {
+                color: #00B4D8;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 10px;
+            }
+            .question {
+                font-size: 18px;
+                margin-bottom: 25px;
+                line-height: 1.4;
+            }
+            .btn {
+                background-color: #00B4D8;
+                color: #000000;
+                border: none;
+                padding: 12px;
+                width: 100%;
+                margin-bottom: 10px;
+                border-radius: 4px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                text-align: left;
+                transition: background 0.2s;
+            }
+            .btn:hover { background-color: #48CAE4; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <span class="firewall">🛡️ FIREWALL: █ █ █</span>
+                <span class="score">SCORE: 0</span>
+            </div>
+            <hr style="border-color: #00B4D8; margin-bottom: 20px;">
+            <div class="category">🔒 SENHAS SEGURAS</div>
+            <div class="question">Qual das alternativas abaixo representa uma senha forte?</div>
+            
+            <button class="btn" onclick="answer(0)">[ A ] 12345678</button>
+            <button class="btn" onclick="answer(1)">[ B ] admin2026</button>
+            <button class="btn" onclick="answer(2)">[ C ] K#9vP!x2$Lq</button>
+            <button class="btn" onclick="answer(3)">[ D ] senhasecreta</button>
+        </div>
+
+        <script>
+            function answer(idx) {
+                if(idx === 2) {
+                    alert("✅ CORRETO! Sistema protegido. +100 Pontos.");
+                    window.location.reload(); // Passa para simular a próxima
+                } else {
+                    alert("❌ INCORRETO! O Firewall perdeu uma camada.");
+                }
+            }
+        </script>
+    </body>
+    </html>
+    
