@@ -1,66 +1,64 @@
+import os
+import time
+import string
+import itertools
+import hmac
+import hashlib
 import tkinter as tk
 from tkinter import messagebox
 
-# --- CONFIGURAÇÃO DE CORES (TEMA HACKER ÉTICO) ---
-COLOR_BG = "#0B132B"         # Fundo azul bem escuro
-COLOR_CARD = "#1C2541"       # Fundo da caixa da pergunta
-COLOR_BTN = "#00B4D8"        # Botões (Azul Neon)
-COLOR_TEXT = "#FFFFFF"       # Texto branco
-COLOR_HEALTH = "#06D6A0"     # Barra de vida (Verde/Ciano)
-COLOR_RIGHT = "#4BB543"      # Feedback de acerto (Verde)
-COLOR_WRONG = "#D9534F"      # Feedback de erro (Vermelho)
+# ===================================================================== #
+# CONFIGURAÇÕES DA INTERFACE GRÁFICA (TEMA HACKER ÉTICO)               #
+# ===================================================================== #
+COLOR_BG = "#0B132B"         
+COLOR_CARD = "#1C2541"       
+COLOR_BTN = "#00B4D8"        
+COLOR_TEXT = "#FFFFFF"       
+COLOR_HEALTH = "#06D6A0"     
 
-# --- DADOS DO QUIZ INTEGRADOS (6 PERGUNTAS) ---
-# Os índices das respostas corretas seguem a lógica: A=0, B=1, C=2, D=3
+# --- NOVAS PERGUNTAS ATUALIZADAS DO QUIZ ---
 QUESTIONS = [
     {
-        "category": "🌐 SERVIÇOS DE REDE",
-        "question": "Qual serviço é responsável por traduzir nomes de domínio (ex: site.com) para endereços IP?",
-        "options": ["DHCP", "Firewall", "DNS", "HTTP"],
-        "answer": 2
-    },
-    {
-        "category": "📦 MODELO OSI",
-        "question": "Qual é a principal função da Camada de Rede (Camada 3) no modelo OSI?",
+        "category": "🔑 AUTENTICAÇÃO (MFA)",
+        "question": "Como funciona o método TOTP usado na autenticação multifator (MFA)?",
         "options": [
-            "Transmissão de bits brutos pelo meio físico.",
-            "Estabelecimento, manutenção e encerramento de sessões entre aplicações.",
-            "Determinação do melhor caminho e roteamento de pacotes.",
-            "Formatação, criptografia e compressão de dados."
-        ],
-        "answer": 2
-    },
-    {
-        "category": "🔢 ENDEREÇAMENTO IP",
-        "question": "Quantos bits compõem um endereço IPv4 padrão?",
-        "options": ["32 bits", "64 bits", "128 bits", "256 bits"],
-        "answer": 0
-    },
-    {
-        "category": "🚀 PROTOCOLOS DE TRANSPORTE",
-        "question": "Qual dos seguintes protocolos pertence à camada de Transporte, é orientado à conexão e garante a entrega dos dados?",
-        "options": ["UDP", "IP", "TCP", "ICMP"],
-        "answer": 2
-    },
-    {
-        "category": "🌐 PROTOCOLOS DE APLICAÇÃO",
-        "question": "Qual é a principal diferença entre os protocolos HTTP e HTTPS?",
-        "options": [
-            "O HTTP é usado apenas para arquivos de áudio, enquanto o HTTPS é para imagens.",
-            "O HTTPS utiliza criptografia, tornando a transmissão de dados mais segura.",
-            "O HTTPS é uma versão desatualizada e mais lenta do protocolo HTTP.",
-            "O HTTP permite acesso a redes privadas, e o HTTPS é exclusivo para a internet pública."
+            "Envia um SMS padrão para o chip do celular",
+            "Gera códigos temporários baseados em chaves secretas e no horário atual",
+            "Valida apenas as perguntas de segurança do cadastro",
+            "Usa uma lista fixa de senhas guardada no computador"
         ],
         "answer": 1
     },
     {
-        "category": "🛡️ SEGURANÇA DE REDE",
-        "question": "Qual é o principal objetivo de um Firewall em uma rede de computadores?",
+        "category": "🧠 ENGENHARIA SOCIAL",
+        "question": "O que caracteriza um ataque de 'Spear Phishing'?",
         "options": [
-            "Fornecer e gerenciar automaticamente os endereços IP dos dispositivos.",
-            "Filtrar e controlar o tráfego de rede com base em regras de segurança.",
-            "Traduzir nomes de sites (URLs) em endereços IP legíveis.",
-            "Ampliar o alcance do sinal de Wi-Fi em grandes empresas."
+            "Um ataque em massa enviado aleatoriamente para milhares de pessoas",
+            "O roubo físico de roteadores dentro de uma empresa",
+            "E-mails altamente personalizados direcionados a alvos específicos",
+            "Bloqueio de arquivos do sistema exigindo resgate em criptomoedas"
+        ],
+        "answer": 2
+    },
+    {
+        "category": "🦠 MALWARE",
+        "question": "Qual tipo de malware criptografa os arquivos da vítima e exige pagamento?",
+        "options": [
+            "Spyware",
+            "Ransomware",
+            "Rootkit",
+            "Trojan-Banker"
+        ],
+        "answer": 1
+    },
+    {
+        "category": "⚙️ MANUTENÇÃO",
+        "question": "Por que atualizações de segurança do sistema operacional devem ser instaladas logo?",
+        "options": [
+            "Apenas para mudar a parte visual e os ícones das janelas",
+            "Para corrigir vulnerabilidades já conhecidas que hackers exploram",
+            "Para apagar arquivos antigos e liberar espaço em disco",
+            "Para desativar firewalls e antivírus antigos por completo"
         ],
         "answer": 1
     }
@@ -70,18 +68,15 @@ class CyberQuizApp:
     def __init__(self, root):
         self.root = root
         self.root.title("CyberShield: Ethical Hacker Quiz")
-        self.root.geometry("650x550")
+        self.root.geometry("600x500")
         self.root.configure(bg=COLOR_BG)
-
         self.current_q = 0
         self.lives = 3
         self.score = 0
-
         self.setup_ui()
         self.load_question()
 
     def setup_ui(self):
-        # Header / Status Bar
         self.status_frame = tk.Frame(self.root, bg=COLOR_BG)
         self.status_frame.pack(fill="x", padx=20, pady=15)
 
@@ -103,7 +98,6 @@ class CyberQuizApp:
         )
         self.lbl_score.pack(side="right")
 
-        # Painel da Pergunta
         self.card_frame = tk.Frame(self.root, bg=COLOR_CARD, bd=2, relief="groove")
         self.card_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
@@ -119,15 +113,14 @@ class CyberQuizApp:
         self.lbl_question = tk.Label(
             self.card_frame, 
             text="", 
-            font=("Helvetica", 12, "bold"), 
+            font=("Helvetica", 13), 
             fg=COLOR_TEXT, 
             bg=COLOR_CARD, 
-            wraplength=550, 
+            wraplength=500, 
             justify="left"
         )
         self.lbl_question.pack(anchor="w", padx=15, pady=10)
 
-        # Botões de Resposta
         self.btn_frame = tk.Frame(self.card_frame, bg=COLOR_CARD)
         self.btn_frame.pack(fill="x", padx=15, pady=15)
 
@@ -152,47 +145,111 @@ class CyberQuizApp:
             q_data = QUESTIONS[self.current_q]
             self.lbl_category.config(text=q_data["category"])
             self.lbl_question.config(text=q_data["question"])
-            
             for i, opt in enumerate(q_data["options"]):
-                self.buttons[i].config(
-                    text=f"[ {chr(65+i)} ]  {opt}",
-                    bg=COLOR_BTN,
-                    fg="#000000",
-                    state="normal"
-                )
+                self.buttons[i].config(text=f"[ {chr(65+i)} ]  {opt}")
         else:
             messagebox.showinfo("Vitória!", f"Você protegeu o sistema!\nPontuação final: {self.score}")
             self.root.destroy()
 
     def check_answer(self, selected_idx):
         correct_idx = QUESTIONS[self.current_q]["answer"]
-        
-        # Desabilita botões temporariamente para evitar cliques duplos
-        for btn in self.buttons:
-            btn.config(state="disabled")
-
         if selected_idx == correct_idx:
             self.score += 100
             self.lbl_score.config(text=f"SCORE: {self.score}")
-            self.buttons[selected_idx].config(bg=COLOR_RIGHT, fg=COLOR_TEXT)
         else:
             self.lives -= 1
             self.lbl_firewall.config(text=f"🛡️ FIREWALL: {'█ ' * self.lives}")
-            self.buttons[selected_idx].config(bg=COLOR_WRONG, fg=COLOR_TEXT)
-            self.buttons[correct_idx].config(bg=COLOR_RIGHT, fg=COLOR_TEXT)
-
             if self.lives == 0:
-                self.root.after(1000, self.game_over)
+                messagebox.showerror("Game Over", "O sistema foi hackeado! Tente novamente.")
+                self.root.destroy()
                 return
-
         self.current_q += 1
-        self.root.after(1000, self.load_question)
+        self.load_question()
 
-    def game_over(self):
-        messagebox.showerror("Game Over", "O sistema foi hackeado! Tente novamente.")
-        self.root.destroy()
+# ===================================================================== #
+# FASE 1: SIMULAÇÃO INTERATIVA DE SEGURANÇA (NO TERMINAL)              #
+# ===================================================================== #
+def rodar_simulacao_terminal():
+    print("=" * 60)
+    print("INICIANDO SIMULAÇÃO: EVOLUÇÃO DA SEGURANÇA DIGITAL")
+    print("=" * 60)
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = CyberQuizApp(root)
-    root.mainloop()
+    # PASSO 1: O PERIGO DO TEXTO PURO E REUTILIZAÇÃO
+    print("\n[PASSO 1] Testando vulnerabilidades de armazenamento e reuso.")
+    senha_usuario = input("Digite uma senha simples para salvar no arquivo (ex: 12345): ")
+
+    with open("senhas.txt", "w", encoding="utf-8") as f:
+        f.write(senha_usuario)
+    print(f"[D] Arquivo 'senhas.txt' criado com a senha: '{senha_usuario}'")
+    input("\n[Pressione ENTER para simular a execução de um Malware local...]")
+
+    senha_roubada = ""
+    if os.path.exists("senhas.txt"):
+        with open("senhas.txt", "r", encoding="utf-8") as f:
+            senha_roubada = f.read().strip()
+        print(f"[❌] MALWARE: Sucesso! Arquivo lido. Senha capturada: '{senha_roubada}'")
+        os.remove("senhas.txt")
+
+    input("\n[Pressione ENTER para o Hacker usar essa senha em outros sites...]")
+    contas_alvo = ["E-mail Principal", "Internet Banking", "Rede Social"]
+    print("\n[B] Hacker inicia ataque de Credential Stuffing usando a senha roubada...")
+    for conta in contas_alvo:
+        print(f"[*] Testando credenciais roubadas no sistema do: {conta}")
+        print(f"[❌] INVASÃO BEM-SUCEDIDA! Acesso liberado ao {conta}.")
+    print("-" * 50)
+
+    # PASSO 2: A FRAGILIDADE DAS SENHAS CURTAS
+    print("\n[PASSO 2] Nova política: Mudar a senha para uma curta toda semana.")
+    senha_curta_da_semana = input("Digite uma senha curta de até 4 letras minúsculas (ex: gato): ").lower()
+
+    print(f"[A] Nova senha semanal definida: '{senha_curta_da_semana}'")
+    input("\n[Pressione ENTER para iniciar o ataque de Força Bruta automatizado...]")
+    print("[!] Quebrando senha por Força Bruta...")
+
+    caracteres = string.ascii_lowercase
+    inicio_forca_bruta = time.time()
+    tentativas = 0
+    senha_descoberta = None
+
+    for comprimento in range(1, len(senha_curta_da_semana) + 1):
+        for combinacao in itertools.product(caracteres, repeat=comprimento):
+            tentativas += 1
+            palpite = "".join(combinacao)
+            if palpite == senha_curta_da_semana:
+                senha_descoberta = palpite
+                break
+        if senha_descoberta:
+            break
+
+    tempo_gasto = time.time() - inicio_forca_bruta
+    print(f"[❌] SENHA QUEBRADA: '{senha_descoberta}'")
+    print(f"[*] Total de combinações testadas: {tentativas}")
+    print(f"[*] Tempo necessário: {tempo_gasto:.4f} segundos")
+    print("-" * 50)
+
+    # PASSO 3: A SOLUÇÃO IDEAL - SENHA EXCLUSIVA + MFA
+    print("\n[PASSO 3] Adotando a postura correta (Senha Forte Exclusiva + MFA)...")
+
+    SENHA_BANCO_REAL = "Super#Senha#Exclusiva#Longa#2026"
+    CHAVE_MFA_SECRETA = b"CHAVE_SECRETA_DO_CELULAR_DO_USUARIO_123"
+
+    passo_tempo = int(time.time() // 30)
+    mensagem = passo_tempo.to_bytes(8, byteorder='big')
+    hash_hmac = hmac.new(CHAVE_MFA_SECRETA, msg=mensagem, digestmod=hashlib.sha256).digest()
+    codigo_real_do_celular = str(int.from_bytes(hash_hmac[-4:], byteorder='big') % 1000000).zfill(6)
+
+    print(f"[C] Usuário configurou a senha forte: '{SENHA_BANCO_REAL}'")
+    print("[MFA] Sistema gerou um token temporário no celular do usuário real.")
+    print("\n[CENÁRIO] O hacker descobriu sua senha por Phishing, mas o banco tem MFA.")
+    
+    codigo_tentado_pelo_hacker = input("\n[VOCÊ É O HACKER] Tente adivinhar o Token de 6 dígitos do MFA: ")
+
+    print(f"\n[*] Código digitado pelo invasor: {codigo_tentado_pelo_hacker}")
+    print(f"[*] Código real gerado no app do usuário: {codigo_real_do_celular}")
+
+    if codigo_tentado_pelo_hacker == codigo_real_do_celular:
+        print("[❌] Falha grave! O hacker acertou o token aleatório. Acesso concedido.")
+    else:
+        print("[✅] DEFESA TOTAL: Token incorreto! Sistema BLOQUEOU a tentativa de login.")
+
+    print("\n" + "=" * 60)
