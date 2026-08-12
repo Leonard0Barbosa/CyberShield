@@ -1,5 +1,3 @@
-#Fase 6 — Criptografia
-
 import hashlib
 import tkinter as tk
 from tkinter import messagebox
@@ -22,9 +20,9 @@ COLOR_INCORRECT = "#FF3366"    # Vermelho/Rosa Neon para erro
 COLOR_WARNING = "#FFD166"      # Amarelo/Laranja para alertas
 
 # ==============================================================================
-# --- BANCO DE PERGUNTAS DA FASE 3 ---
+# --- BANCO DE PERGUNTAS DA FASE 6 ---
 # ==============================================================================
-QUIZ_FASE_3 = [
+QUIZ_FASE_6 = [
     {
         "category": "🔐 INTEGRIDADE DE DADOS",
         "question": "Qual técnica gera um resumo criptográfico de tamanho fixo para verificar a integridade de um arquivo?",
@@ -99,10 +97,10 @@ QUIZ_FASE_3 = [
     }
 ]
 
-class Phase3App:
+class Phase6App:
     def __init__(self, root):
         self.root = root
-        self.root.title("CyberShield: Fase 3 — Integridade, Hash & Assinatura Digital")
+        self.root.title("CyberShield: Fase 6 — Integridade, Hash & Criptografia")
         self.root.geometry("700x640")
         self.root.resizable(False, False)
 
@@ -125,7 +123,7 @@ class Phase3App:
 
         self.lbl_header = tk.Label(
             self.status_frame, 
-            text="🛡️ FASE 3: INTEGRIDADE & CRIPTOGRAFIA", 
+            text="🛡️ FASE 6: INTEGRIDADE & CRIPTOGRAFIA", 
             font=("Consolas", 11, "bold"), 
             fg=COLOR_HEALTH, 
             bg=COLOR_BG_TOP
@@ -202,11 +200,11 @@ class Phase3App:
         return btn
 
     def on_hover_enter(self, btn):
-        if btn["state"] == "normal":
+        if str(btn["state"]) == "normal":
             btn.config(bg=COLOR_BTN_HOVER, fg=COLOR_TEXT_MAIN)
 
     def on_hover_leave(self, btn):
-        if btn["state"] == "normal":
+        if str(btn["state"]) == "normal":
             btn.config(bg=COLOR_BTN_BG, fg=COLOR_TEXT_MUTED)
 
     # ==========================================================================
@@ -265,7 +263,6 @@ class Phase3App:
         )
         self.lbl_hash_output.pack(fill="x", padx=20, pady=5)
 
-        # Desafio de Modificação
         self.lbl_hash_info = tk.Label(
             self.card_frame, 
             text="💡 Teste: Adicione um ponto no final do texto acima e compare o resultado Hash obtido!", 
@@ -355,7 +352,6 @@ class Phase3App:
             return
 
         self.simulated_message = text
-        # Simula assinatura encriptando o hash do documento
         raw_hash = hashlib.sha256(text.encode('utf-8')).hexdigest()
         self.simulated_signature = f"SIG_PRIVKEY_RSA2048[{raw_hash[:16]}]"
 
@@ -394,9 +390,9 @@ class Phase3App:
     # ==========================================================================
     def load_quiz_mode(self):
         self.clear_card()
-        self.lbl_mode.config(text=f"ETAPA 3/3 — QUIZ ({self.current_q + 1}/{len(QUIZ_FASE_3)})")
+        self.lbl_mode.config(text=f"ETAPA 3/3 — QUIZ ({self.current_q + 1}/{len(QUIZ_FASE_6)})")
 
-        q_data = QUIZ_FASE_3[self.current_q]
+        q_data = QUIZ_FASE_6[self.current_q]
 
         lbl_cat = tk.Label(
             self.card_frame, 
@@ -445,13 +441,13 @@ class Phase3App:
         for btn in self.quiz_buttons:
             btn.config(state="disabled")
 
-        q_data = QUIZ_FASE_3[self.current_q]
+        q_data = QUIZ_FASE_6[self.current_q]
         correct_idx = q_data["answer"]
         selected_btn = self.quiz_buttons[selected_idx]
 
         if selected_idx == correct_idx:
             selected_btn.config(bg=COLOR_CORRECT, fg="#000000")
-            self.root.update()
+            self.root.update_idletasks()
             
             messagebox.showinfo(
                 "Resposta Correta! 🎯", 
@@ -459,29 +455,30 @@ class Phase3App:
             )
             
             self.current_q += 1
-            if self.current_q < len(QUIZ_FASE_3):
+            if self.current_q < len(QUIZ_FASE_6):
                 self.load_quiz_mode()
             else:
                 messagebox.showinfo(
-                    "Fase 3 Concluída com Excelência! 🏆", 
+                    "Fase 6 Concluída com Excelência! 🏆", 
                     "Parabéns! Você dominou os conceitos essenciais de Hashing, Integridade, Criptografia Assimétrica e Assinatura Digital!"
                 )
                 self.root.destroy()
         else:
             selected_btn.config(bg=COLOR_INCORRECT, fg="#FFFFFF")
             self.quiz_buttons[correct_idx].config(bg=COLOR_CORRECT, fg="#000000")
-            self.root.update()
+            self.root.update_idletasks()
             
             messagebox.showerror(
                 "Resposta Incorreta! ⚠️", 
                 f"{q_data['explanations'][selected_idx]}\n\n{q_data['tip']}"
             )
-            self.load_quiz_mode()  # Tenta novamente a mesma questão
+            # Recarrega a pergunta após dar ok no messagebox
+            self.load_quiz_mode()
 
 if __name__ == "__main__":
     root = tk.Tk()
     
-    # Centralização
+    # Centralização da janela
     window_width = 700
     window_height = 640
     screen_width = root.winfo_screenwidth()
@@ -490,6 +487,5 @@ if __name__ == "__main__":
     position_top = int(screen_height/2 - window_height/2)
     root.geometry(f"{window_width}x{window_height}+{position_right}+{position_top}")
 
-    app = Phase3App(root)
+    app = Phase6App(root)
     root.mainloop()
-    
