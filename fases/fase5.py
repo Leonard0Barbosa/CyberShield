@@ -107,7 +107,7 @@ class CyberQuizApp:
         self.load_question()
 
     def setup_ui(self):
-        # --- CANVAS DE FUNDO (DEGRADÊ + DETALHES DE CIRCUITO) ---
+        # --- CANVAS DE FUNDO ---
         self.bg_canvas = tk.Canvas(self.root, width=680, height=600, highlightthickness=0)
         self.bg_canvas.pack(fill="both", expand=True)
         self.draw_cyber_background()
@@ -196,7 +196,6 @@ class CyberQuizApp:
         r1, g1, b1 = self.hex_to_rgb(COLOR_BG_TOP)
         r2, g2, b2 = self.hex_to_rgb(COLOR_BG_BOTTOM)
         
-        # Gradiente suave
         for y in range(height):
             r = int(r1 + (r2 - r1) * (y / height))
             g = int(g1 + (g2 - g1) * (y / height))
@@ -204,7 +203,6 @@ class CyberQuizApp:
             color = f"#{r:02x}{g:02x}{b:02x}"
             self.bg_canvas.create_line(0, y, width, y, fill=color)
 
-        # Linhas de circuito cibernético
         line_color = "#0B3254"
         glow_dot = COLOR_CYAN_GLOW
 
@@ -221,11 +219,11 @@ class CyberQuizApp:
         return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
 
     def on_hover_enter(self, btn):
-        if btn["state"] == "normal":
+        if str(btn["state"]) == "normal":
             btn.config(bg=COLOR_BTN_HOVER, fg=COLOR_TEXT_MAIN)
 
     def on_hover_leave(self, btn):
-        if btn["state"] == "normal":
+        if str(btn["state"]) == "normal":
             btn.config(bg=COLOR_BTN_BG, fg=COLOR_TEXT_MUTED)
 
     def load_question(self):
@@ -249,7 +247,6 @@ class CyberQuizApp:
         q_data = QUESTIONS[self.current_q]
         correct_idx = q_data["answer"]
 
-        # Desativa todos os botões temporariamente
         for btn in self.buttons:
             btn.config(state="disabled")
 
@@ -257,21 +254,36 @@ class CyberQuizApp:
             self.score += 100
             self.lbl_score.config(text=f"SCORE: {self.score}")
             self.buttons[selected_idx].config(bg=COLOR_CORRECT, fg="#000000")
+            self.current_q += 1
+            self.root.after(1200, self.load_question)
         else:
             self.lives -= 1
             self.lbl_firewall.config(text=f"🛡️ FIREWALL: {'█ ' * self.lives}") 
             self.buttons[selected_idx].config(bg=COLOR_INCORRECT, fg=COLOR_TEXT_MAIN)
             self.buttons[correct_idx].config(bg=COLOR_CORRECT, fg="#000000")
 
-            if self.lives == 0:
-                self.root.after(1000, self.game_over)
-                return
+            # POP-UP DE ERRO DO WINDOWS NATIVO
+            messagebox.showerror(
+                "System Error - Security Violation",
+                f"system32\\drivers\\firewall.sys\n\n"
+                f"ERROR Code: 0x80070005 (Access Denied)\n"
+                f"Resposta incorreta! Uma brecha foi explorada.\n\n"
+                f"Escudos do Firewall restantes: {self.lives}"
+            )
 
-        self.current_q += 1
-        self.root.after(1200, self.load_question)
+            if self.lives == 0:
+                self.game_over()
+            else:
+                self.current_q += 1
+                self.load_question()
 
     def game_over(self):
-        messagebox.showerror("Game Over ⚠️", "O firewall caiu e o sistema foi compromised!\n\nTente novamente.")
+        messagebox.showerror(
+            "CRITICAL SYSTEM ERROR", 
+            "Windows - System Error\n\n"
+            "O firewall foi completamente destruído e o sistema travou!\n"
+            "A aplicação será encerrada."
+        )
         self.root.destroy()
 
 
@@ -281,7 +293,6 @@ class CyberQuizApp:
 if __name__ == "__main__":
     root = tk.Tk()
     
-    # Centralização da janela na tela
     window_width = 680
     window_height = 600
     screen_width = root.winfo_screenwidth()
