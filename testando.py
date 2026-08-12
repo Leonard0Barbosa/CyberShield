@@ -2,620 +2,1335 @@ import tkinter as tk
 from tkinter import messagebox
 
 
-# ==============================================================================
-# CYBERSHIELD — FASE 8
-# DESENVOLVIMENTO SEGURO
-# ==============================================================================
+# ============================================================
+# CYBERSHIELD — FASE 10
+# BOSS FINAL
+# ============================================================
 
-COLOR_BG_TOP = "#030D22"
-COLOR_BG_BOTTOM = "#0A2542"
+COLOR_BG = "#050509"
+COLOR_BG_DARK = "#0A080C"
 
-COLOR_CARD_BG = "#0D1F38"
-COLOR_CARD_BORDER = "#144574"
+COLOR_CARD = "#130D12"
+COLOR_CARD_BORDER = "#5C1625"
 
-COLOR_CYAN_GLOW = "#00F0FF"
+COLOR_RED = "#FF1744"
+COLOR_RED_DARK = "#8B1028"
+COLOR_RED_BRIGHT = "#FF003C"
 
-COLOR_BTN_BG = "#0F3356"
-COLOR_BTN_HOVER = "#0077B6"
+COLOR_CYAN = "#00F0FF"
+COLOR_GREEN = "#00E676"
+COLOR_YELLOW = "#FFD600"
 
-COLOR_TEXT_MAIN = "#FFFFFF"
-COLOR_TEXT_MUTED = "#8ECAE6"
+COLOR_TEXT = "#FFFFFF"
+COLOR_MUTED = "#B8AEB2"
 
-COLOR_HEALTH = "#00F5D4"
-
-COLOR_CORRECT = "#00E676"
-COLOR_INCORRECT = "#FF3366"
-
-
-# ==============================================================================
-# PERGUNTA
-# ==============================================================================
-
-QUESTION = {
-    "category": "🛠️ FASE 8 — DESENVOLVIMENTO SEGURO",
-
-    "question": (
-        "Durante o desenvolvimento de um sistema, "
-        "foi identificada uma falha relacionada aos dados "
-        "enviados pelos usuários.\n\n"
-        "Qual medida é mais adequada para reduzir esse risco?"
-    ),
-
-    "options": [
-        "Aumentar a velocidade do servidor",
-        "Desativar o firewall",
-        "Validar e tratar adequadamente as entradas",
-        "Armazenar todos os dados em texto puro"
-    ],
-
-    "answer": 2
-}
+COLOR_BUTTON = "#24131A"
+COLOR_BUTTON_HOVER = "#5E1628"
 
 
-# ==============================================================================
-# EXPLICAÇÕES
-# ==============================================================================
+# ============================================================
+# PERGUNTAS DO BOSS
+# ============================================================
 
-EXPLANATIONS = {
+BOSS_BATTLE_DATA = [
 
-    0: (
-        "❌ Aumentar a velocidade do servidor\n\n"
-        "Desempenho não corrige falhas de validação. "
-        "Um servidor mais rápido continuará vulnerável "
-        "se aceitar entradas maliciosas."
-    ),
+    # --------------------------------------------------------
+    # PERGUNTA 1
+    # --------------------------------------------------------
 
-    1: (
-        "❌ Desativar o firewall\n\n"
-        "Desativar o firewall reduziria ainda mais a segurança "
-        "e não corrige o problema relacionado à validação."
-    ),
+    {
+        "categoria": "🔐 INTEGRIDADE",
 
-    2: (
-        "✅ Validar e tratar adequadamente as entradas\n\n"
-        "A validação e o tratamento adequado das entradas "
-        "ajudam a impedir que dados maliciosos sejam aceitos "
-        "pelo sistema."
-    ),
+        "questao": (
+            "Um administrador percebe que o hash SHA-256 de um "
+            "arquivo crítico mudou após uma alteração que não foi "
+            "registrada. O que essa evidência indica com maior "
+            "precisão?"
+        ),
 
-    3: (
-        "❌ Armazenar todos os dados em texto puro\n\n"
-        "Isso aumenta o risco de exposição e vazamento "
-        "de informações."
-    )
-}
+        "opcoes": [
+            "O arquivo ficou indisponível",
+            "A confidencialidade foi necessariamente comprometida",
+            "O conteúdo do arquivo foi alterado e precisa ser investigado",
+            "O servidor obrigatoriamente foi desligado"
+        ],
+
+        "resposta_correta": 2,
+
+        "dificuldade": 2,
+
+        "explicacao": (
+            "O hash funciona como uma impressão digital dos dados. "
+            "Se o arquivo muda, seu hash normalmente também muda. "
+            "Isso indica uma alteração, mas não permite concluir "
+            "sozinho quem realizou a alteração ou qual foi a causa."
+        )
+    },
 
 
-# ==============================================================================
-# CLASSE DA FASE 8
-# ==============================================================================
+    # --------------------------------------------------------
+    # PERGUNTA 2
+    # --------------------------------------------------------
 
-class Fase8:
+    {
+        "categoria": "🔑 AUTENTICAÇÃO",
 
-    def __init__(self, root, proxima_fase=None):
+        "questao": (
+            "Uma empresa descobriu que uma senha de funcionário "
+            "apareceu em um vazamento. A conta utiliza uma senha "
+            "exclusiva, mas ainda não possui MFA. Qual medida "
+            "oferece uma camada adicional de proteção?"
+        ),
+
+        "opcoes": [
+            "Usar a mesma senha em outros sistemas",
+            "Ativar MFA e redefinir a credencial comprometida",
+            "Colocar a senha em um arquivo de texto",
+            "Diminuir o tamanho da senha"
+        ],
+
+        "resposta_correta": 1,
+
+        "dificuldade": 2,
+
+        "explicacao": (
+            "Uma senha comprometida deve ser substituída. "
+            "O MFA adiciona outro fator de autenticação, reduzindo "
+            "o impacto caso a senha seja descoberta."
+        )
+    },
+
+
+    # --------------------------------------------------------
+    # PERGUNTA 3
+    # --------------------------------------------------------
+
+    {
+        "categoria": "🎣 PHISHING",
+
+        "questao": (
+            "Um funcionário recebe um e-mail aparentemente enviado "
+            "pelo setor financeiro. O texto exige uma ação urgente "
+            "e contém um link para login. O domínio do link possui "
+            "uma pequena alteração em relação ao domínio oficial. "
+            "Qual é a melhor resposta?"
+        ),
+
+        "opcoes": [
+            "Clicar rapidamente antes que a conta seja bloqueada",
+            "Responder ao e-mail pedindo confirmação",
+            "Verificar a mensagem por um canal oficial e não utilizar o link",
+            "Encaminhar o e-mail para toda a empresa"
+        ],
+
+        "resposta_correta": 2,
+
+        "dificuldade": 3,
+
+        "explicacao": (
+            "Domínios parecidos são frequentemente utilizados para "
+            "enganar usuários. A urgência também é um sinal de alerta. "
+            "A mensagem deve ser verificada por um canal confiável."
+        )
+    },
+
+
+    # --------------------------------------------------------
+    # PERGUNTA 4
+    # --------------------------------------------------------
+
+    {
+        "categoria": "🌐 DNS / REDE",
+
+        "questao": (
+            "Durante uma investigação, um analista precisa descobrir "
+            "qual endereço IP está associado ao domínio "
+            "'empresa-exemplo.com'. Qual serviço é responsável "
+            "normalmente por realizar essa resolução?"
+        ),
+
+        "opcoes": [
+            "DHCP",
+            "Firewall",
+            "DNS",
+            "MFA"
+        ],
+
+        "resposta_correta": 2,
+
+        "dificuldade": 2,
+
+        "explicacao": (
+            "O DNS traduz nomes de domínio em endereços IP. "
+            "O DHCP possui outra função: distribuir configurações "
+            "de rede, como endereços IP."
+        )
+    },
+
+
+    # --------------------------------------------------------
+    # PERGUNTA 5
+    # --------------------------------------------------------
+
+    {
+        "categoria": "🗄️ BANCO DE DADOS",
+
+        "questao": (
+            "Um usuário consegue fazer login normalmente, porém "
+            "após a autenticação consegue acessar registros "
+            "administrativos que não deveriam estar disponíveis "
+            "para sua função. Qual controle provavelmente falhou?"
+        ),
+
+        "opcoes": [
+            "Autenticação",
+            "Autorização / controle de acesso",
+            "DNS",
+            "Disponibilidade"
+        ],
+
+        "resposta_correta": 1,
+
+        "dificuldade": 3,
+
+        "explicacao": (
+            "A autenticação confirmou a identidade do usuário. "
+            "O problema está no que ele pode fazer depois de "
+            "autenticado, portanto envolve autorização e controle "
+            "de acesso."
+        )
+    },
+
+
+    # --------------------------------------------------------
+    # PERGUNTA 6
+    # --------------------------------------------------------
+
+    {
+        "categoria": "🛡️ DESENVOLVIMENTO SEGURO",
+
+        "questao": (
+            "Uma aplicação recebe dados diretamente de usuários e "
+            "os utiliza em operações internas. Qual abordagem é "
+            "mais adequada para reduzir riscos relacionados a "
+            "entradas maliciosas?"
+        ),
+
+        "opcoes": [
+            "Confiar nos dados porque o usuário está autenticado",
+            "Aumentar a velocidade do servidor",
+            "Validar, normalizar e tratar adequadamente as entradas",
+            "Desativar o firewall"
+        ],
+
+        "resposta_correta": 2,
+
+        "dificuldade": 3,
+
+        "explicacao": (
+            "Autenticação não torna automaticamente os dados "
+            "confiáveis. As entradas devem ser validadas e tratadas "
+            "de acordo com o contexto em que serão utilizadas."
+        )
+    },
+
+
+    # --------------------------------------------------------
+    # PERGUNTA 7
+    # --------------------------------------------------------
+
+    {
+        "categoria": "🚨 SOC / INCIDENTE",
+
+        "questao": (
+            "O SOC detecta dezenas de falhas de login, seguidas "
+            "por um login bem-sucedido de uma localização incomum "
+            "e posteriormente um download elevado de arquivos. "
+            "Qual conclusão é mais apropriada?"
+        ),
+
+        "opcoes": [
+            "O computador está definitivamente infectado",
+            "O usuário apenas esqueceu a senha",
+            "Existe um comportamento suspeito que merece investigação",
+            "O servidor necessariamente está desligado"
+        ],
+
+        "resposta_correta": 2,
+
+        "dificuldade": 3,
+
+        "explicacao": (
+            "Os eventos formam um padrão suspeito, mas os registros "
+            "não são suficientes para afirmar definitivamente que "
+            "houve comprometimento. O correto é investigar e "
+            "correlacionar os eventos."
+        )
+    },
+
+
+    # --------------------------------------------------------
+    # PERGUNTA 8
+    # --------------------------------------------------------
+
+    {
+        "categoria": "🔏 CRIPTOGRAFIA",
+
+        "questao": (
+            "Uma equipe precisa verificar se um arquivo recebido "
+            "foi alterado durante o processo de distribuição. "
+            "Ela possui um hash conhecido do arquivo original. "
+            "O que deve fazer?"
+        ),
+
+        "opcoes": [
+            "Comparar o hash do arquivo recebido com o hash esperado",
+            "Converter o arquivo para Base64",
+            "Alterar o nome do arquivo",
+            "Reiniciar o servidor"
+        ],
+
+        "resposta_correta": 0,
+
+        "dificuldade": 3,
+
+        "explicacao": (
+            "Calculando o hash do arquivo recebido e comparando-o "
+            "com o valor esperado, é possível detectar alterações "
+            "no conteúdo."
+        )
+    },
+
+
+    # --------------------------------------------------------
+    # PERGUNTA 9
+    # --------------------------------------------------------
+
+    {
+        "categoria": "✍️ ASSINATURA DIGITAL",
+
+        "questao": (
+            "Uma organização precisa verificar a autenticidade de "
+            "uma mensagem e também detectar se ela foi modificada "
+            "depois de assinada. Qual mecanismo é apropriado?"
+        ),
+
+        "opcoes": [
+            "Compressão",
+            "Base64",
+            "Assinatura digital",
+            "DHCP"
+        ],
+
+        "resposta_correta": 2,
+
+        "dificuldade": 3,
+
+        "explicacao": (
+            "Uma assinatura digital permite verificar a autenticidade "
+            "da origem e detectar alterações na mensagem."
+        )
+    },
+
+
+    # --------------------------------------------------------
+    # PERGUNTA 10 — MAIS DIFÍCIL
+    # --------------------------------------------------------
+
+    {
+        "categoria": "☠️ INCIDENT RESPONSE",
+
+        "questao": (
+            "Durante um incidente, uma conta administrativa apresenta "
+            "atividade suspeita. O atacante pode ainda estar conectado. "
+            "Qual ação representa uma abordagem inicial mais adequada?"
+        ),
+
+        "opcoes": [
+            "Apagar todos os computadores da empresa",
+            "Publicar imediatamente todos os detalhes do incidente",
+            "Conter o acesso comprometido, preservar evidências e iniciar a investigação",
+            "Ignorar o comportamento até aparecer uma prova definitiva"
+        ],
+
+        "resposta_correta": 2,
+
+        "dificuldade": 4,
+
+        "explicacao": (
+            "Em um incidente real, é importante conter o problema "
+            "sem destruir evidências. A equipe deve proteger as "
+            "contas afetadas, preservar informações relevantes e "
+            "seguir o procedimento de resposta a incidentes."
+        )
+    },
+
+
+    # --------------------------------------------------------
+    # PERGUNTA 11 — BOSS FINAL
+    # --------------------------------------------------------
+
+    {
+        "categoria": "👹 PROTOCOLO FINAL",
+
+        "questao": (
+            "O SOC correlaciona logs e encontra: múltiplas tentativas "
+            "de autenticação, acesso administrativo fora do padrão, "
+            "alterações em arquivos críticos e transferência de "
+            "dados para um destino externo. Qual interpretação é "
+            "mais tecnicamente responsável?"
+        ),
+
+        "opcoes": [
+            "É apenas uma falha de senha sem relação entre os eventos",
+            "É possível afirmar exatamente quem é o atacante sem investigação",
+            "Existe um forte conjunto de indicadores de possível comprometimento que exige resposta imediata",
+            "Os arquivos foram necessariamente apagados"
+        ],
+
+        "resposta_correta": 2,
+
+        "dificuldade": 5,
+
+        "explicacao": (
+            "A combinação de eventos aumenta significativamente a "
+            "suspeita de um incidente. Ainda assim, os logs não "
+            "permitem concluir automaticamente a identidade do "
+            "atacante. É necessário investigar, correlacionar "
+            "evidências e executar o plano de resposta."
+        )
+    }
+]
+
+
+# ============================================================
+# APLICAÇÃO
+# ============================================================
+
+class BossFightApp:
+
+    def __init__(self, root):
 
         self.root = root
-        self.proxima_fase = proxima_fase
 
-        self.lives = 3
-        self.score = 0
+        self.root.title("☠ CYBERSHIELD — BOSS FINAL")
 
-        # Configuração da janela
-        self.root.title("CyberShield — Fase 8")
-        self.root.geometry("660x560")
+        self.root.geometry("760x650")
+
         self.root.resizable(False, False)
 
-        self.setup_ui()
-        self.load_question()
+        self.root.configure(bg=COLOR_BG)
+
+        self.vida_jogador = 100
+
+        self.vida_boss = 100
+
+        self.indice_questao = 0
+
+        self.pontos = 0
+
+        self.respondendo = False
+
+        self.mostrar_introducao()
 
 
-    # ==========================================================================
-    # INTERFACE
-    # ==========================================================================
+    # ========================================================
+    # INTRODUÇÃO
+    # ========================================================
 
-    def setup_ui(self):
+    def mostrar_introducao(self):
 
-        self.bg_canvas = tk.Canvas(
+        self.limpar_janela()
+
+        frame = tk.Frame(
             self.root,
-            width=660,
-            height=560,
-            highlightthickness=0
+            bg=COLOR_BG
         )
 
-        self.bg_canvas.pack(
+        frame.pack(
             fill="both",
             expand=True
         )
 
-        self.draw_cyber_background()
+        tk.Label(
+            frame,
+            text="⚠️ ALERTA CRÍTICO ⚠️",
+            font=("Consolas", 28, "bold"),
+            fg=COLOR_RED_BRIGHT,
+            bg=COLOR_BG
+        ).pack(pady=(70, 20))
 
+        tk.Label(
+            frame,
+            text="PROTOCOLO DE EMERGÊNCIA ATIVADO",
+            font=("Consolas", 15, "bold"),
+            fg=COLOR_RED,
+            bg=COLOR_BG
+        ).pack(pady=10)
 
-        # ----------------------------------------------------------------------
-        # BARRA SUPERIOR
-        # ----------------------------------------------------------------------
+        tk.Label(
+            frame,
+            text=(
+                "\nVocê chegou ao núcleo do sistema.\n\n"
+                "O invasor ultrapassou várias camadas de defesa.\n"
+                "Agora não existem mais fases intermediárias.\n\n"
+                "Cada decisão errada causará danos ao sistema.\n"
+                "As próximas perguntas exigirão conhecimento real\n"
+                "de segurança da informação.\n\n"
+                "O protocolo final está aguardando uma decisão."
+            ),
+            font=("Segoe UI", 12),
+            fg=COLOR_TEXT,
+            bg=COLOR_BG,
+            justify="center"
+        ).pack(pady=20)
 
-        self.status_frame = tk.Frame(
-            self.bg_canvas,
-            bg=COLOR_BG_TOP
-        )
+        tk.Label(
+            frame,
+            text="☠️  O BOSS ESTÁ AGUARDANDO.  ☠️",
+            font=("Consolas", 16, "bold"),
+            fg=COLOR_RED_BRIGHT,
+            bg=COLOR_BG
+        ).pack(pady=25)
 
-        self.bg_canvas.create_window(
-            330,
-            35,
-            window=self.status_frame,
-            width=620
-        )
+        # Importante:
+        # Não usamos messagebox aqui.
+        # Assim o botão OK não interfere na criação da fase.
 
-
-        # ----------------------------------------------------------------------
-        # FIREWALL
-        # ----------------------------------------------------------------------
-
-        self.lbl_firewall = tk.Label(
-            self.status_frame,
-            text=f"🛡️ FIREWALL: {'█ ' * self.lives}",
+        tk.Button(
+            frame,
+            text="⚔️ ENTRAR NO NÚCLEO",
             font=("Consolas", 13, "bold"),
-            fg=COLOR_HEALTH,
-            bg=COLOR_BG_TOP
+            bg=COLOR_RED_DARK,
+            fg="white",
+            activebackground=COLOR_RED_BRIGHT,
+            activeforeground="white",
+            relief="flat",
+            cursor="hand2",
+            padx=30,
+            pady=12,
+            command=self.iniciar_batalha
+        ).pack(pady=20)
+
+
+    # ========================================================
+    # INICIAR BATALHA
+    # ========================================================
+
+    def iniciar_batalha(self):
+
+        self.limpar_janela()
+
+        self.criar_interface()
+
+        self.carregar_questao()
+
+
+    # ========================================================
+    # LIMPAR JANELA
+    # ========================================================
+
+    def limpar_janela(self):
+
+        for widget in self.root.winfo_children():
+
+            widget.destroy()
+
+
+    # ========================================================
+    # INTERFACE
+    # ========================================================
+
+    def criar_interface(self):
+
+        # ----------------------------------------------------
+        # TÍTULO
+        # ----------------------------------------------------
+
+        tk.Label(
+            self.root,
+            text="☠ CYBERSHIELD — BOSS FINAL ☠",
+            font=("Consolas", 21, "bold"),
+            fg=COLOR_RED_BRIGHT,
+            bg=COLOR_BG
+        ).pack(pady=(15, 5))
+
+        tk.Label(
+            self.root,
+            text="PROTOCOLO DE CONTENÇÃO // AMEAÇA CRÍTICA",
+            font=("Consolas", 9, "bold"),
+            fg=COLOR_MUTED,
+            bg=COLOR_BG
+        ).pack(pady=(0, 15))
+
+
+        # ----------------------------------------------------
+        # STATUS
+        # ----------------------------------------------------
+
+        self.status = tk.Frame(
+            self.root,
+            bg=COLOR_BG
         )
 
-        self.lbl_firewall.pack(side="left")
+        self.status.pack(
+            fill="x",
+            padx=40
+        )
 
 
-        # ----------------------------------------------------------------------
+        # ----------------------------------------------------
+        # PLAYER
+        # ----------------------------------------------------
+
+        tk.Label(
+            self.status,
+            text="🛡️ OPERADOR",
+            font=("Consolas", 11, "bold"),
+            fg=COLOR_CYAN,
+            bg=COLOR_BG
+        ).grid(
+            row=0,
+            column=0,
+            sticky="w"
+        )
+
+
+        self.lbl_vida_player = tk.Label(
+            self.status,
+            text="100 / 100",
+            font=("Consolas", 10, "bold"),
+            fg=COLOR_GREEN,
+            bg=COLOR_BG
+        )
+
+        self.lbl_vida_player.grid(
+            row=1,
+            column=0,
+            sticky="w"
+        )
+
+
+        self.canvas_player = tk.Canvas(
+            self.status,
+            width=300,
+            height=22,
+            bg="#251018",
+            highlightthickness=1,
+            highlightbackground=COLOR_RED_DARK
+        )
+
+        self.canvas_player.grid(
+            row=2,
+            column=0,
+            padx=(0, 20),
+            pady=5
+        )
+
+
+        self.fill_player = self.canvas_player.create_rectangle(
+            0,
+            0,
+            300,
+            22,
+            fill=COLOR_GREEN,
+            outline=""
+        )
+
+
+        # ----------------------------------------------------
+        # BOSS
+        # ----------------------------------------------------
+
+        tk.Label(
+            self.status,
+            text="👹 BOSS — AMEAÇA",
+            font=("Consolas", 11, "bold"),
+            fg=COLOR_RED_BRIGHT,
+            bg=COLOR_BG
+        ).grid(
+            row=0,
+            column=1,
+            sticky="e"
+        )
+
+
+        self.lbl_vida_boss = tk.Label(
+            self.status,
+            text="100 / 100",
+            font=("Consolas", 10, "bold"),
+            fg=COLOR_RED_BRIGHT,
+            bg=COLOR_BG
+        )
+
+        self.lbl_vida_boss.grid(
+            row=1,
+            column=1,
+            sticky="e"
+        )
+
+
+        self.canvas_boss = tk.Canvas(
+            self.status,
+            width=300,
+            height=22,
+            bg="#251018",
+            highlightthickness=1,
+            highlightbackground=COLOR_RED_DARK
+        )
+
+        self.canvas_boss.grid(
+            row=2,
+            column=1,
+            pady=5
+        )
+
+
+        self.fill_boss = self.canvas_boss.create_rectangle(
+            0,
+            0,
+            300,
+            22,
+            fill=COLOR_RED_BRIGHT,
+            outline=""
+        )
+
+
+        # ----------------------------------------------------
         # SCORE
-        # ----------------------------------------------------------------------
+        # ----------------------------------------------------
 
         self.lbl_score = tk.Label(
-            self.status_frame,
-            text=f"SCORE: {self.score}",
-            font=("Consolas", 13, "bold"),
-            fg=COLOR_CYAN_GLOW,
-            bg=COLOR_BG_TOP
+            self.root,
+            text="SCORE: 0",
+            font=("Consolas", 11, "bold"),
+            fg=COLOR_YELLOW,
+            bg=COLOR_BG
         )
 
-        self.lbl_score.pack(side="right")
+        self.lbl_score.pack(
+            pady=8
+        )
 
 
-        # ----------------------------------------------------------------------
+        # ----------------------------------------------------
         # CARD
-        # ----------------------------------------------------------------------
+        # ----------------------------------------------------
 
-        self.card_frame = tk.Frame(
-            self.bg_canvas,
-            bg=COLOR_CARD_BG,
+        self.card = tk.Frame(
+            self.root,
+            bg=COLOR_CARD,
             highlightbackground=COLOR_CARD_BORDER,
-            highlightthickness=2,
-            bd=0
+            highlightthickness=2
         )
 
-        self.bg_canvas.create_window(
-            330,
-            290,
-            window=self.card_frame,
-            width=620,
-            height=430
-        )
-
-
-        # ----------------------------------------------------------------------
-        # CATEGORIA
-        # ----------------------------------------------------------------------
-
-        self.lbl_category = tk.Label(
-            self.card_frame,
-            text="",
-            font=("Segoe UI", 10, "bold"),
-            fg=COLOR_CYAN_GLOW,
-            bg=COLOR_CARD_BG
-        )
-
-        self.lbl_category.pack(
-            anchor="w",
-            padx=20,
-            pady=(15, 5)
-        )
-
-
-        # ----------------------------------------------------------------------
-        # PERGUNTA
-        # ----------------------------------------------------------------------
-
-        self.lbl_question = tk.Label(
-            self.card_frame,
-            text="",
-            font=("Segoe UI", 12),
-            fg=COLOR_TEXT_MAIN,
-            bg=COLOR_CARD_BG,
-            wraplength=570,
-            justify="left"
-        )
-
-        self.lbl_question.pack(
-            anchor="w",
-            padx=20,
-            pady=10
-        )
-
-
-        # ----------------------------------------------------------------------
-        # BOTÕES
-        # ----------------------------------------------------------------------
-
-        self.btn_frame = tk.Frame(
-            self.card_frame,
-            bg=COLOR_CARD_BG
-        )
-
-        self.btn_frame.pack(
+        self.card.pack(
             fill="both",
             expand=True,
-            padx=20,
+            padx=35,
             pady=10
         )
 
 
-        self.buttons = []
+        self.lbl_categoria = tk.Label(
+            self.card,
+            text="",
+            font=("Consolas", 10, "bold"),
+            fg=COLOR_RED_BRIGHT,
+            bg=COLOR_CARD
+        )
+
+        self.lbl_categoria.pack(
+            pady=(18, 8)
+        )
 
 
-        for i in range(4):
+        self.lbl_numero = tk.Label(
+            self.card,
+            text="",
+            font=("Consolas", 9),
+            fg=COLOR_MUTED,
+            bg=COLOR_CARD
+        )
 
-            btn = tk.Button(
-                self.btn_frame,
-                text="",
+        self.lbl_numero.pack()
+
+
+        self.lbl_questao = tk.Label(
+            self.card,
+            text="",
+            font=("Segoe UI", 13, "bold"),
+            fg=COLOR_TEXT,
+            bg=COLOR_CARD,
+            wraplength=630,
+            justify="center"
+        )
+
+        self.lbl_questao.pack(
+            pady=18,
+            padx=30
+        )
+
+
+        self.frame_botoes = tk.Frame(
+            self.card,
+            bg=COLOR_CARD
+        )
+
+        self.frame_botoes.pack(
+            fill="x",
+            padx=35,
+            pady=5
+        )
+
+
+        self.lbl_dificuldade = tk.Label(
+            self.card,
+            text="",
+            font=("Consolas", 9, "bold"),
+            fg=COLOR_RED,
+            bg=COLOR_CARD
+        )
+
+        self.lbl_dificuldade.pack(
+            pady=10
+        )
+
+
+    # ========================================================
+    # CARREGAR QUESTÃO
+    # ========================================================
+
+    def carregar_questao(self):
+
+        if self.indice_questao >= len(BOSS_BATTLE_DATA):
+
+            self.vitoria()
+
+            return
+
+
+        dados = BOSS_BATTLE_DATA[
+            self.indice_questao
+        ]
+
+
+        self.respondendo = False
+
+
+        self.lbl_categoria.config(
+            text=dados["categoria"]
+        )
+
+
+        self.lbl_numero.config(
+            text=(
+                f"QUESTÃO "
+                f"{self.indice_questao + 1}"
+                f"/"
+                f"{len(BOSS_BATTLE_DATA)}"
+            )
+        )
+
+
+        self.lbl_questao.config(
+            text=dados["questao"]
+        )
+
+
+        dificuldade = dados["dificuldade"]
+
+        estrelas = "★" * dificuldade
+
+        self.lbl_dificuldade.config(
+            text=f"DIFICULDADE: {estrelas}"
+        )
+
+
+        # Remove botões antigos
+
+        for widget in self.frame_botoes.winfo_children():
+
+            widget.destroy()
+
+
+        # Cria alternativas
+
+        for i, opcao in enumerate(
+            dados["opcoes"]
+        ):
+
+            botao = tk.Button(
+                self.frame_botoes,
+                text=opcao,
                 font=("Segoe UI", 10, "bold"),
-                bg=COLOR_BTN_BG,
-                fg=COLOR_TEXT_MUTED,
-                activebackground=COLOR_BTN_HOVER,
-                activeforeground=COLOR_TEXT_MAIN,
+                bg=COLOR_BUTTON,
+                fg=COLOR_TEXT,
+                activebackground=COLOR_BUTTON_HOVER,
+                activeforeground=COLOR_TEXT,
                 relief="flat",
                 cursor="hand2",
                 anchor="w",
                 padx=15,
-                bd=1,
-                highlightbackground=COLOR_CARD_BORDER,
-                command=lambda idx=i: self.check_answer(idx)
+                pady=8,
+                command=lambda idx=i:
+                self.processar_resposta(idx)
             )
 
-            btn.pack(
+            botao.pack(
                 fill="x",
-                pady=6,
-                ipady=4
+                pady=4
             )
 
 
-            btn.bind(
-                "<Enter>",
-                lambda event, b=btn:
-                self.on_hover_enter(b)
-            )
+    # ========================================================
+    # PROCESSAR RESPOSTA
+    # ========================================================
 
-            btn.bind(
-                "<Leave>",
-                lambda event, b=btn:
-                self.on_hover_leave(b)
-            )
+    def processar_resposta(
+        self,
+        indice_escolhido
+    ):
 
-            self.buttons.append(btn)
+        if self.respondendo:
 
-
-    # ==========================================================================
-    # HOVER
-    # ==========================================================================
-
-    def on_hover_enter(self, btn):
-
-        if btn["state"] == "normal":
-
-            btn.config(
-                bg=COLOR_BTN_HOVER,
-                fg=COLOR_TEXT_MAIN
-            )
+            return
 
 
-    def on_hover_leave(self, btn):
-
-        if btn["state"] == "normal":
-
-            btn.config(
-                bg=COLOR_BTN_BG,
-                fg=COLOR_TEXT_MUTED
-            )
+        self.respondendo = True
 
 
-    # ==========================================================================
-    # FUNDO CYBER
-    # ==========================================================================
-
-    def draw_cyber_background(self):
-
-        width = 660
-        height = 560
-
-        r1, g1, b1 = self.hex_to_rgb(COLOR_BG_TOP)
-        r2, g2, b2 = self.hex_to_rgb(COLOR_BG_BOTTOM)
-
-        for y in range(height):
-
-            r = int(
-                r1 + (r2 - r1) * (y / height)
-            )
-
-            g = int(
-                g1 + (g2 - g1) * (y / height)
-            )
-
-            b = int(
-                b1 + (b2 - b1) * (y / height)
-            )
-
-            color = f"#{r:02x}{g:02x}{b:02x}"
-
-            self.bg_canvas.create_line(
-                0,
-                y,
-                width,
-                y,
-                fill=color
-            )
+        dados = BOSS_BATTLE_DATA[
+            self.indice_questao
+        ]
 
 
-        # ----------------------------------------------------------------------
-        # CIRCUITO SUPERIOR
-        # ----------------------------------------------------------------------
-
-        line_color = "#0B3254"
-
-        self.bg_canvas.create_line(
-            30,
-            25,
-            180,
-            25,
-            230,
-            50,
-            430,
-            50,
-            fill=line_color,
-            width=1.5
-        )
-
-        self.bg_canvas.create_oval(
-            177,
-            22,
-            183,
-            28,
-            fill=COLOR_CYAN_GLOW,
-            outline=""
-        )
-
-        self.bg_canvas.create_oval(
-            427,
-            47,
-            433,
-            53,
-            fill=COLOR_CYAN_GLOW,
-            outline=""
+        correta = (
+            indice_escolhido
+            ==
+            dados["resposta_correta"]
         )
 
 
-        # ----------------------------------------------------------------------
-        # CIRCUITO INFERIOR
-        # ----------------------------------------------------------------------
+        # ====================================================
+        # ACERTO
+        # ====================================================
 
-        self.bg_canvas.create_line(
-            50,
-            530,
-            200,
-            530,
-            250,
-            510,
-            500,
-            510,
-            550,
-            535,
-            fill=line_color,
-            width=1.5
-        )
+        if correta:
 
-        self.bg_canvas.create_oval(
-            247,
-            507,
-            253,
-            513,
-            fill=COLOR_CYAN_GLOW,
-            outline=""
-        )
+            dano = 12 + (
+                dados["dificuldade"] * 5
+            )
 
-        self.bg_canvas.create_oval(
-            497,
-            507,
-            503,
-            513,
-            fill=COLOR_CYAN_GLOW,
-            outline=""
-        )
+            self.vida_boss -= dano
 
-
-    # ==========================================================================
-    # HEX PARA RGB
-    # ==========================================================================
-
-    @staticmethod
-    def hex_to_rgb(hex_str):
-
-        hex_str = hex_str.lstrip("#")
-
-        return tuple(
-            int(hex_str[i:i + 2], 16)
-            for i in (0, 2, 4)
-        )
-
-
-    # ==========================================================================
-    # CARREGAR PERGUNTA
-    # ==========================================================================
-
-    def load_question(self):
-
-        self.lbl_category.config(
-            text=QUESTION["category"]
-        )
-
-        self.lbl_question.config(
-            text=QUESTION["question"]
-        )
-
-        for i, option in enumerate(QUESTION["options"]):
-
-            self.buttons[i].config(
-                text=f"[ {chr(65 + i)} ]   {option}",
-                bg=COLOR_BTN_BG,
-                fg=COLOR_TEXT_MUTED,
-                state="normal"
+            self.pontos += (
+                dados["dificuldade"] * 100
             )
 
 
-    # ==========================================================================
-    # VERIFICAR RESPOSTA
-    # ==========================================================================
+            self.atualizar_barras()
 
-    def check_answer(self, selected_idx):
-
-        for btn in self.buttons:
-            btn.config(state="disabled")
-
-
-        correct_idx = QUESTION["answer"]
-
-        selected_btn = self.buttons[selected_idx]
-
-
-        # ======================================================================
-        # CORRETA
-        # ======================================================================
-
-        if selected_idx == correct_idx:
-
-            selected_btn.config(
-                bg=COLOR_CORRECT,
-                fg="#000000"
-            )
-
-            self.root.update()
-
-            self.score += 100
-
-            self.lbl_score.config(
-                text=f"SCORE: {self.score}"
-            )
 
             messagebox.showinfo(
-                "Resposta Correta! 🎯",
-                EXPLANATIONS[selected_idx]
-                + "\n\n+100 PTS"
+                "⚔️ ATAQUE BEM-SUCEDIDO",
+                (
+                    f"✅ Resposta correta!\n\n"
+                    f"O Boss sofreu {dano} de dano.\n\n"
+                    f"+{dados['dificuldade'] * 100} pontos\n\n"
+                    f"{dados['explicacao']}"
+                )
             )
 
 
-            # --------------------------------------------------------------
-            # SE ESTIVER SENDO EXECUTADA PELO MAIN
-            # --------------------------------------------------------------
+        # ====================================================
+        # ERRO
+        # ====================================================
 
-            if self.proxima_fase is not None:
+        else:
 
-                self.proxima_fase()
+            dano = 8 + (
+                dados["dificuldade"] * 8
+            )
 
-            # --------------------------------------------------------------
-            # SE ESTIVER SENDO EXECUTADA SOZINHA
-            # --------------------------------------------------------------
-
-            else:
-
-                messagebox.showinfo(
-                    "Fase 8 concluída!",
-                    "🛡️ Desenvolvimento seguro concluído!\n\n"
-                    "Você protegeu o sistema."
-                )
-
-                self.root.destroy()
-
-            return
+            self.vida_jogador -= dano
 
 
-        # ======================================================================
-        # INCORRETA
-        # ======================================================================
+            self.atualizar_barras()
 
-        selected_btn.config(
-            bg=COLOR_INCORRECT,
-            fg="#FFFFFF"
-        )
-
-        self.root.update()
-
-        self.lives -= 1
-
-        self.lbl_firewall.config(
-            text=f"🛡️ FIREWALL: {'█ ' * self.lives}"
-        )
-
-
-        messagebox.showerror(
-            "Resposta Incorreta! ⚠️",
-            EXPLANATIONS[selected_idx]
-        )
-
-
-        # ======================================================================
-        # GAME OVER
-        # ======================================================================
-
-        if self.lives <= 0:
 
             messagebox.showerror(
-                "GAME OVER",
-                "🚨 O firewall caiu!\n\n"
-                "O sistema foi comprometido.\n\n"
-                "Tente novamente."
+                "☠️ DEFESA ROMPIDA",
+                (
+                    "❌ Resposta incorreta!\n\n"
+                    f"O sistema sofreu {dano} de dano.\n\n"
+                    f"{dados['explicacao']}"
+                )
             )
 
-            self.root.destroy()
+
+        # ====================================================
+        # VERIFICAR RESULTADO
+        # ====================================================
+
+        if self.vida_boss <= 0:
+
+            self.vitoria()
 
             return
 
 
-        # ======================================================================
-        # CONTINUA
-        # ======================================================================
+        if self.vida_jogador <= 0:
 
-        for btn in self.buttons:
+            self.game_over()
 
-            btn.config(
-                state="normal",
-                bg=COLOR_BTN_BG,
-                fg=COLOR_TEXT_MUTED
+            return
+
+
+        # Próxima questão
+
+        self.indice_questao += 1
+
+
+        if self.indice_questao >= len(
+            BOSS_BATTLE_DATA
+        ):
+
+            # Caso o Boss ainda esteja vivo,
+            # ele recebe uma recuperação pequena
+            # e a batalha continua em modo difícil.
+
+            self.indice_questao = 0
+
+            self.vida_boss = min(
+                100,
+                self.vida_boss + 15
             )
 
 
-# ==============================================================================
-# FUNÇÃO USADA PELO MAIN
-# ==============================================================================
+            messagebox.showwarning(
+                "⚠️ O BOSS RESISTIU",
+                (
+                    "O Boss ainda está de pé.\n\n"
+                    "Ele recuperou parte da defesa.\n\n"
+                    "As perguntas serão reiniciadas.\n"
+                    "Agora você precisa finalizar o combate."
+                )
+            )
 
-def executar(root, proxima_fase):
 
-    Fase8(
-        root,
-        proxima_fase
-    )
+        self.carregar_questao()
 
 
-# ==============================================================================
-# TESTE DIRETO DA FASE 8
-# ==============================================================================
+    # ========================================================
+    # ATUALIZAR BARRAS
+    # ========================================================
+
+    def atualizar_barras(self):
+
+        self.vida_jogador = max(
+            0,
+            self.vida_jogador
+        )
+
+        self.vida_boss = max(
+            0,
+            self.vida_boss
+        )
+
+
+        largura_player = (
+            self.vida_jogador * 3
+        )
+
+        largura_boss = (
+            self.vida_boss * 3
+        )
+
+
+        self.canvas_player.coords(
+            self.fill_player,
+            0,
+            0,
+            largura_player,
+            22
+        )
+
+
+        self.canvas_boss.coords(
+            self.fill_boss,
+            0,
+            0,
+            largura_boss,
+            22
+        )
+
+
+        self.lbl_vida_player.config(
+            text=f"{self.vida_jogador} / 100"
+        )
+
+
+        self.lbl_vida_boss.config(
+            text=f"{self.vida_boss} / 100"
+        )
+
+
+        self.lbl_score.config(
+            text=f"SCORE: {self.pontos}"
+        )
+
+
+    # ========================================================
+    # GAME OVER
+    # ========================================================
+
+    def game_over(self):
+
+        self.limpar_janela()
+
+
+        frame = tk.Frame(
+            self.root,
+            bg=COLOR_BG
+        )
+
+        frame.pack(
+            fill="both",
+            expand=True
+        )
+
+
+        tk.Label(
+            frame,
+            text="☠️",
+            font=("Segoe UI", 60),
+            fg=COLOR_RED_BRIGHT,
+            bg=COLOR_BG
+        ).pack(
+            pady=(60, 10)
+        )
+
+
+        tk.Label(
+            frame,
+            text="GAME OVER",
+            font=("Consolas", 38, "bold"),
+            fg=COLOR_RED_BRIGHT,
+            bg=COLOR_BG
+        ).pack()
+
+
+        tk.Label(
+            frame,
+            text="O SISTEMA FOI COMPROMETIDO",
+            font=("Consolas", 14, "bold"),
+            fg=COLOR_RED,
+            bg=COLOR_BG
+        ).pack(
+            pady=15
+        )
+
+
+        tk.Label(
+            frame,
+            text=(
+                "O operador não conseguiu conter a ameaça.\n\n"
+                "O protocolo de segurança falhou."
+            ),
+            font=("Segoe UI", 12),
+            fg=COLOR_TEXT,
+            bg=COLOR_BG,
+            justify="center"
+        ).pack(
+            pady=15
+        )
+
+
+        tk.Label(
+            frame,
+            text=f"SCORE FINAL: {self.pontos}",
+            font=("Consolas", 13, "bold"),
+            fg=COLOR_YELLOW,
+            bg=COLOR_BG
+        ).pack(
+            pady=15
+        )
+
+
+        tk.Button(
+            frame,
+            text="SAIR",
+            font=("Consolas", 12, "bold"),
+            bg=COLOR_RED_DARK,
+            fg="white",
+            relief="flat",
+            padx=40,
+            pady=10,
+            command=self.root.destroy
+        ).pack(
+            pady=20
+        )
+
+
+    # ========================================================
+    # VITÓRIA
+    # ========================================================
+
+    def vitoria(self):
+
+        self.limpar_janela()
+
+
+        frame = tk.Frame(
+            self.root,
+            bg=COLOR_BG
+        )
+
+        frame.pack(
+            fill="both",
+            expand=True
+        )
+
+
+        # ----------------------------------------------------
+        # EFEITO DE VITÓRIA
+        # ----------------------------------------------------
+
+        tk.Label(
+            frame,
+            text="🏆",
+            font=("Segoe UI", 70),
+            fg=COLOR_YELLOW,
+            bg=COLOR_BG
+        ).pack(
+            pady=(45, 5)
+        )
+
+
+        tk.Label(
+            frame,
+            text="PARABÉNS!",
+            font=("Consolas", 40, "bold"),
+            fg=COLOR_GREEN,
+            bg=COLOR_BG
+        ).pack()
+
+
+        tk.Label(
+            frame,
+            text="VOCÊ DERROTOU O BOSS",
+            font=("Consolas", 18, "bold"),
+            fg=COLOR_CYAN,
+            bg=COLOR_BG
+        ).pack(
+            pady=12
+        )
+
+
+        tk.Label(
+            frame,
+            text=(
+                "A ameaça foi contida.\n\n"
+                "Você conseguiu atravessar todas as camadas "
+                "de defesa e proteger o sistema.\n\n"
+                "O protocolo CyberShield foi concluído."
+            ),
+            font=("Segoe UI", 13),
+            fg=COLOR_TEXT,
+            bg=COLOR_BG,
+            justify="center"
+        ).pack(
+            pady=15
+        )
+
+
+        # ----------------------------------------------------
+        # RESULTADO
+        # ----------------------------------------------------
+
+        resultado = tk.Frame(
+            frame,
+            bg=COLOR_CARD
+        )
+
+        resultado.pack(
+            padx=80,
+            pady=15,
+            fill="x"
+        )
+
+
+        tk.Label(
+            resultado,
+            text="☑ AMEAÇA CONTIDA",
+            font=("Consolas", 12, "bold"),
+            fg=COLOR_GREEN,
+            bg=COLOR_CARD
+        ).pack(
+            pady=(15, 5)
+        )
+
+
+        tk.Label(
+            resultado,
+            text="☑ SISTEMA PROTEGIDO",
+            font=("Consolas", 12, "bold"),
+            fg=COLOR_GREEN,
+            bg=COLOR_CARD
+        ).pack(
+            pady=5
+        )
+
+
+        tk.Label(
+            resultado,
+            text="☑ BOSS DERROTADO",
+            font=("Consolas", 12, "bold"),
+            fg=COLOR_GREEN,
+            bg=COLOR_CARD
+        ).pack(
+            pady=5
+        )
+
+
+        tk.Label(
+            resultado,
+            text=f"SCORE FINAL: {self.pontos}",
+            font=("Consolas", 14, "bold"),
+            fg=COLOR_YELLOW,
+            bg=COLOR_CARD
+        ).pack(
+            pady=(10, 15)
+        )
+
+
+        tk.Button(
+            frame,
+            text="🏆 FINALIZAR JOGO",
+            font=("Consolas", 13, "bold"),
+            bg=COLOR_RED_DARK,
+            fg="white",
+            activebackground=COLOR_RED_BRIGHT,
+            activeforeground="white",
+            relief="flat",
+            cursor="hand2",
+            padx=35,
+            pady=12,
+            command=self.root.destroy
+        ).pack(
+            pady=15
+        )
+
+
+# ============================================================
+# EXECUÇÃO
+# ============================================================
 
 if __name__ == "__main__":
 
     root = tk.Tk()
 
-    app = Fase8(root)
+    app = BossFightApp(root)
 
     root.mainloop()
