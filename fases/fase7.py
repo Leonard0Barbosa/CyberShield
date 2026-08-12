@@ -478,25 +478,25 @@ class Phase7App:
             fg=COLOR_CYAN_GLOW, 
             bg=COLOR_CARD_BG
         )
-        lbl_cat.pack(anchor="w", padx=20, pady=(15, 5))
+        lbl_cat.pack(anchor="w", padx=20, pady=(10, 2))
 
         lbl_q = tk.Label(
             self.card_frame, 
             text=q_data["question"], 
-            font=("Segoe UI", 10), 
+            font=("Segoe UI", 9, "bold"), 
             fg=COLOR_TEXT_MAIN, 
             bg=COLOR_CARD_BG, 
             wraplength=600, 
             justify="left"
         )
-        lbl_q.pack(anchor="w", padx=20, pady=10)
+        lbl_q.pack(anchor="w", padx=20, pady=5)
 
         self.quiz_buttons = []
         for i, opt in enumerate(q_data["options"]):
             btn = tk.Button(
                 self.card_frame,
                 text=opt,
-                font=("Segoe UI", 9, "bold"),
+                font=("Segoe UI", 8, "bold"),
                 bg=COLOR_BTN_BG,
                 fg=COLOR_TEXT_MUTED,
                 activebackground=COLOR_BTN_HOVER,
@@ -504,12 +504,12 @@ class Phase7App:
                 relief="flat",
                 cursor="hand2",
                 anchor="w",
-                padx=15,
+                padx=10,
                 bd=1,
                 highlightbackground=COLOR_CARD_BORDER,
                 command=lambda idx=i: self.check_quiz_answer(idx)
             )
-            btn.pack(fill="x", padx=20, pady=5, ipady=4)
+            btn.pack(fill="x", padx=20, pady=3, ipady=3)
             btn.bind("<Enter>", lambda e, b=btn: self.on_hover_enter(b))
             btn.bind("<Leave>", lambda e, b=btn: self.on_hover_leave(b))
             self.quiz_buttons.append(btn)
