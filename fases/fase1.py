@@ -511,3 +511,8 @@ def executar(root, proxima_fase=None):
     )
 
     return app
+
+def iniciar_fase_2():
+    root = tk.Tk()
+    fase2.executar(root, iniciar_fase_3)
+    root.mainloop()
