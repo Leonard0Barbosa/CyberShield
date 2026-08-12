@@ -1287,25 +1287,9 @@ class Phase2App:
             self.current_q += 1
 
             if self.current_q < len(QUIZ_QUESTIONS):
-
                 self.load_quiz_mode()
-
             else:
-
-                messagebox.showinfo(
-                    "Fase 2 Concluída! 🏆",
-                    "Parabéns! Você completou o Laboratório "
-                    "de Senhas, praticou criação segura, "
-                    "autenticação MFA e dominou a teoria!"
-                )
-
-                # ==========================================================
-                # NÃO FECHA A JANELA
-                # Passa o controle para a próxima fase.
-                # ==========================================================
-
-                if self.proxima_fase:
-                    self.proxima_fase()
+                self.advance_to_next_phase()
 
         else:
 
@@ -1314,7 +1298,8 @@ class Phase2App:
                 fg="#FFFFFF"
             )
 
-            self.quiz_buttons[correct_idx].config(
+            correct_btn = self.quiz_buttons[correct_idx]
+            correct_btn.config(
                 bg=COLOR_CORRECT,
                 fg="#000000"
             )
@@ -1322,36 +1307,37 @@ class Phase2App:
             self.root.update()
 
             messagebox.showerror(
-                "Resposta Incorreta! ⚠️",
+                "Resposta Incorreta ❌",
                 q_data["explanations"][selected_idx]
             )
 
-            # Permite tentar a mesma questão novamente
-            self.load_quiz_mode()
+            self.current_q += 1
+
+            if self.current_q < len(QUIZ_QUESTIONS):
+                self.load_quiz_mode()
+            else:
+                self.advance_to_next_phase()
+
+
+    def advance_to_next_phase(self):
+
+        messagebox.showinfo(
+            "Fase 2 Concluída! 🏆",
+            "Parabéns! Você concluiu todos os treinamentos "
+            "e perguntas da Fase 2."
+        )
+
+        if callable(self.proxima_fase):
+            self.proxima_fase()
+        else:
+            self.root.destroy()
 
 
 # ==============================================================================
-# --- FUNÇÃO PADRÃO PARA O MAIN.PY ---
-# ==============================================================================
-
-def executar(root, proxima_fase=None):
-
-    app = Phase2App(
-        root,
-        proxima_fase
-    )
-
-    return app
-
-
-# ==============================================================================
-# --- EXECUÇÃO DIRETA PARA TESTE ---
+# --- EXECUÇÃO PRINCIPAL ---
 # ==============================================================================
 
 if __name__ == "__main__":
-
     root = tk.Tk()
-
-    app = executar(root)
-
+    app = Phase2App(root)
     root.mainloop()
