@@ -348,7 +348,7 @@ class Phase4App:
 
         if alerts:
             self.lbl_url_status.config(
-                text="AMMEAÇA DETECTADA:\n" + "\n".join(alerts),
+                text="AMEAÇA DETECTADA:\n" + "\n".join(alerts),
                 fg=COLOR_INCORRECT
             )
         else:
@@ -433,7 +433,6 @@ class Phase4App:
 
         self.btn_next2 = self.create_custom_button(self.card_frame, "Ir para o Quiz Conceitual Expandido ➔", self.load_quiz_mode)
         self.btn_next2.pack(fill="x", padx=20, pady=(8, 12))
-        self.btn_next2.config(state="disabled")
 
     def evaluate_phishing(self):
         sender = self.phish_sender_var.get()
@@ -457,7 +456,6 @@ class Phase4App:
                 "Nenhum indicador de comprometimento (IoC) foi encontrado.\n\n- Remetente Oficial\n- Comunicação Normal\n- Link Seguro com HTTPS\n- Sem Anexos Suspeitos"
             )
             self.lbl_phish_result.config(text="✅ DECISÃO: E-MAIL SEGURO / CAIXA DE ENTRADA", fg=COLOR_HEALTH)
-            self.btn_next2.config(state="normal")
         else:
             reason_str = "\n".join(flags)
             messagebox.showerror(
