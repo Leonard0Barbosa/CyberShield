@@ -20,7 +20,7 @@ COLOR_CORRECT = "#00E676"
 COLOR_INCORRECT = "#FF3366"
 
 # ==============================================================================
-# PERGUNTAS
+# PERGUNTAS DA FASE 3
 # ==============================================================================
 
 QUESTIONS = [
@@ -34,11 +34,8 @@ QUESTIONS = [
 
         "options": [
             "Clicar rapidamente para evitar o bloqueio",
-
             "Responder pedindo a senha do remetente",
-
             "Verificar remetente, endereço e contexto da mensagem",
-
             "Encaminhar para todos os colegas"
         ],
 
@@ -85,6 +82,7 @@ class CyberQuizApp:
         self.current_q = 0
         self.lives = 3
         self.score = 0
+        self.buttons = []
 
         self.setup_ui()
         self.load_question()
@@ -207,45 +205,6 @@ class CyberQuizApp:
             pady=10
         )
 
-        self.buttons = []
-
-        for i in range(4):
-
-            btn = tk.Button(
-                self.btn_frame,
-                text="",
-                font=("Segoe UI", 10, "bold"),
-                bg=COLOR_BTN_BG,
-                fg=COLOR_TEXT_MUTED,
-                activebackground=COLOR_BTN_HOVER,
-                activeforeground=COLOR_TEXT_MAIN,
-                relief="flat",
-                cursor="hand2",
-                anchor="w",
-                padx=15,
-                bd=1,
-                highlightbackground=COLOR_CARD_BORDER,
-                command=lambda idx=i: self.check_answer(idx)
-            )
-
-            btn.pack(
-                fill="x",
-                pady=6,
-                ipady=4
-            )
-
-            btn.bind(
-                "<Enter>",
-                lambda e, b=btn: self.on_hover_enter(b)
-            )
-
-            btn.bind(
-                "<Leave>",
-                lambda e, b=btn: self.on_hover_leave(b)
-            )
-
-            self.buttons.append(btn)
-
     # ==========================================================================
     # HOVER
     # ==========================================================================
@@ -277,35 +236,19 @@ class CyberQuizApp:
         width = 660
         height = 560
 
-        r1, g1, b1 = self.hex_to_rgb(
-            COLOR_BG_TOP
-        )
-
-        r2, g2, b2 = self.hex_to_rgb(
-            COLOR_BG_BOTTOM
-        )
+        r1, g1, b1 = self.hex_to_rgb(COLOR_BG_TOP)
+        r2, g2, b2 = self.hex_to_rgb(COLOR_BG_BOTTOM)
 
         for y in range(height):
 
-            r = int(
-                r1 + (r2 - r1) * (y / height)
-            )
-
-            g = int(
-                g1 + (g2 - g1) * (y / height)
-            )
-
-            b = int(
-                b1 + (b2 - b1) * (y / height)
-            )
+            r = int(r1 + (r2 - r1) * (y / height))
+            g = int(g1 + (g2 - g1) * (y / height))
+            b = int(b1 + (b2 - b1) * (y / height))
 
             color = f"#{r:02x}{g:02x}{b:02x}"
 
             self.bg_canvas.create_line(
-                0,
-                y,
-                width,
-                y,
+                0, y, width, y,
                 fill=color
             )
 
@@ -313,54 +256,27 @@ class CyberQuizApp:
         glow_dot = COLOR_CYAN_GLOW
 
         # Circuito superior
-
         self.bg_canvas.create_line(
-            30, 25,
-            180, 25,
-            230, 50,
-            430, 50,
-            fill=line_color,
-            width=1.5
+            30, 25, 180, 25, 230, 50, 430, 50,
+            fill=line_color, width=1.5
         )
-
         self.bg_canvas.create_oval(
-            177, 22,
-            183, 28,
-            fill=glow_dot,
-            outline=""
+            177, 22, 183, 28, fill=glow_dot, outline=""
         )
-
         self.bg_canvas.create_oval(
-            427, 47,
-            433, 53,
-            fill=glow_dot,
-            outline=""
+            427, 47, 433, 53, fill=glow_dot, outline=""
         )
 
         # Circuito inferior
-
         self.bg_canvas.create_line(
-            50, 530,
-            200, 530,
-            250, 510,
-            500, 510,
-            550, 535,
-            fill=line_color,
-            width=1.5
+            50, 530, 200, 530, 250, 510, 500, 510, 550, 535,
+            fill=line_color, width=1.5
         )
-
         self.bg_canvas.create_oval(
-            247, 507,
-            253, 513,
-            fill=glow_dot,
-            outline=""
+            247, 507, 253, 513, fill=glow_dot, outline=""
         )
-
         self.bg_canvas.create_oval(
-            497, 507,
-            503, 513,
-            fill=glow_dot,
-            outline=""
+            497, 507, 503, 513, fill=glow_dot, outline=""
         )
 
     # ==========================================================================
@@ -387,25 +303,53 @@ class CyberQuizApp:
 
             q_data = QUESTIONS[self.current_q]
 
-            self.lbl_category.config(
-                text=q_data["category"]
-            )
+            self.lbl_category.config(text=q_data["category"])
+            self.lbl_question.config(text=q_data["question"])
 
-            self.lbl_question.config(
-                text=q_data["question"]
-            )
+            # Limpa botões antigos caso existam
+            for btn in self.buttons:
+                btn.destroy()
+            self.buttons.clear()
 
+            # Cria botões dinamicamente conforme a quantidade de opções
             for i, opt in enumerate(q_data["options"]):
 
-                self.buttons[i].config(
+                btn = tk.Button(
+                    self.btn_frame,
                     text=f"[ {chr(65 + i)} ]   {opt}",
+                    font=("Segoe UI", 10, "bold"),
                     bg=COLOR_BTN_BG,
                     fg=COLOR_TEXT_MUTED,
-                    state="normal"
+                    activebackground=COLOR_BTN_HOVER,
+                    activeforeground=COLOR_TEXT_MAIN,
+                    relief="flat",
+                    cursor="hand2",
+                    anchor="w",
+                    padx=15,
+                    bd=1,
+                    highlightbackground=COLOR_CARD_BORDER,
+                    command=lambda idx=i: self.check_answer(idx)
                 )
 
-        else:
+                btn.pack(
+                    fill="x",
+                    pady=6,
+                    ipady=4
+                )
 
+                btn.bind(
+                    "<Enter>",
+                    lambda e, b=btn: self.on_hover_enter(b)
+                )
+
+                btn.bind(
+                    "<Leave>",
+                    lambda e, b=btn: self.on_hover_leave(b)
+                )
+
+                self.buttons.append(btn)
+
+        else:
             self.finish_phase()
 
     # ==========================================================================
@@ -415,21 +359,12 @@ class CyberQuizApp:
     def check_answer(self, selected_idx):
 
         for btn in self.buttons:
-            btn.config(
-                state="disabled"
-            )
+            btn.config(state="disabled")
 
         q_data = QUESTIONS[self.current_q]
-
         correct_idx = q_data["answer"]
-
-        explanation = q_data["explanations"][
-            selected_idx
-        ]
-
-        selected_btn = self.buttons[
-            selected_idx
-        ]
+        explanation = q_data["explanations"][selected_idx]
+        selected_btn = self.buttons[selected_idx]
 
         if selected_idx == correct_idx:
 
@@ -441,10 +376,7 @@ class CyberQuizApp:
             self.root.update()
 
             self.score += 100
-
-            self.lbl_score.config(
-                text=f"SCORE: {self.score}"
-            )
+            self.lbl_score.config(text=f"SCORE: {self.score}")
 
             messagebox.showinfo(
                 "Resposta Correta! ✅",
@@ -458,9 +390,7 @@ class CyberQuizApp:
                 fg="#FFFFFF"
             )
 
-            self.buttons[
-                correct_idx
-            ].config(
+            self.buttons[correct_idx].config(
                 bg=COLOR_CORRECT,
                 fg="#000000"
             )
@@ -468,7 +398,6 @@ class CyberQuizApp:
             self.root.update()
 
             self.lives -= 1
-
             self.lbl_firewall.config(
                 text=f"🛡️ FIREWALL: {'█ ' * self.lives}"
             )
@@ -478,7 +407,7 @@ class CyberQuizApp:
                 explanation
             )
 
-            if self.lives == 0:
+            if self.lives <= 0:
 
                 messagebox.showerror(
                     "Game Over",
@@ -488,11 +417,9 @@ class CyberQuizApp:
                 )
 
                 self.root.destroy()
-
                 return
 
         self.current_q += 1
-
         self.load_question()
 
     # ==========================================================================
@@ -509,15 +436,9 @@ class CyberQuizApp:
             f"Pontuação da Fase 3: {self.score}"
         )
 
-        # Não cria outra janela.
-        # Entrega o controle ao main.py.
-
-        if self.proxima_fase:
-
+        if callable(self.proxima_fase):
             self.proxima_fase()
-
         else:
-
             self.root.destroy()
 
 
@@ -526,12 +447,7 @@ class CyberQuizApp:
 # ==============================================================================
 
 def executar(root, proxima_fase=None):
-
-    app = CyberQuizApp(
-        root,
-        proxima_fase
-    )
-
+    app = CyberQuizApp(root, proxima_fase)
     return app
 
 
@@ -540,9 +456,6 @@ def executar(root, proxima_fase=None):
 # ==============================================================================
 
 if __name__ == "__main__":
-
     root = tk.Tk()
-
     app = executar(root)
-
     root.mainloop()
