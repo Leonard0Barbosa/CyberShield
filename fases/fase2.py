@@ -80,8 +80,9 @@ QUIZ_QUESTIONS = [
 ]
 
 class Phase2App:
-    def __init__(self, root):
+    def __init__(self, root, proxima_fase=None):
         self.root = root
+        self.proxima_fase = proxima_fase
         self.root.title("CyberShield: Fase 2 — Gestão e Proteção de Senhas")
         self.root.geometry("700x640")
         self.root.resizable(False, False)
@@ -600,7 +601,16 @@ class Phase2App:
                     "Fase 2 Concluída com Sucesso! 🏆", 
                     "Parabéns! Você completou o Laboratório de Senhas, praticou criação segura, autenticação MFA e dominou a teoria!"
                 )
-                self.root.destroy()
+                self.finalizar_fase()
+                def finalizar_fase(self):
+
+                    messagebox.showinfo(
+                        "Fase 2 concluída! 🏆",
+                    "Parabéns! Você completou a Fase 2!"
+                )
+
+                if self.proxima_fase:
+                    self.proxima_fase()
         else:
             selected_btn.config(bg=COLOR_INCORRECT, fg="#FFFFFF")
             self.quiz_buttons[correct_idx].config(bg=COLOR_CORRECT, fg="#000000")
@@ -612,7 +622,5 @@ class Phase2App:
             )
             self.load_quiz_mode()  # Reinicia o nível atual para nova tentativa
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = Phase2App(root)
-    root.mainloop()
+def executar(root, proxima_fase=None):
+    return Phase2App(root, proxima_fase)
