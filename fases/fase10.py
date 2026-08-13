@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 import tkinter as tk
 import random
 
@@ -948,4 +946,3 @@ if __name__ == "__main__":
     jogo = BossFinal(root)
 
     root.mainloop()
->>>>>>> Stashed changes
