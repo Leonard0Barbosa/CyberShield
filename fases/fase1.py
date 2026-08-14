@@ -45,6 +45,7 @@ QUESTIONS = [
 
         "explanations": [
             (
+                "❌ INCORRETO!\n\n"
                 "A disponibilidade garante que o sistema esteja acessível. "
                 "O arquivo continuou lá, porém alterado.\n\n"
                 "💡 Dica: Falou em sistema fora do ar? "
@@ -52,6 +53,7 @@ QUESTIONS = [
             ),
 
             (
+                "❌ INCORRETO!\n\n"
                 "A confidencialidade protege contra acesso não autorizado "
                 "(vazamento). O foco aqui foi a alteração.\n\n"
                 "💡 Dica: Apenas leu dados sem permissão? "
@@ -59,11 +61,13 @@ QUESTIONS = [
             ),
 
             (
+                "✅ CORRETO!\n\n"
                 "A integridade garante que os dados permaneçam exatos, "
                 "completos e sem alterações indevidas."
             ),
 
             (
+                "❌ INCORRETO!\n\n"
                 "A autenticação verifica a identidade de quem acessa, "
                 "mas não o conteúdo do arquivo.\n\n"
                 "💡 Dica: Confirmar quem é o usuário? "
@@ -93,9 +97,11 @@ class CyberQuizApp:
         self.lives = 3
         self.score = 0
 
+        # Evita chamar a próxima fase duas vezes
+        self.finalizando = False
+
         self.setup_ui()
         self.load_question()
-
 
     # ==========================================================================
     # INTERFACE
@@ -117,8 +123,9 @@ class CyberQuizApp:
 
         self.draw_cyber_background()
 
-
+        # ----------------------------------------------------------------------
         # HEADER
+        # ----------------------------------------------------------------------
 
         self.status_frame = tk.Frame(
             self.bg_canvas,
@@ -132,6 +139,15 @@ class CyberQuizApp:
             width=620
         )
 
+        self.lbl_phase = tk.Label(
+            self.status_frame,
+            text="🛡️ FASE 1 — FUNDAMENTOS",
+            font=("Consolas", 12, "bold"),
+            fg=COLOR_HEALTH,
+            bg=COLOR_BG_TOP
+        )
+
+        self.lbl_phase.pack(side="left")
 
         self.lbl_firewall = tk.Label(
             self.status_frame,
@@ -141,10 +157,7 @@ class CyberQuizApp:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_firewall.pack(
-            side="left"
-        )
-
+        self.lbl_firewall.pack(side="right")
 
         self.lbl_score = tk.Label(
             self.status_frame,
@@ -155,11 +168,13 @@ class CyberQuizApp:
         )
 
         self.lbl_score.pack(
-            side="right"
+            side="right",
+            padx=20
         )
 
-
+        # ----------------------------------------------------------------------
         # CARD
+        # ----------------------------------------------------------------------
 
         self.card_frame = tk.Frame(
             self.bg_canvas,
@@ -177,6 +192,27 @@ class CyberQuizApp:
             height=430
         )
 
+        # ----------------------------------------------------------------------
+        # PROGRESSO
+        # ----------------------------------------------------------------------
+
+        self.lbl_progress = tk.Label(
+            self.card_frame,
+            text="",
+            font=("Consolas", 9, "bold"),
+            fg=COLOR_TEXT_MUTED,
+            bg=COLOR_CARD_BG
+        )
+
+        self.lbl_progress.pack(
+            anchor="e",
+            padx=20,
+            pady=(12, 0)
+        )
+
+        # ----------------------------------------------------------------------
+        # CATEGORIA
+        # ----------------------------------------------------------------------
 
         self.lbl_category = tk.Label(
             self.card_frame,
@@ -189,9 +225,12 @@ class CyberQuizApp:
         self.lbl_category.pack(
             anchor="w",
             padx=20,
-            pady=(15, 5)
+            pady=(4, 5)
         )
 
+        # ----------------------------------------------------------------------
+        # PERGUNTA
+        # ----------------------------------------------------------------------
 
         self.lbl_question = tk.Label(
             self.card_frame,
@@ -209,8 +248,9 @@ class CyberQuizApp:
             pady=10
         )
 
-
+        # ----------------------------------------------------------------------
         # BOTÕES
+        # ----------------------------------------------------------------------
 
         self.btn_frame = tk.Frame(
             self.card_frame,
@@ -223,7 +263,6 @@ class CyberQuizApp:
             padx=20,
             pady=10
         )
-
 
         self.buttons = []
 
@@ -264,7 +303,6 @@ class CyberQuizApp:
 
             self.buttons.append(btn)
 
-
     # ==========================================================================
     # HOVER
     # ==========================================================================
@@ -278,7 +316,6 @@ class CyberQuizApp:
                 fg=COLOR_TEXT_MAIN
             )
 
-
     def on_hover_leave(self, btn):
 
         if btn["state"] == "normal":
@@ -287,7 +324,6 @@ class CyberQuizApp:
                 bg=COLOR_BTN_BG,
                 fg=COLOR_TEXT_MUTED
             )
-
 
     # ==========================================================================
     # FUNDO
@@ -300,6 +336,10 @@ class CyberQuizApp:
 
         r1, g1, b1 = self.hex_to_rgb(COLOR_BG_TOP)
         r2, g2, b2 = self.hex_to_rgb(COLOR_BG_BOTTOM)
+
+        # ----------------------------------------------------------------------
+        # DEGRADÊ
+        # ----------------------------------------------------------------------
 
         for y in range(height):
 
@@ -317,10 +357,12 @@ class CyberQuizApp:
                 fill=color
             )
 
+        # ----------------------------------------------------------------------
+        # CIRCUITOS
+        # ----------------------------------------------------------------------
 
         line_color = "#0B3254"
         glow_dot = COLOR_CYAN_GLOW
-
 
         self.bg_canvas.create_line(
             30,
@@ -352,7 +394,6 @@ class CyberQuizApp:
             fill=glow_dot,
             outline=""
         )
-
 
         self.bg_canvas.create_line(
             50,
@@ -387,7 +428,6 @@ class CyberQuizApp:
             outline=""
         )
 
-
     @staticmethod
     def hex_to_rgb(hex_str):
 
@@ -398,49 +438,52 @@ class CyberQuizApp:
             for i in (0, 2, 4)
         )
 
-
     # ==========================================================================
     # CARREGAR QUESTÃO
     # ==========================================================================
 
     def load_question(self):
 
-        if self.current_q < len(QUESTIONS):
-
-            q_data = QUESTIONS[self.current_q]
-
-            self.lbl_category.config(
-                text=q_data["category"]
-            )
-
-            self.lbl_question.config(
-                text=q_data["question"]
-            )
-
-
-            for i, opt in enumerate(q_data["options"]):
-
-                self.buttons[i].config(
-                    text=f"[ {chr(65 + i)} ]   {opt}",
-                    bg=COLOR_BTN_BG,
-                    fg=COLOR_TEXT_MUTED,
-                    state="normal"
-                )
-
-        else:
-
+        # Se acabaram as perguntas
+        if self.current_q >= len(QUESTIONS):
             self.finalizar_fase()
+            return
 
+        q_data = QUESTIONS[self.current_q]
+
+        self.lbl_progress.config(
+            text=f"QUESTÃO {self.current_q + 1}/{len(QUESTIONS)}"
+        )
+
+        self.lbl_category.config(
+            text=q_data["category"]
+        )
+
+        self.lbl_question.config(
+            text=q_data["question"]
+        )
+
+        for i, option in enumerate(q_data["options"]):
+
+            self.buttons[i].config(
+                text=f"[ {chr(65 + i)} ]   {option}",
+                bg=COLOR_BTN_BG,
+                fg=COLOR_TEXT_MUTED,
+                state="normal"
+            )
 
     # ==========================================================================
-    # RESPOSTA
+    # VERIFICAR RESPOSTA
     # ==========================================================================
 
     def check_answer(self, selected_idx):
 
+        if self.finalizando:
+            return
+
+        # Desativa os botões para impedir duplo clique
         for btn in self.buttons:
             btn.config(state="disabled")
-
 
         q_data = QUESTIONS[self.current_q]
 
@@ -449,7 +492,6 @@ class CyberQuizApp:
         explanation = q_data["explanations"][selected_idx]
 
         selected_btn = self.buttons[selected_idx]
-
 
         # ----------------------------------------------------------------------
         # ACERTO
@@ -472,9 +514,9 @@ class CyberQuizApp:
 
             messagebox.showinfo(
                 "Resposta Correta! ✅",
-                f"Parabéns! Você acertou!\n\n{explanation}"
+                f"Parabéns! Você acertou!\n\n{explanation}",
+                parent=self.root
             )
-
 
         # ----------------------------------------------------------------------
         # ERRO
@@ -487,6 +529,12 @@ class CyberQuizApp:
                 fg="#FFFFFF"
             )
 
+            # Mostra também a resposta correta
+            self.buttons[correct_idx].config(
+                bg=COLOR_CORRECT,
+                fg="#000000"
+            )
+
             self.root.update()
 
             self.lives -= 1
@@ -497,26 +545,36 @@ class CyberQuizApp:
 
             messagebox.showwarning(
                 "Resposta Incorreta! ❌",
-                explanation
+                explanation,
+                parent=self.root
             )
 
+            # ------------------------------------------------------------------
+            # GAME OVER
+            # ------------------------------------------------------------------
 
-            if self.lives == 0:
+            if self.lives <= 0:
 
                 messagebox.showerror(
                     "Game Over",
-                    "O firewall caiu! O sistema foi hackeado."
+                    "O firewall caiu!\n\n"
+                    "Você perdeu todas as vidas e não pode avançar.",
+                    parent=self.root
                 )
 
+                # Aqui a fase pode ser encerrada.
+                # O mainloop continua pertencendo ao main.py.
                 self.root.destroy()
 
                 return
 
+        # ----------------------------------------------------------------------
+        # PRÓXIMA QUESTÃO
+        # ----------------------------------------------------------------------
 
         self.current_q += 1
 
         self.load_question()
-
 
     # ==========================================================================
     # FINALIZAR FASE
@@ -524,21 +582,49 @@ class CyberQuizApp:
 
     def finalizar_fase(self):
 
+        # Impede duplicação
+        if self.finalizando:
+            return
+
+        self.finalizando = True
+
         messagebox.showinfo(
-            "Fase 1 concluída! 🏆",
-            f"Você concluiu a Fase 1!\n\n"
-            f"Pontuação: {self.score}\n\n"
-            "Preparando a próxima fase..."
+            "FASE 1 CONCLUÍDA! 🏆",
+            "Excelente trabalho!\n\n"
+            "Você concluiu os fundamentos de segurança "
+            "da informação.\n\n"
+            f"Pontuação da Fase 1: {self.score}\n\n"
+            "Preparando a próxima fase...",
+            parent=self.root
         )
 
-        # NÃO destrói a janela aqui.
-        # O main.py controla a troca de fases.
+        # ======================================================================
+        # IMPORTANTE:
+        #
+        # NÃO usamos:
+        #
+        # self.root.destroy()
+        #
+        # porque quem controla a troca de janelas é o main.py.
+        #
+        # A próxima fase é chamada depois de 100ms para permitir que
+        # a janela termine de processar a mensagem.
+        # ======================================================================
 
         if self.proxima_fase:
 
             self.root.after(
                 100,
                 self.proxima_fase
+            )
+
+        else:
+
+            # Caso queira executar a Fase 1 sozinha
+            messagebox.showinfo(
+                "Fim",
+                "A Fase 1 foi concluída!",
+                parent=self.root
             )
 
 

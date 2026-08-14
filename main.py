@@ -7,24 +7,43 @@ from fases import fase4
 
 
 # ============================================================
+# LIMPAR A JANELA ATUAL
+# ============================================================
+
+def limpar_janela(root):
+
+    for widget in root.winfo_children():
+        widget.destroy()
+
+
+# ============================================================
 # TROCAR DE FASE
 # ============================================================
 
-def trocar_fase(janela_atual, proxima_fase):
-    janela_atual.destroy()
-    proxima_fase()
+def trocar_fase(root, proxima_fase_func):
+
+    limpar_janela(root)
+
+    # Pequeno atraso para garantir que o Tkinter
+    # terminou de destruir os widgets anteriores.
+    root.after(
+        50,
+        lambda: proxima_fase_func(root)
+    )
 
 
 # ============================================================
 # FASE 1
 # ============================================================
 
-def iniciar_fase_1():
-    root = tk.Tk()
+def iniciar_fase_1(root):
 
     fase1.executar(
         root,
-        lambda: trocar_fase(root, iniciar_fase_2)
+        lambda: trocar_fase(
+            root,
+            iniciar_fase_2
+        )
     )
 
 
@@ -32,12 +51,14 @@ def iniciar_fase_1():
 # FASE 2
 # ============================================================
 
-def iniciar_fase_2():
-    root = tk.Tk()
+def iniciar_fase_2(root):
 
     fase2.executar(
         root,
-        lambda: trocar_fase(root, iniciar_fase_3)
+        lambda: trocar_fase(
+            root,
+            iniciar_fase_3
+        )
     )
 
 
@@ -45,12 +66,14 @@ def iniciar_fase_2():
 # FASE 3
 # ============================================================
 
-def iniciar_fase_3():
-    root = tk.Tk()
+def iniciar_fase_3(root):
 
     fase3.executar(
         root,
-        lambda: trocar_fase(root, iniciar_fase_4)
+        lambda: trocar_fase(
+            root,
+            iniciar_fase_4
+        )
     )
 
 
@@ -58,8 +81,7 @@ def iniciar_fase_3():
 # FASE 4
 # ============================================================
 
-def iniciar_fase_4():
-    root = tk.Tk()
+def iniciar_fase_4(root):
 
     fase4.executar(
         root,
@@ -71,18 +93,25 @@ def iniciar_fase_4():
 # FINALIZAR JOGO
 # ============================================================
 
-def finalizar_jogo(janela):
-    janela.destroy()
+def finalizar_jogo(root):
+
+    limpar_janela(root)
+
     print("================================")
     print("JOGO FINALIZADO!")
     print("================================")
 
+    root.destroy()
+
 
 # ============================================================
-# INICIAR
+# INICIAR JOGO
 # ============================================================
 
-iniciar_fase_1()
+if __name__ == "__main__":
 
-# APENAS UM MAINLOOP PARA O JOGO INTEIRO
-tk.mainloop()
+    root = tk.Tk()
+
+    iniciar_fase_1(root)
+
+    root.mainloop()
