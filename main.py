@@ -1,5 +1,6 @@
 import tkinter as tk
 
+from fases import introdução
 from fases import fase1
 from fases import fase2
 from fases import fase3
@@ -35,6 +36,21 @@ def trocar_fase(root, proxima_fase_func):
         lambda: proxima_fase_func(root)
     )
 
+
+
+# ============================================================
+# FASE 1
+# ============================================================
+
+def iniciar_introdução(root):
+
+    introdução.executar(
+        root,
+        lambda: trocar_fase(
+            root,
+            iniciar_fase_1
+        )
+    )
 
 # ============================================================
 # FASE 1
@@ -207,6 +223,6 @@ if __name__ == "__main__":
 
     root = tk.Tk()
 
-    iniciar_fase_1(root)
+    iniciar_introdução(root)
 
     root.mainloop()

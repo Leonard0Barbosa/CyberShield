@@ -3,19 +3,29 @@ import random
 
 
 # ============================================================
+# CYBERSHIELD — FASE 10
+# BOSS FINAL
+# ============================================================
+
+
+# ============================================================
 # CORES
 # ============================================================
 
 BG = "#090000"
 CARD = "#1A0505"
+
 RED = "#FF1744"
 RED_DARK = "#8B0000"
 RED_HOVER = "#C4112F"
+
 WHITE = "#FFFFFF"
 GRAY = "#BDBDBD"
+
 CYAN = "#00E5FF"
 GREEN = "#00E676"
 YELLOW = "#FFD600"
+
 BUTTON = "#350909"
 BUTTON_HOVER = "#5A1111"
 
@@ -123,22 +133,22 @@ QUESTOES = [
 
 class BossFinal:
 
-    def __init__(self, root):
+    def __init__(self, root, proxima_fase=None):
 
         self.root = root
+        self.proxima_fase = proxima_fase
 
-        self.root.title("CYBERSHIELD — BOSS FINAL")
+        self.root.title(
+            "CYBERSHIELD — FASE 10 — BOSS FINAL"
+        )
+
         self.root.geometry("800x600")
         self.root.resizable(False, False)
         self.root.configure(bg=BG)
 
         # ====================================================
-        # BLOQUEAR TECLADO
+        # STATUS DA BATALHA
         # ====================================================
-        # Impede que ESPAÇO ou ENTER acionem botões
-        # automaticamente.
-        self.root.bind_all("<space>", self.bloquear_tecla)
-        self.root.bind_all("<Return>", self.bloquear_tecla)
 
         self.vida_jogador = 100
         self.vida_boss = 100
@@ -146,15 +156,24 @@ class BossFinal:
         self.questao_atual = 0
         self.respondida = False
 
+        # Guarda se a fase já terminou
+        self.fase_finalizada = False
+
+        # ====================================================
+        # TELA INICIAL
+        # ====================================================
+
         self.tela_inicial()
 
 
     # ========================================================
-    # BLOQUEAR TECLAS
+    # LIMPAR JANELA
     # ========================================================
 
-    def bloquear_tecla(self, event):
-        return "break"
+    def limpar_janela(self):
+
+        for widget in self.root.winfo_children():
+            widget.destroy()
 
 
     # ========================================================
@@ -162,6 +181,10 @@ class BossFinal:
     # ========================================================
 
     def tela_inicial(self):
+
+        self.limpar_janela()
+
+        self.root.configure(bg=BG)
 
         self.frame_inicio = tk.Frame(
             self.root,
@@ -261,7 +284,11 @@ class BossFinal:
 
     def iniciar(self):
 
-        self.frame_inicio.destroy()
+        self.vida_jogador = 100
+        self.vida_boss = 100
+        self.questao_atual = 0
+        self.respondida = False
+        self.fase_finalizada = False
 
         self.criar_interface()
 
@@ -273,6 +300,10 @@ class BossFinal:
     # ========================================================
 
     def criar_interface(self):
+
+        self.limpar_janela()
+
+        self.root.configure(bg=BG)
 
         tk.Label(
             self.root,
@@ -290,7 +321,6 @@ class BossFinal:
             bg=BG
         ).pack()
 
-
         # ====================================================
         # STATUS
         # ====================================================
@@ -305,7 +335,6 @@ class BossFinal:
             padx=25,
             pady=8
         )
-
 
         # ====================================================
         # PLAYER
@@ -361,7 +390,6 @@ class BossFinal:
 
         self.player_hp.pack()
 
-
         # ====================================================
         # BOSS
         # ====================================================
@@ -416,7 +444,6 @@ class BossFinal:
 
         self.boss_hp.pack()
 
-
         # ====================================================
         # CARD
         # ====================================================
@@ -435,7 +462,6 @@ class BossFinal:
             pady=8
         )
 
-
         self.lbl_numero = tk.Label(
             self.card,
             text="",
@@ -444,8 +470,9 @@ class BossFinal:
             bg=CARD
         )
 
-        self.lbl_numero.pack(pady=(10, 3))
-
+        self.lbl_numero.pack(
+            pady=(10, 3)
+        )
 
         self.lbl_questao = tk.Label(
             self.card,
@@ -457,8 +484,9 @@ class BossFinal:
             justify="center"
         )
 
-        self.lbl_questao.pack(pady=5)
-
+        self.lbl_questao.pack(
+            pady=5
+        )
 
         self.frame_opcoes = tk.Frame(
             self.card,
@@ -471,7 +499,6 @@ class BossFinal:
             pady=8
         )
 
-
         self.lbl_evento = tk.Label(
             self.card,
             text="",
@@ -480,8 +507,9 @@ class BossFinal:
             bg=CARD
         )
 
-        self.lbl_evento.pack(pady=4)
-
+        self.lbl_evento.pack(
+            pady=4
+        )
 
         self.btn_proxima = tk.Button(
             self.card,
@@ -511,7 +539,10 @@ class BossFinal:
         dados = QUESTOES[self.questao_atual]
 
         self.lbl_numero.config(
-            text=f"AMEAÇA {self.questao_atual + 1} / {len(QUESTOES)}"
+            text=(
+                f"AMEAÇA {self.questao_atual + 1} / "
+                f"{len(QUESTOES)}"
+            )
         )
 
         self.lbl_questao.config(
@@ -524,10 +555,8 @@ class BossFinal:
 
         self.btn_proxima.pack_forget()
 
-
         for widget in self.frame_opcoes.winfo_children():
             widget.destroy()
-
 
         for i, opcao in enumerate(dados["opcoes"]):
 
@@ -544,10 +573,7 @@ class BossFinal:
                 padx=12,
                 pady=7,
                 cursor="hand2",
-
-                # Impede foco pelo teclado.
                 takefocus=False,
-
                 command=lambda indice=i: self.responder(indice)
             )
 
@@ -566,6 +592,9 @@ class BossFinal:
         if self.respondida:
             return
 
+        if self.fase_finalizada:
+            return
+
         self.respondida = True
 
         dados = QUESTOES[self.questao_atual]
@@ -576,7 +605,6 @@ class BossFinal:
             botao.config(
                 state="disabled"
             )
-
 
         # ====================================================
         # ACERTO
@@ -593,14 +621,20 @@ class BossFinal:
                 dano += random.randint(8, 15)
 
                 self.lbl_evento.config(
-                    text=f"💥 ACERTO CRÍTICO!  BOSS -{dano} HP",
+                    text=(
+                        f"💥 ACERTO CRÍTICO!  "
+                        f"BOSS -{dano} HP"
+                    ),
                     fg=YELLOW
                 )
 
             else:
 
                 self.lbl_evento.config(
-                    text=f"⚡ ATAQUE EFETIVO!  BOSS -{dano} HP",
+                    text=(
+                        f"⚡ ATAQUE EFETIVO!  "
+                        f"BOSS -{dano} HP"
+                    ),
                     fg=GREEN
                 )
 
@@ -613,7 +647,6 @@ class BossFinal:
 
             self.animar_boss()
 
-
         # ====================================================
         # ERRO
         # ====================================================
@@ -625,7 +658,10 @@ class BossFinal:
             self.vida_jogador -= dano
 
             self.lbl_evento.config(
-                text=f"☠ CONTRA-ATAQUE!  PLAYER -{dano} HP",
+                text=(
+                    f"☠ CONTRA-ATAQUE!  "
+                    f"PLAYER -{dano} HP"
+                ),
                 fg=RED
             )
 
@@ -640,13 +676,11 @@ class BossFinal:
 
             self.animar_player()
 
-
         # ====================================================
-        # ATUALIZA STATUS
+        # ATUALIZAR STATUS
         # ====================================================
 
         self.atualizar_status()
-
 
         # ====================================================
         # DERROTA
@@ -661,7 +695,6 @@ class BossFinal:
 
             return
 
-
         # ====================================================
         # VITÓRIA
         # ====================================================
@@ -674,7 +707,6 @@ class BossFinal:
             )
 
             return
-
 
         # ====================================================
         # CONTINUAR
@@ -697,7 +729,10 @@ class BossFinal:
 
         self.root.after(
             100,
-            lambda: self.card.config(bg=CARD)
+            lambda: (
+                self.card.winfo_exists()
+                and self.card.config(bg=CARD)
+            )
         )
 
 
@@ -733,11 +768,12 @@ class BossFinal:
             min(100, self.vida_boss)
         )
 
-
+        # ====================================================
         # PLAYER
+        # ====================================================
 
-        largura_player = 280 * (
-            self.vida_jogador / 100
+        largura_player = (
+            280 * (self.vida_jogador / 100)
         )
 
         self.player_bar_bg.coords(
@@ -752,11 +788,12 @@ class BossFinal:
             text=f"{self.vida_jogador} / 100 HP"
         )
 
-
+        # ====================================================
         # BOSS
+        # ====================================================
 
-        largura_boss = 280 * (
-            self.vida_boss / 100
+        largura_boss = (
+            280 * (self.vida_boss / 100)
         )
 
         self.boss_bar_bg.coords(
@@ -778,33 +815,36 @@ class BossFinal:
 
     def proxima(self):
 
-        # Segurança contra estados inválidos
+        if self.fase_finalizada:
+            return
 
         if self.vida_jogador <= 0:
+
             self.derrota()
             return
 
         if self.vida_boss <= 0:
+
             self.vitoria()
             return
 
-
         self.questao_atual += 1
 
-
-        # Se acabaram as perguntas,
-        # volta para a primeira.
-        # Isso NÃO gera vitória.
+        # ====================================================
+        # TODAS AS QUESTÕES TERMINARAM
+        # ====================================================
 
         if self.questao_atual >= len(QUESTOES):
 
             self.questao_atual = 0
 
             self.lbl_evento.config(
-                text="☠ O BOSS AINDA ESTÁ DE PÉ! A BATALHA CONTINUA!",
+                text=(
+                    "☠ O BOSS AINDA ESTÁ DE PÉ! "
+                    "A BATALHA CONTINUA!"
+                ),
                 fg=RED
             )
-
 
         self.carregar_questao()
 
@@ -818,8 +858,12 @@ class BossFinal:
         if self.vida_boss > 0:
             return
 
-        for widget in self.root.winfo_children():
-            widget.destroy()
+        if self.fase_finalizada:
+            return
+
+        self.fase_finalizada = True
+
+        self.limpar_janela()
 
         self.root.configure(
             bg="#001A0A"
@@ -831,7 +875,9 @@ class BossFinal:
             font=("Arial", 55),
             fg=GREEN,
             bg="#001A0A"
-        ).pack(pady=(70, 5))
+        ).pack(
+            pady=(70, 5)
+        )
 
         tk.Label(
             self.root,
@@ -847,29 +893,59 @@ class BossFinal:
             font=("Consolas", 13, "bold"),
             fg=WHITE,
             bg="#001A0A"
-        ).pack(pady=10)
+        ).pack(
+            pady=10
+        )
 
         tk.Label(
             self.root,
-            text="A ameaça foi contida.\nA infraestrutura está segura.",
+            text=(
+                "A ameaça foi contida.\n"
+                "A infraestrutura está segura."
+            ),
             font=("Segoe UI", 11),
             fg=GRAY,
             bg="#001A0A",
             justify="center"
-        ).pack(pady=15)
+        ).pack(
+            pady=15
+        )
 
-        tk.Button(
-            self.root,
-            text="SAIR",
-            font=("Consolas", 10, "bold"),
-            fg=WHITE,
-            bg="#075C2B",
-            relief="flat",
-            padx=30,
-            pady=8,
-            takefocus=False,
-            command=self.root.destroy
-        ).pack(pady=15)
+        # ====================================================
+        # PRÓXIMA FASE
+        # ====================================================
+
+        if self.proxima_fase is not None:
+
+            tk.Button(
+                self.root,
+                text="CONTINUAR ➜",
+                font=("Consolas", 10, "bold"),
+                fg=WHITE,
+                bg="#075C2B",
+                activeforeground=WHITE,
+                activebackground="#0A7A3A",
+                relief="flat",
+                padx=30,
+                pady=8,
+                takefocus=False,
+                cursor="hand2",
+                command=self.proxima_fase
+            ).pack(
+                pady=15
+            )
+
+        else:
+
+            tk.Label(
+                self.root,
+                text="🏆 MISSÃO CONCLUÍDA",
+                font=("Consolas", 10, "bold"),
+                fg=GREEN,
+                bg="#001A0A"
+            ).pack(
+                pady=10
+            )
 
 
     # ========================================================
@@ -881,8 +957,12 @@ class BossFinal:
         if self.vida_jogador > 0:
             return
 
-        for widget in self.root.winfo_children():
-            widget.destroy()
+        if self.fase_finalizada:
+            return
+
+        self.fase_finalizada = True
+
+        self.limpar_janela()
 
         self.root.configure(
             bg="#080000"
@@ -894,7 +974,9 @@ class BossFinal:
             font=("Arial", 55),
             fg=RED,
             bg="#080000"
-        ).pack(pady=(70, 5))
+        ).pack(
+            pady=(70, 5)
+        )
 
         tk.Label(
             self.root,
@@ -910,39 +992,70 @@ class BossFinal:
             font=("Consolas", 13, "bold"),
             fg=WHITE,
             bg="#080000"
-        ).pack(pady=10)
+        ).pack(
+            pady=10
+        )
 
         tk.Label(
             self.root,
-            text="A defesa falhou.\nA infraestrutura foi comprometida.",
+            text=(
+                "A defesa falhou.\n"
+                "A infraestrutura foi comprometida."
+            ),
             font=("Segoe UI", 11),
             fg=GRAY,
             bg="#080000",
             justify="center"
-        ).pack(pady=15)
+        ).pack(
+            pady=15
+        )
+
+        # ====================================================
+        # TENTAR NOVAMENTE
+        # ====================================================
 
         tk.Button(
             self.root,
-            text="SAIR",
+            text="TENTAR NOVAMENTE",
             font=("Consolas", 10, "bold"),
             fg=WHITE,
             bg=RED_DARK,
+            activeforeground=WHITE,
+            activebackground=RED_HOVER,
             relief="flat",
             padx=30,
             pady=8,
             takefocus=False,
-            command=self.root.destroy
-        ).pack(pady=15)
+            cursor="hand2",
+            command=self.iniciar
+        ).pack(
+            pady=15
+        )
 
 
 # ============================================================
-# EXECUTAR
+# FUNÇÃO EXECUTAR
+# ============================================================
+
+def executar(root, proxima_fase):
+
+    BossFinal(
+        root,
+        proxima_fase
+    )
+
+
+# ============================================================
+# EXECUÇÃO INDIVIDUAL
 # ============================================================
 
 if __name__ == "__main__":
 
     root = tk.Tk()
 
-    jogo = BossFinal(root)
+    executar(
+        root,
+        None
+    )
 
     root.mainloop()
