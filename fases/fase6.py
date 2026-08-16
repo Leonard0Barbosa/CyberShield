@@ -197,12 +197,45 @@ class Phase6App:
         self.root = root
         self.proxima_fase = proxima_fase
 
+        # ----------------------------------------------------------------------
+        # CONFIGURAÇÃO DA JANELA
+        # ----------------------------------------------------------------------
+
         self.root.title(
             "CyberShield: Fase 6 — Integridade, Hash & Assinatura Digital"
         )
 
         self.root.geometry("700x640")
-        self.root.resizable(False, False)
+
+        self.root.minsize(
+            660,
+            560
+        )
+
+        self.root.resizable(
+            True,
+            True
+        )
+
+        # ----------------------------------------------------------------------
+        # TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.fullscreen = False
+
+        self.root.bind(
+            "<F11>",
+            self.toggle_fullscreen
+        )
+
+        self.root.bind(
+            "<Escape>",
+            self.exit_fullscreen
+        )
+
+        # ----------------------------------------------------------------------
+        # ESTADO
+        # ----------------------------------------------------------------------
 
         self.current_q = 0
 
@@ -212,9 +245,266 @@ class Phase6App:
 
         self.simulated_signature = ""
 
+        self.resize_job = None
+
+        self.finalizando = False
+
+        # ----------------------------------------------------------------------
+        # INTERFACE
+        # ----------------------------------------------------------------------
+
         self.setup_ui()
 
         self.load_step_hash_lab()
+
+        # Atualiza layout quando a janela for redimensionada
+        self.root.bind(
+            "<Configure>",
+            self.on_window_resize
+        )
+
+        self.root.update_idletasks()
+
+        self.update_layout()
+
+
+    # ==========================================================================
+    # TELA CHEIA
+    # ==========================================================================
+
+    def toggle_fullscreen(self, event=None):
+
+        self.fullscreen = not self.fullscreen
+
+        self.root.attributes(
+            "-fullscreen",
+            self.fullscreen
+        )
+
+        if self.fullscreen:
+
+            self.btn_fullscreen.config(
+                text="🗗 SAIR DA TELA CHEIA"
+            )
+
+        else:
+
+            self.btn_fullscreen.config(
+                text="⛶ TELA CHEIA"
+            )
+
+        self.root.update_idletasks()
+
+        self.update_layout()
+
+        return "break"
+
+
+    def exit_fullscreen(self, event=None):
+
+        if self.fullscreen:
+
+            self.fullscreen = False
+
+            self.root.attributes(
+                "-fullscreen",
+                False
+            )
+
+            self.btn_fullscreen.config(
+                text="⛶ TELA CHEIA"
+            )
+
+            self.root.update_idletasks()
+
+            self.update_layout()
+
+        return "break"
+
+
+    # ==========================================================================
+    # REDIMENSIONAMENTO
+    # ==========================================================================
+
+    def on_window_resize(self, event=None):
+
+        if event is not None:
+
+            if event.widget != self.root:
+                return
+
+        if self.resize_job:
+
+            try:
+
+                self.root.after_cancel(
+                    self.resize_job
+                )
+
+            except Exception:
+                pass
+
+        self.resize_job = self.root.after(
+            50,
+            self.update_layout
+        )
+
+
+    # ==========================================================================
+    # ATUALIZAR LAYOUT
+    # ==========================================================================
+
+    def update_layout(self):
+
+        self.resize_job = None
+
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+
+        if width < 1 or height < 1:
+            return
+
+        # ----------------------------------------------------------------------
+        # FUNDO
+        # ----------------------------------------------------------------------
+
+        self.draw_cyber_background(
+            width,
+            height
+        )
+
+        # ----------------------------------------------------------------------
+        # HEADER
+        # ----------------------------------------------------------------------
+
+        header_width = max(
+            500,
+            int(width * 0.94)
+        )
+
+        header_width = min(
+            header_width,
+            width - 30
+        )
+
+        self.bg_canvas.coords(
+            self.header_window,
+            width / 2,
+            max(35, height * 0.055)
+        )
+
+        self.bg_canvas.itemconfig(
+            self.header_window,
+            width=header_width
+        )
+
+        # ----------------------------------------------------------------------
+        # CARD
+        # ----------------------------------------------------------------------
+
+        card_width = min(
+            int(width * 0.92),
+            1200
+        )
+
+        card_height = min(
+            int(height * 0.80),
+            760
+        )
+
+        card_width = max(
+            card_width,
+            620
+        )
+
+        card_height = max(
+            card_height,
+            430
+        )
+
+        card_width = min(
+            card_width,
+            width - 30
+        )
+
+        card_height = min(
+            card_height,
+            height - 100
+        )
+
+        card_y = height * 0.54
+
+        self.bg_canvas.coords(
+            self.card_window,
+            width / 2,
+            card_y
+        )
+
+        self.bg_canvas.itemconfig(
+            self.card_window,
+            width=card_width,
+            height=card_height
+        )
+
+        # ----------------------------------------------------------------------
+        # WRAPLENGTH DOS ELEMENTOS
+        # ----------------------------------------------------------------------
+
+        content_wrap = max(
+            450,
+            card_width - 60
+        )
+
+        if hasattr(self, "lbl_hash_output"):
+
+            self.lbl_hash_output.config(
+                wraplength=max(
+                    400,
+                    card_width - 80
+                )
+            )
+
+        # Procura labels criados dinamicamente no card
+        for widget in self.card_frame.winfo_children():
+
+            if isinstance(widget, tk.Label):
+
+                try:
+
+                    current_wrap = int(
+                        widget.cget("wraplength")
+                    )
+
+                    if current_wrap > 0:
+
+                        widget.config(
+                            wraplength=content_wrap
+                        )
+
+                except Exception:
+                    pass
+
+        # ----------------------------------------------------------------------
+        # ENTRIES
+        # ----------------------------------------------------------------------
+
+        if hasattr(self, "entry_hash_input"):
+
+            self.entry_hash_input.pack_configure(
+                padx=max(
+                    20,
+                    int(card_width * 0.03)
+                )
+            )
+
+        if hasattr(self, "entry_doc_content"):
+
+            self.entry_doc_content.pack_configure(
+                padx=max(
+                    20,
+                    int(card_width * 0.03)
+                )
+            )
 
 
     # ==========================================================================
@@ -223,20 +513,20 @@ class Phase6App:
 
     def setup_ui(self):
 
+        # ----------------------------------------------------------------------
+        # CANVAS
+        # ----------------------------------------------------------------------
+
         self.bg_canvas = tk.Canvas(
             self.root,
-            width=700,
-            height=640,
-            highlightthickness=0
+            highlightthickness=0,
+            bd=0
         )
 
         self.bg_canvas.pack(
             fill="both",
             expand=True
         )
-
-        self.draw_cyber_background()
-
 
         # ----------------------------------------------------------------------
         # HEADER
@@ -247,13 +537,16 @@ class Phase6App:
             bg=COLOR_BG_TOP
         )
 
-        self.bg_canvas.create_window(
+        self.header_window = self.bg_canvas.create_window(
             350,
             35,
             window=self.status_frame,
             width=660
         )
 
+        # ----------------------------------------------------------------------
+        # TÍTULO
+        # ----------------------------------------------------------------------
 
         self.lbl_header = tk.Label(
             self.status_frame,
@@ -263,8 +556,54 @@ class Phase6App:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_header.pack(side="left")
+        self.lbl_header.pack(
+            side="left"
+        )
 
+        # ----------------------------------------------------------------------
+        # TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.btn_fullscreen = tk.Button(
+            self.status_frame,
+            text="⛶ TELA CHEIA",
+            font=("Consolas", 9, "bold"),
+            bg=COLOR_BTN_BG,
+            fg=COLOR_TEXT_MUTED,
+            activebackground=COLOR_BTN_HOVER,
+            activeforeground=COLOR_TEXT_MAIN,
+            relief="flat",
+            bd=0,
+            cursor="hand2",
+            command=self.toggle_fullscreen
+        )
+
+        self.btn_fullscreen.pack(
+            side="right",
+            padx=(10, 0)
+        )
+
+        self.btn_fullscreen.bind(
+            "<Enter>",
+            lambda e:
+            self.btn_fullscreen.config(
+                bg=COLOR_BTN_HOVER,
+                fg=COLOR_TEXT_MAIN
+            )
+        )
+
+        self.btn_fullscreen.bind(
+            "<Leave>",
+            lambda e:
+            self.btn_fullscreen.config(
+                bg=COLOR_BTN_BG,
+                fg=COLOR_TEXT_MUTED
+            )
+        )
+
+        # ----------------------------------------------------------------------
+        # ETAPA
+        # ----------------------------------------------------------------------
 
         self.lbl_mode = tk.Label(
             self.status_frame,
@@ -274,8 +613,10 @@ class Phase6App:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_mode.pack(side="right")
-
+        self.lbl_mode.pack(
+            side="right",
+            padx=20
+        )
 
         # ----------------------------------------------------------------------
         # CARD
@@ -289,7 +630,7 @@ class Phase6App:
             bd=0
         )
 
-        self.bg_canvas.create_window(
+        self.card_window = self.bg_canvas.create_window(
             350,
             330,
             window=self.card_frame,
@@ -299,13 +640,40 @@ class Phase6App:
 
 
     # ==========================================================================
-    # FUNDO
+    # FUNDO RESPONSIVO
     # ==========================================================================
 
-    def draw_cyber_background(self):
+    def draw_cyber_background(
+        self,
+        width=None,
+        height=None
+    ):
 
-        width = 700
-        height = 640
+        if width is None:
+
+            width = max(
+                self.root.winfo_width(),
+                680
+            )
+
+        if height is None:
+
+            height = max(
+                self.root.winfo_height(),
+                600
+            )
+
+        # ----------------------------------------------------------------------
+        # REMOVE FUNDO ANTERIOR
+        # ----------------------------------------------------------------------
+
+        self.bg_canvas.delete(
+            "background"
+        )
+
+        # ----------------------------------------------------------------------
+        # CORES DO GRADIENTE
+        # ----------------------------------------------------------------------
 
         r1, g1, b1 = self.hex_to_rgb(
             COLOR_BG_TOP
@@ -314,7 +682,6 @@ class Phase6App:
         r2, g2, b2 = self.hex_to_rgb(
             COLOR_BG_BOTTOM
         )
-
 
         # ----------------------------------------------------------------------
         # GRADIENTE
@@ -334,77 +701,124 @@ class Phase6App:
                 b1 + (b2 - b1) * (y / height)
             )
 
-            color = f"#{r:02x}{g:02x}{b:02x}"
+            color = (
+                f"#{r:02x}{g:02x}{b:02x}"
+            )
 
             self.bg_canvas.create_line(
                 0,
                 y,
                 width,
                 y,
-                fill=color
+                fill=color,
+                tags="background"
             )
 
-
         # ----------------------------------------------------------------------
-        # CIRCUITOS
+        # CIRCUITOS RESPONSIVOS
         # ----------------------------------------------------------------------
 
         line_color = "#0B3254"
         glow_dot = COLOR_CYAN_GLOW
 
+        # ----------------------------------------------------------------------
+        # CIRCUITO SUPERIOR
+        # ----------------------------------------------------------------------
+
+        x1 = int(width * 0.04)
+        x2 = int(width * 0.25)
+        x3 = int(width * 0.32)
+        x4 = int(width * 0.48)
+
+        y1 = int(height * 0.045)
+        y2 = int(height * 0.09)
 
         self.bg_canvas.create_line(
-            30,
-            25,
-            180,
-            25,
-            230,
-            50,
-            480,
-            50,
+            x1,
+            y1,
+            x2,
+            y1,
+            x3,
+            y2,
+            x4,
+            y2,
             fill=line_color,
-            width=1.5
+            width=2,
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            177,
-            22,
-            183,
-            28,
+            x2 - 3,
+            y1 - 3,
+            x2 + 3,
+            y1 + 3,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            477,
-            47,
-            483,
-            53,
+            x4 - 3,
+            y2 - 3,
+            x4 + 3,
+            y2 + 3,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
 
+        # ----------------------------------------------------------------------
+        # CIRCUITO INFERIOR
+        # ----------------------------------------------------------------------
+
+        y3 = int(height * 0.94)
+        y4 = int(height * 0.91)
+
+        x5 = int(width * 0.06)
+        x6 = int(width * 0.25)
+        x7 = int(width * 0.32)
+        x8 = int(width * 0.72)
 
         self.bg_canvas.create_line(
-            50,
-            610,
-            200,
-            610,
-            250,
-            590,
-            550,
-            590,
+            x5,
+            y3,
+            x6,
+            y3,
+            x7,
+            y4,
+            x8,
+            y4,
             fill=line_color,
-            width=1.5
+            width=2,
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            247,
-            587,
-            253,
-            593,
+            x7 - 3,
+            y4 - 3,
+            x7 + 3,
+            y4 + 3,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
+        )
+
+        self.bg_canvas.create_oval(
+            x8 - 3,
+            y4 - 3,
+            x8 + 3,
+            y4 + 3,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+        # ----------------------------------------------------------------------
+        # MANDA O FUNDO PARA TRÁS
+        # ----------------------------------------------------------------------
+
+        self.bg_canvas.tag_lower(
+            "background"
         )
 
 
@@ -418,7 +832,10 @@ class Phase6App:
         hex_str = hex_str.lstrip("#")
 
         return tuple(
-            int(hex_str[i:i + 2], 16)
+            int(
+                hex_str[i:i + 2],
+                16
+            )
             for i in (0, 2, 4)
         )
 
@@ -430,7 +847,30 @@ class Phase6App:
     def clear_card(self):
 
         for widget in self.card_frame.winfo_children():
+
             widget.destroy()
+
+        # Remove referências aos widgets antigos
+        for attr in [
+            "entry_hash_input",
+            "lbl_hash_output",
+            "lbl_hash_info",
+            "entry_doc_content",
+            "lbl_sig_status",
+            "btn_next2",
+            "quiz_buttons"
+        ]:
+
+            if hasattr(self, attr):
+
+                try:
+                    delattr(
+                        self,
+                        attr
+                    )
+
+                except Exception:
+                    pass
 
 
     # ==========================================================================
@@ -510,7 +950,6 @@ class Phase6App:
             text="ETAPA 1/3 — GERADOR DE HASH"
         )
 
-
         lbl_title = tk.Label(
             self.card_frame,
             text="⚡ LABORATÓRIO DE HASHING (SHA-256 EM TEMPO REAL)",
@@ -524,7 +963,6 @@ class Phase6App:
             padx=20,
             pady=(15, 5)
         )
-
 
         lbl_desc = tk.Label(
             self.card_frame,
@@ -546,7 +984,6 @@ class Phase6App:
             padx=20,
             pady=5
         )
-
 
         self.entry_hash_input = tk.Entry(
             self.card_frame,
@@ -574,7 +1011,6 @@ class Phase6App:
             self.update_live_hash
         )
 
-
         tk.Label(
             self.card_frame,
             text="Resumo Criptográfico SHA-256 (64 caracteres hex):",
@@ -586,7 +1022,6 @@ class Phase6App:
             padx=20,
             pady=(10, 2)
         )
-
 
         self.lbl_hash_output = tk.Label(
             self.card_frame,
@@ -607,7 +1042,6 @@ class Phase6App:
             pady=5
         )
 
-
         self.lbl_hash_info = tk.Label(
             self.card_frame,
             text=(
@@ -616,7 +1050,9 @@ class Phase6App:
             ),
             font=("Segoe UI", 9, "italic"),
             fg=COLOR_WARNING,
-            bg=COLOR_CARD_BG
+            bg=COLOR_CARD_BG,
+            wraplength=600,
+            justify="left"
         )
 
         self.lbl_hash_info.pack(
@@ -625,9 +1061,7 @@ class Phase6App:
             pady=10
         )
 
-
         self.update_live_hash()
-
 
         btn_next1 = self.create_custom_button(
             self.card_frame,
@@ -641,12 +1075,29 @@ class Phase6App:
             pady=(10, 15)
         )
 
+        self.root.after(
+            50,
+            self.update_layout
+        )
+
 
     # ==========================================================================
     # ATUALIZAR HASH
     # ==========================================================================
 
     def update_live_hash(self, event=None):
+
+        if not hasattr(
+            self,
+            "entry_hash_input"
+        ):
+            return
+
+        if not hasattr(
+            self,
+            "lbl_hash_output"
+        ):
+            return
 
         text = self.entry_hash_input.get()
 
@@ -671,7 +1122,6 @@ class Phase6App:
             text="ETAPA 2/3 — ASSINATURA DIGITAL"
         )
 
-
         lbl_title = tk.Label(
             self.card_frame,
             text="🔏 MINIGAME: AUDITORIA E VERIFICAÇÃO DE ADULTERAÇÃO",
@@ -685,7 +1135,6 @@ class Phase6App:
             padx=20,
             pady=(15, 5)
         )
-
 
         lbl_desc = tk.Label(
             self.card_frame,
@@ -708,7 +1157,6 @@ class Phase6App:
             pady=5
         )
 
-
         tk.Label(
             self.card_frame,
             text="Conteúdo do Documento / Ordem Bancária:",
@@ -720,7 +1168,6 @@ class Phase6App:
             padx=20,
             pady=(5, 2)
         )
-
 
         self.entry_doc_content = tk.Entry(
             self.card_frame,
@@ -743,7 +1190,6 @@ class Phase6App:
             pady=2
         )
 
-
         btn_sign = self.create_custom_button(
             self.card_frame,
             "✍️ Assinar Documento com Chave Privada",
@@ -756,7 +1202,6 @@ class Phase6App:
             pady=6
         )
 
-
         self.lbl_sig_status = tk.Label(
             self.card_frame,
             text="Status: Documento NÃO Assinado",
@@ -765,7 +1210,9 @@ class Phase6App:
             bg=COLOR_BG_TOP,
             bd=1,
             relief="solid",
-            pady=6
+            pady=6,
+            wraplength=600,
+            justify="left"
         )
 
         self.lbl_sig_status.pack(
@@ -773,7 +1220,6 @@ class Phase6App:
             padx=20,
             pady=4
         )
-
 
         btn_verify = self.create_custom_button(
             self.card_frame,
@@ -786,7 +1232,6 @@ class Phase6App:
             padx=20,
             pady=6
         )
-
 
         self.btn_next2 = self.create_custom_button(
             self.card_frame,
@@ -804,6 +1249,11 @@ class Phase6App:
             state="disabled"
         )
 
+        self.root.after(
+            50,
+            self.update_layout
+        )
+
 
     # ==========================================================================
     # GERAR ASSINATURA
@@ -817,24 +1267,21 @@ class Phase6App:
 
             messagebox.showwarning(
                 "Aviso",
-                "O documento não pode estar vazio!"
+                "O documento não pode estar vazio!",
+                parent=self.root
             )
 
             return
 
-
         self.simulated_message = text
-
 
         raw_hash = hashlib.sha256(
             text.encode("utf-8")
         ).hexdigest()
 
-
         self.simulated_signature = (
             f"SIG_PRIVKEY_RSA2048[{raw_hash[:16]}]"
         )
-
 
         self.lbl_sig_status.config(
             text=(
@@ -844,6 +1291,8 @@ class Phase6App:
             ),
             fg=COLOR_HEALTH
         )
+
+        self.update_layout()
 
 
     # ==========================================================================
@@ -857,26 +1306,23 @@ class Phase6App:
             messagebox.showerror(
                 "Erro de Auditoria",
                 "Assine o documento primeiro para gerar "
-                "o registro de validação!"
+                "o registro de validação!",
+                parent=self.root
             )
 
             return
-
 
         current_text = (
             self.entry_doc_content.get().strip()
         )
 
-
         current_hash = hashlib.sha256(
             current_text.encode("utf-8")
         ).hexdigest()
 
-
         expected_hash = hashlib.sha256(
             self.simulated_message.encode("utf-8")
         ).hexdigest()
-
 
         if current_hash == expected_hash:
 
@@ -886,7 +1332,9 @@ class Phase6App:
                 "1. INTEGRIDADE: NENHUM bit do texto foi alterado.\n"
                 "2. AUTENTICIDADE: A assinatura corresponde "
                 "exatamente à Chave Pública do autor.\n\n"
-                "Status: VÁLIDO (Garantia de Não-Repúdio)."
+                "Status: VÁLIDO (Garantia de Não-Repúdio).",
+
+                parent=self.root
             )
 
             self.btn_next2.config(
@@ -901,7 +1349,9 @@ class Phase6App:
                 "Falha na Verificação!\n\n"
                 "O Hash do conteúdo atual difere do Hash "
                 "vinculado à Assinatura Digital.\n"
-                "Alguém modificou a mensagem durante a transmissão!"
+                "Alguém modificou a mensagem durante a transmissão!",
+
+                parent=self.root
             )
 
 
@@ -920,11 +1370,9 @@ class Phase6App:
             )
         )
 
-
         q_data = QUIZ_FASE_6[
             self.current_q
         ]
-
 
         lbl_cat = tk.Label(
             self.card_frame,
@@ -939,7 +1387,6 @@ class Phase6App:
             padx=20,
             pady=(15, 5)
         )
-
 
         lbl_q = tk.Label(
             self.card_frame,
@@ -957,9 +1404,7 @@ class Phase6App:
             pady=10
         )
 
-
         self.quiz_buttons = []
-
 
         for i, opt in enumerate(
             q_data["options"]
@@ -990,7 +1435,6 @@ class Phase6App:
                 ipady=4
             )
 
-
             btn.bind(
                 "<Enter>",
                 lambda e, b=btn:
@@ -1003,8 +1447,14 @@ class Phase6App:
                 self.on_hover_leave(b)
             )
 
+            self.quiz_buttons.append(
+                btn
+            )
 
-            self.quiz_buttons.append(btn)
+        self.root.after(
+            50,
+            self.update_layout
+        )
 
 
     # ==========================================================================
@@ -1022,7 +1472,6 @@ class Phase6App:
                 state="disabled"
             )
 
-
         q_data = QUIZ_FASE_6[
             self.current_q
         ]
@@ -1032,7 +1481,6 @@ class Phase6App:
         selected_btn = self.quiz_buttons[
             selected_idx
         ]
-
 
         # ----------------------------------------------------------------------
         # RESPOSTA CORRETA
@@ -1047,52 +1495,32 @@ class Phase6App:
 
             self.root.update()
 
-
             messagebox.showinfo(
                 "Resposta Correta! 🎯",
 
                 f"{q_data['explanations'][selected_idx]}"
-                f"\n\n{q_data['tip']}"
-            )
+                f"\n\n{q_data['tip']}",
 
+                parent=self.root
+            )
 
             self.current_q += 1
 
-
-            # --------------------------------------------------------------
+            # ------------------------------------------------------------------
             # PRÓXIMA QUESTÃO
-            # --------------------------------------------------------------
+            # ------------------------------------------------------------------
 
             if self.current_q < len(QUIZ_FASE_6):
 
                 self.load_quiz_mode()
 
-
-            # --------------------------------------------------------------
+            # ------------------------------------------------------------------
             # FASE 6 TERMINOU
-            # --------------------------------------------------------------
+            # ------------------------------------------------------------------
 
             else:
 
-                messagebox.showinfo(
-                    "Fase 6 Concluída! 🏆",
-
-                    "Parabéns!\n\n"
-                    "Você dominou os conceitos essenciais de:\n\n"
-                    "• Hashing\n"
-                    "• Integridade de Dados\n"
-                    "• Criptografia Assimétrica\n"
-                    "• Assinatura Digital\n"
-                    "• Colisões de Hash\n\n"
-                    "Prepare-se para a próxima fase!"
-                )
-
-
-                # IMPORTANTE:
-                # Não destrói a janela.
-                # O MAIN controla a próxima fase.
-
-                self.proxima_fase()
+                self.finalizar_fase()
 
 
         # ----------------------------------------------------------------------
@@ -1113,31 +1541,87 @@ class Phase6App:
                 fg="#000000"
             )
 
-
             self.root.update()
-
 
             messagebox.showerror(
                 "Resposta Incorreta! ⚠️",
 
                 f"{q_data['explanations'][selected_idx]}"
-                f"\n\n{q_data['tip']}"
+                f"\n\n{q_data['tip']}",
+
+                parent=self.root
             )
 
-
             # Tenta novamente a mesma pergunta
-
             self.load_quiz_mode()
+
+
+    # ==========================================================================
+    # FINALIZAR FASE
+    # ==========================================================================
+
+    def finalizar_fase(self):
+
+        if self.finalizando:
+            return
+
+        self.finalizando = True
+
+        messagebox.showinfo(
+            "Fase 6 Concluída! 🏆",
+
+            "Parabéns!\n\n"
+            "Você dominou os conceitos essenciais de:\n\n"
+            "• Hashing\n"
+            "• Integridade de Dados\n"
+            "• Criptografia Assimétrica\n"
+            "• Assinatura Digital\n"
+            "• Colisões de Hash\n\n"
+            "Prepare-se para a próxima fase!",
+
+            parent=self.root
+        )
+
+        # ----------------------------------------------------------------------
+        # NÃO DESTRÓI A JANELA.
+        #
+        # O MAIN CONTROLA A PRÓXIMA FASE.
+        # ----------------------------------------------------------------------
+
+        if self.proxima_fase:
+
+            self.root.after(
+                100,
+                self.proxima_fase
+            )
 
 
 # ==============================================================================
 # FUNÇÃO EXECUTAR
 # ==============================================================================
 
-def executar(root, proxima_fase):
+def executar(
+    root,
+    proxima_fase=None
+):
 
-    Phase6App(
+    return Phase6App(
         root,
         proxima_fase
     )
+
+
+# ==============================================================================
+# TESTE INDIVIDUAL
+# ==============================================================================
+
+if __name__ == "__main__":
+
+    root = tk.Tk()
+
+    executar(
+        root
+    )
+
+    root.mainloop()
     

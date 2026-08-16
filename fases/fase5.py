@@ -3,7 +3,7 @@ from tkinter import messagebox
 
 
 # ==============================================================================
-# --- PADRÃO DE DESIGN (CYBER NETWORK - AZUL SUAVE & CIANO NEON) ---
+# CORES — CYBER NETWORK
 # ==============================================================================
 
 COLOR_BG_TOP = "#030D22"
@@ -16,91 +16,130 @@ COLOR_BTN_HOVER = "#0077B6"
 COLOR_TEXT_MAIN = "#FFFFFF"
 COLOR_TEXT_MUTED = "#8ECAE6"
 COLOR_HEALTH = "#00F5D4"
+
 COLOR_CORRECT = "#00E676"
 COLOR_INCORRECT = "#FF3366"
+COLOR_WARNING = "#FFD166"
 
 
 # ==============================================================================
-# --- BANCO DE DADOS DAS QUESTÕES ---
+# BANCO DE DADOS DAS QUESTÕES — FASE 5
 # ==============================================================================
 
 QUESTIONS = [
+
     {
         "category": "🌐 NAVEGAÇÃO SEGURA & PROTOCOLOS",
-        "question": "Qual sinal indica a maior probabilidade de um site ser uma tentativa de golpe ou Phishing?",
+
+        "question": (
+            "Qual sinal indica a maior probabilidade de um site ser "
+            "uma tentativa de golpe ou Phishing?"
+        ),
+
         "options": [
             "O site utiliza o protocolo HTTPS com o ícone de cadeado",
             "O site carrega as imagens de forma lenta e desconfigurada",
             "O domínio na barra de endereços possui grafia alterada (ex: banc0.com)",
             "O site contém muitos elementos multimídia e animações em vídeo"
         ],
+
         "answer": 2
     },
 
     {
         "category": "🔒 CRIPTOGRAFIA WEB & CERTIFICADOS",
-        "question": "Um site exibe o ícone de 'Cadeado/HTTPS' na barra de endereços. O que esse certificado SSL/TLS garante exatamente?",
+
+        "question": (
+            "Um site exibe o ícone de 'Cadeado/HTTPS' na barra de endereços. "
+            "O que esse certificado SSL/TLS garante exatamente?"
+        ),
+
         "options": [
             "Garante que o site é 100% confiável e livre de malwares",
             "Garante apenas que a comunicação entre navegador e servidor está criptografada",
             "Garante que o site pertence obrigatoriamente a uma instituição bancária",
             "Garante que os dados do usuário jamais serão compartilhados com terceiros"
         ],
+
         "answer": 1
     },
 
     {
         "category": "🎣 ENGENHARIA SOCIAL & TYPOSQUATTING",
-        "question": "Ao passar o mouse sobre um link, o destino exibe: 'suporte-security-update.com/login'. Como essa técnica é classificada?",
+
+        "question": (
+            "Ao passar o mouse sobre um link, o destino exibe: "
+            "'suporte-security-update.com/login'. Como essa técnica é classificada?"
+        ),
+
         "options": [
             "Ataque por Negação de Serviço Distribuído (DDoS)",
             "Engenharia Social por Typosquatting / Domínio Falso",
             "Injeção de código SQL em Banco de Dados (SQLi)",
             "Ataque de Força Bruta por Dicionário (Brute Force)"
         ],
+
         "answer": 1
     },
 
     {
         "category": "🔗 ENCURTADORES DE LINK & REDIRECIONAMENTOS",
-        "question": "Qual é o principal risco de segurança associado ao uso de encurtadores de URL (como bit.ly) em e-mails suspeitos?",
+
+        "question": (
+            "Qual é o principal risco de segurança associado ao uso "
+            "de encurtadores de URL (como bit.ly) em e-mails suspeitos?"
+        ),
+
         "options": [
             "Eles infectam o sistema operacional instantaneamente ao serem exibidos na tela",
             "Eles ocultam o destino real do link, impedindo a verificação prévia do domínio final",
             "Eles desativam o antivírus e firewall locais durante a navegação",
             "Eles alteram as senhas salvas automaticamente no navegador"
         ],
+
         "answer": 1
     },
 
     {
         "category": "🛑 ATAQUES HOMÓGRAFOS & PUNYCODE",
-        "question": "O que caracteriza um Ataque Homográfico de IDN (Internationalized Domain Name)?",
+
+        "question": (
+            "O que caracteriza um Ataque Homográfico de IDN "
+            "(Internationalized Domain Name)?"
+        ),
+
         "options": [
             "A invasão direta de servidores de nomes de domínio (DNS)",
             "Uso de caracteres de outros alfabetos (ex: cirílico) idênticos aos latinos para criar URLs falsas",
             "A interceptação de tráfego de redes Wi-Fi públicas sem senha",
             "A alteração do arquivo 'hosts' local para redirecionar o navegador"
         ],
+
         "answer": 1
     },
 
     {
         "category": "🛡️ DEFESA & PREVENÇÃO",
-        "question": "Qual é a conduta mais recomendada antes de inserir credenciais em uma página de login recebida por e-mail?",
+
+        "question": (
+            "Qual é a conduta mais recomendada antes de inserir credenciais "
+            "em uma página de login recebida por e-mail?"
+        ),
+
         "options": [
             "Verificar se o site possui um design moderno e logotipos em alta resolução",
             "Digitar qualquer senha falsa primeiro para testar se o sistema valida",
             "Inspecionar manualmente o domínio na barra de endereços ou acessar digitando a URL oficial diretamente",
             "Confiar caso a mensagem possua um selo visual de 'Antivírus Verificado'"
         ],
+
         "answer": 2
     }
 ]
 
 
 # ==============================================================================
-# --- CLASSE PRINCIPAL ---
+# CLASSE PRINCIPAL
 # ==============================================================================
 
 class CyberQuizApp:
@@ -110,9 +149,47 @@ class CyberQuizApp:
         self.root = root
         self.proxima_fase = proxima_fase
 
-        self.root.title("CyberShield: Fase 5 — Ethical Hacker Quiz")
-        self.root.geometry("680x600")
-        self.root.resizable(False, False)
+        # ----------------------------------------------------------------------
+        # CONFIGURAÇÃO DA JANELA
+        # ----------------------------------------------------------------------
+
+        self.root.title(
+            "CyberShield: Fase 5 — Ethical Hacker Quiz"
+        )
+
+        self.root.geometry(
+            "680x600"
+        )
+
+        self.root.minsize(
+            660,
+            560
+        )
+
+        self.root.resizable(
+            True,
+            True
+        )
+
+        # ----------------------------------------------------------------------
+        # TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.fullscreen = False
+
+        self.root.bind(
+            "<F11>",
+            self.toggle_fullscreen
+        )
+
+        self.root.bind(
+            "<Escape>",
+            self.exit_fullscreen
+        )
+
+        # ----------------------------------------------------------------------
+        # ESTADO DO JOGO
+        # ----------------------------------------------------------------------
 
         self.current_q = 0
         self.lives = 3
@@ -120,21 +197,244 @@ class CyberQuizApp:
 
         self.finalizando = False
 
+        # Evita redesenhar excessivamente
+        self.resize_job = None
+
+        # ----------------------------------------------------------------------
+        # INTERFACE
+        # ----------------------------------------------------------------------
+
         self.setup_ui()
+
         self.load_question()
 
+        # Atualiza o layout sempre que a janela mudar de tamanho
+        self.root.bind(
+            "<Configure>",
+            self.on_window_resize
+        )
 
-    # ==============================================================================
-    # --- INTERFACE ---
-    # ==============================================================================
+
+    # ==========================================================================
+    # TELA CHEIA
+    # ==========================================================================
+
+    def toggle_fullscreen(self, event=None):
+
+        self.fullscreen = not self.fullscreen
+
+        self.root.attributes(
+            "-fullscreen",
+            self.fullscreen
+        )
+
+        if self.fullscreen:
+
+            self.btn_fullscreen.config(
+                text="🗗 SAIR DA TELA CHEIA"
+            )
+
+        else:
+
+            self.btn_fullscreen.config(
+                text="⛶ TELA CHEIA"
+            )
+
+        self.root.update_idletasks()
+
+        self.update_layout()
+
+        return "break"
+
+
+    def exit_fullscreen(self, event=None):
+
+        if self.fullscreen:
+
+            self.fullscreen = False
+
+            self.root.attributes(
+                "-fullscreen",
+                False
+            )
+
+            self.btn_fullscreen.config(
+                text="⛶ TELA CHEIA"
+            )
+
+            self.root.update_idletasks()
+
+            self.update_layout()
+
+        return "break"
+
+
+    # ==========================================================================
+    # REDIMENSIONAMENTO DA JANELA
+    # ==========================================================================
+
+    def on_window_resize(self, event=None):
+
+        # Ignora eventos que não sejam da janela principal
+        if event is not None:
+
+            if event.widget != self.root:
+                return
+
+        # Evita vários redesenhos seguidos
+        if self.resize_job:
+
+            try:
+                self.root.after_cancel(
+                    self.resize_job
+                )
+
+            except Exception:
+                pass
+
+        self.resize_job = self.root.after(
+            50,
+            self.update_layout
+        )
+
+
+    # ==========================================================================
+    # ATUALIZAR LAYOUT
+    # ==========================================================================
+
+    def update_layout(self):
+
+        self.resize_job = None
+
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+
+        if width < 1:
+            return
+
+        if height < 1:
+            return
+
+        # ----------------------------------------------------------------------
+        # FUNDO OCUPA A JANELA INTEIRA
+        # ----------------------------------------------------------------------
+
+        self.draw_cyber_background(
+            width,
+            height
+        )
+
+        # ----------------------------------------------------------------------
+        # TAMANHO DO HEADER
+        # ----------------------------------------------------------------------
+
+        header_width = max(
+            500,
+            int(width * 0.94)
+        )
+
+        self.bg_canvas.coords(
+            self.header_window,
+            width / 2,
+            max(35, height * 0.055)
+        )
+
+        self.bg_canvas.itemconfig(
+            self.header_window,
+            width=header_width
+        )
+
+        # ----------------------------------------------------------------------
+        # TAMANHO DO CARD
+        # ----------------------------------------------------------------------
+
+        card_width = min(
+            int(width * 0.92),
+            1200
+        )
+
+        card_height = min(
+            int(height * 0.78),
+            720
+        )
+
+        # Garante tamanho mínimo
+        card_width = max(
+            card_width,
+            620
+        )
+
+        card_height = max(
+            card_height,
+            430
+        )
+
+        # Não deixa ultrapassar a tela
+        card_width = min(
+            card_width,
+            width - 30
+        )
+
+        card_height = min(
+            card_height,
+            height - 100
+        )
+
+        card_y = (
+            height * 0.54
+        )
+
+        self.bg_canvas.coords(
+            self.card_window,
+            width / 2,
+            card_y
+        )
+
+        self.bg_canvas.itemconfig(
+            self.card_window,
+            width=card_width,
+            height=card_height
+        )
+
+        # ----------------------------------------------------------------------
+        # AJUSTA WRAP DA PERGUNTA
+        # ----------------------------------------------------------------------
+
+        question_wrap = max(
+            500,
+            card_width - 60
+        )
+
+        self.lbl_question.config(
+            wraplength=question_wrap
+        )
+
+        # ----------------------------------------------------------------------
+        # AJUSTA O FRAME DOS BOTÕES
+        # ----------------------------------------------------------------------
+
+        self.btn_frame.pack_configure(
+            padx=max(
+                20,
+                int(card_width * 0.03)
+            )
+        )
+
+
+    # ==========================================================================
+    # INTERFACE
+    # ==========================================================================
 
     def setup_ui(self):
 
+        # ----------------------------------------------------------------------
+        # CANVAS PRINCIPAL
+        # ----------------------------------------------------------------------
+
         self.bg_canvas = tk.Canvas(
             self.root,
-            width=680,
-            height=600,
-            highlightthickness=0
+            highlightthickness=0,
+            bd=0
         )
 
         self.bg_canvas.pack(
@@ -142,25 +442,82 @@ class CyberQuizApp:
             expand=True
         )
 
-        self.draw_cyber_background()
-
-
-        # --------------------------------------------------------------------------
+        # ----------------------------------------------------------------------
         # HEADER
-        # --------------------------------------------------------------------------
+        # ----------------------------------------------------------------------
 
         self.status_frame = tk.Frame(
             self.bg_canvas,
             bg=COLOR_BG_TOP
         )
 
-        self.bg_canvas.create_window(
+        self.header_window = self.bg_canvas.create_window(
             340,
             35,
             window=self.status_frame,
             width=640
         )
 
+        # ----------------------------------------------------------------------
+        # NOME DA FASE
+        # ----------------------------------------------------------------------
+
+        self.lbl_phase = tk.Label(
+            self.status_frame,
+            text="🌐 FASE 5 — NAVEGAÇÃO SEGURA",
+            font=("Consolas", 12, "bold"),
+            fg=COLOR_HEALTH,
+            bg=COLOR_BG_TOP
+        )
+
+        self.lbl_phase.pack(
+            side="left"
+        )
+
+        # ----------------------------------------------------------------------
+        # TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.btn_fullscreen = tk.Button(
+            self.status_frame,
+            text="⛶ TELA CHEIA",
+            font=("Consolas", 9, "bold"),
+            bg=COLOR_BTN_BG,
+            fg=COLOR_TEXT_MUTED,
+            activebackground=COLOR_BTN_HOVER,
+            activeforeground=COLOR_TEXT_MAIN,
+            relief="flat",
+            bd=0,
+            cursor="hand2",
+            command=self.toggle_fullscreen
+        )
+
+        self.btn_fullscreen.pack(
+            side="right",
+            padx=(10, 0)
+        )
+
+        self.btn_fullscreen.bind(
+            "<Enter>",
+            lambda e:
+            self.btn_fullscreen.config(
+                bg=COLOR_BTN_HOVER,
+                fg=COLOR_TEXT_MAIN
+            )
+        )
+
+        self.btn_fullscreen.bind(
+            "<Leave>",
+            lambda e:
+            self.btn_fullscreen.config(
+                bg=COLOR_BTN_BG,
+                fg=COLOR_TEXT_MUTED
+            )
+        )
+
+        # ----------------------------------------------------------------------
+        # FIREWALL
+        # ----------------------------------------------------------------------
 
         self.lbl_firewall = tk.Label(
             self.status_frame,
@@ -170,8 +527,13 @@ class CyberQuizApp:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_firewall.pack(side="left")
+        self.lbl_firewall.pack(
+            side="right"
+        )
 
+        # ----------------------------------------------------------------------
+        # SCORE
+        # ----------------------------------------------------------------------
 
         self.lbl_score = tk.Label(
             self.status_frame,
@@ -181,12 +543,14 @@ class CyberQuizApp:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_score.pack(side="right")
+        self.lbl_score.pack(
+            side="right",
+            padx=20
+        )
 
-
-        # --------------------------------------------------------------------------
+        # ----------------------------------------------------------------------
         # CARD
-        # --------------------------------------------------------------------------
+        # ----------------------------------------------------------------------
 
         self.card_frame = tk.Frame(
             self.bg_canvas,
@@ -196,7 +560,7 @@ class CyberQuizApp:
             bd=0
         )
 
-        self.bg_canvas.create_window(
+        self.card_window = self.bg_canvas.create_window(
             340,
             310,
             window=self.card_frame,
@@ -204,6 +568,27 @@ class CyberQuizApp:
             height=470
         )
 
+        # ----------------------------------------------------------------------
+        # PROGRESSO
+        # ----------------------------------------------------------------------
+
+        self.lbl_progress = tk.Label(
+            self.card_frame,
+            text="",
+            font=("Consolas", 9, "bold"),
+            fg=COLOR_TEXT_MUTED,
+            bg=COLOR_CARD_BG
+        )
+
+        self.lbl_progress.pack(
+            anchor="e",
+            padx=20,
+            pady=(12, 0)
+        )
+
+        # ----------------------------------------------------------------------
+        # CATEGORIA
+        # ----------------------------------------------------------------------
 
         self.lbl_category = tk.Label(
             self.card_frame,
@@ -216,14 +601,17 @@ class CyberQuizApp:
         self.lbl_category.pack(
             anchor="w",
             padx=20,
-            pady=(15, 5)
+            pady=(4, 5)
         )
 
+        # ----------------------------------------------------------------------
+        # PERGUNTA
+        # ----------------------------------------------------------------------
 
         self.lbl_question = tk.Label(
             self.card_frame,
             text="",
-            font=("Segoe UI", 11),
+            font=("Segoe UI", 12),
             fg=COLOR_TEXT_MAIN,
             bg=COLOR_CARD_BG,
             wraplength=580,
@@ -236,10 +624,9 @@ class CyberQuizApp:
             pady=10
         )
 
-
-        # --------------------------------------------------------------------------
-        # BOTÕES
-        # --------------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # FRAME DOS BOTÕES
+        # ----------------------------------------------------------------------
 
         self.btn_frame = tk.Frame(
             self.card_frame,
@@ -250,18 +637,21 @@ class CyberQuizApp:
             fill="both",
             expand=True,
             padx=20,
-            pady=(5, 15)
+            pady=10
         )
 
-
         self.buttons = []
+
+        # ----------------------------------------------------------------------
+        # 4 ALTERNATIVAS
+        # ----------------------------------------------------------------------
 
         for i in range(4):
 
             btn = tk.Button(
                 self.btn_frame,
                 text="",
-                font=("Segoe UI", 9, "bold"),
+                font=("Segoe UI", 10, "bold"),
                 bg=COLOR_BTN_BG,
                 fg=COLOR_TEXT_MUTED,
                 activebackground=COLOR_BTN_HOVER,
@@ -272,7 +662,8 @@ class CyberQuizApp:
                 padx=15,
                 bd=1,
                 highlightbackground=COLOR_CARD_BORDER,
-                command=lambda idx=i: self.check_answer(idx)
+                command=lambda idx=i:
+                self.check_answer(idx)
             )
 
             btn.pack(
@@ -283,120 +674,24 @@ class CyberQuizApp:
 
             btn.bind(
                 "<Enter>",
-                lambda e, b=btn: self.on_hover_enter(b)
+                lambda e, b=btn:
+                self.on_hover_enter(b)
             )
 
             btn.bind(
                 "<Leave>",
-                lambda e, b=btn: self.on_hover_leave(b)
+                lambda e, b=btn:
+                self.on_hover_leave(b)
             )
 
-            self.buttons.append(btn)
-
-
-    # ==============================================================================
-    # --- FUNDO ---
-    # ==============================================================================
-
-    def draw_cyber_background(self):
-
-        width = 680
-        height = 600
-
-        r1, g1, b1 = self.hex_to_rgb(COLOR_BG_TOP)
-        r2, g2, b2 = self.hex_to_rgb(COLOR_BG_BOTTOM)
-
-
-        for y in range(height):
-
-            r = int(r1 + (r2 - r1) * (y / height))
-            g = int(g1 + (g2 - g1) * (y / height))
-            b = int(b1 + (b2 - b1) * (y / height))
-
-            color = f"#{r:02x}{g:02x}{b:02x}"
-
-            self.bg_canvas.create_line(
-                0,
-                y,
-                width,
-                y,
-                fill=color
+            self.buttons.append(
+                btn
             )
 
 
-        line_color = "#0B3254"
-        glow_dot = COLOR_CYAN_GLOW
-
-
-        self.bg_canvas.create_line(
-            30,
-            25,
-            180,
-            25,
-            230,
-            50,
-            450,
-            50,
-            fill=line_color,
-            width=1.5
-        )
-
-        self.bg_canvas.create_oval(
-            177,
-            22,
-            183,
-            28,
-            fill=glow_dot,
-            outline=""
-        )
-
-        self.bg_canvas.create_oval(
-            447,
-            47,
-            453,
-            53,
-            fill=glow_dot,
-            outline=""
-        )
-
-
-        self.bg_canvas.create_line(
-            50,
-            570,
-            200,
-            570,
-            250,
-            550,
-            520,
-            550,
-            fill=line_color,
-            width=1.5
-        )
-
-        self.bg_canvas.create_oval(
-            247,
-            547,
-            253,
-            553,
-            fill=glow_dot,
-            outline=""
-        )
-
-
-    @staticmethod
-    def hex_to_rgb(hex_str):
-
-        hex_str = hex_str.lstrip("#")
-
-        return tuple(
-            int(hex_str[i:i + 2], 16)
-            for i in (0, 2, 4)
-        )
-
-
-    # ==============================================================================
-    # --- HOVER ---
-    # ==============================================================================
+    # ==========================================================================
+    # HOVER
+    # ==========================================================================
 
     def on_hover_enter(self, btn):
 
@@ -418,11 +713,205 @@ class CyberQuizApp:
             )
 
 
-    # ==============================================================================
-    # --- CARREGAR QUESTÃO ---
-    # ==============================================================================
+    # ==========================================================================
+    # FUNDO RESPONSIVO
+    # ==========================================================================
+
+    def draw_cyber_background(
+        self,
+        width=None,
+        height=None
+    ):
+
+        if width is None:
+
+            width = max(
+                self.root.winfo_width(),
+                680
+            )
+
+        if height is None:
+
+            height = max(
+                self.root.winfo_height(),
+                600
+            )
+
+        # ----------------------------------------------------------------------
+        # LIMPA FUNDO ANTIGO
+        # ----------------------------------------------------------------------
+
+        self.bg_canvas.delete(
+            "background"
+        )
+
+        # ----------------------------------------------------------------------
+        # DEGRADÊ
+        # ----------------------------------------------------------------------
+
+        r1, g1, b1 = self.hex_to_rgb(
+            COLOR_BG_TOP
+        )
+
+        r2, g2, b2 = self.hex_to_rgb(
+            COLOR_BG_BOTTOM
+        )
+
+        for y in range(height):
+
+            r = int(
+                r1 + (r2 - r1) * (y / height)
+            )
+
+            g = int(
+                g1 + (g2 - g1) * (y / height)
+            )
+
+            b = int(
+                b1 + (b2 - b1) * (y / height)
+            )
+
+            color = (
+                f"#{r:02x}{g:02x}{b:02x}"
+            )
+
+            self.bg_canvas.create_line(
+                0,
+                y,
+                width,
+                y,
+                fill=color,
+                tags="background"
+            )
+
+        # ----------------------------------------------------------------------
+        # CIRCUITOS RESPONSIVOS
+        # ----------------------------------------------------------------------
+
+        line_color = "#0B3254"
+        glow_dot = COLOR_CYAN_GLOW
+
+        # Circuito superior esquerdo
+        x1 = int(width * 0.04)
+        x2 = int(width * 0.25)
+        x3 = int(width * 0.32)
+        x4 = int(width * 0.48)
+
+        y1 = int(height * 0.045)
+        y2 = int(height * 0.09)
+
+        self.bg_canvas.create_line(
+            x1,
+            y1,
+            x2,
+            y1,
+            x3,
+            y2,
+            x4,
+            y2,
+            fill=line_color,
+            width=2,
+            tags="background"
+        )
+
+        self.bg_canvas.create_oval(
+            x2 - 3,
+            y1 - 3,
+            x2 + 3,
+            y1 + 3,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+        self.bg_canvas.create_oval(
+            x4 - 3,
+            y2 - 3,
+            x4 + 3,
+            y2 + 3,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+        # Circuito inferior
+        y3 = int(height * 0.94)
+        y4 = int(height * 0.91)
+
+        x5 = int(width * 0.06)
+        x6 = int(width * 0.25)
+        x7 = int(width * 0.32)
+        x8 = int(width * 0.72)
+
+        self.bg_canvas.create_line(
+            x5,
+            y3,
+            x6,
+            y3,
+            x7,
+            y4,
+            x8,
+            y4,
+            fill=line_color,
+            width=2,
+            tags="background"
+        )
+
+        self.bg_canvas.create_oval(
+            x7 - 3,
+            y4 - 3,
+            x7 + 3,
+            y4 + 3,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+        self.bg_canvas.create_oval(
+            x8 - 3,
+            y4 - 3,
+            x8 + 3,
+            y4 + 3,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+        # ----------------------------------------------------------------------
+        # FUNDO ATRÁS DOS ELEMENTOS
+        # ----------------------------------------------------------------------
+
+        self.bg_canvas.tag_lower(
+            "background"
+        )
+
+
+    # ==========================================================================
+    # CONVERTER HEX
+    # ==========================================================================
+
+    @staticmethod
+    def hex_to_rgb(hex_str):
+
+        hex_str = hex_str.lstrip("#")
+
+        return tuple(
+            int(
+                hex_str[i:i + 2],
+                16
+            )
+            for i in (0, 2, 4)
+        )
+
+
+    # ==========================================================================
+    # CARREGAR QUESTÃO
+    # ==========================================================================
 
     def load_question(self):
+
+        if self.finalizando:
+            return
 
         if self.current_q >= len(QUESTIONS):
 
@@ -430,44 +919,80 @@ class CyberQuizApp:
 
             return
 
+        q_data = QUESTIONS[
+            self.current_q
+        ]
 
-        q_data = QUESTIONS[self.current_q]
+        # ----------------------------------------------------------------------
+        # PROGRESSO
+        # ----------------------------------------------------------------------
 
-        self.lbl_category.config(
-            text=f"CATEGORIA: {q_data['category']}"
-        )
-
-        self.lbl_question.config(
+        self.lbl_progress.config(
             text=(
-                f"PERGUNTA {self.current_q + 1}/{len(QUESTIONS)}:\n"
-                f"{q_data['question']}"
+                f"QUESTÃO "
+                f"{self.current_q + 1}/"
+                f"{len(QUESTIONS)}"
             )
         )
 
+        # ----------------------------------------------------------------------
+        # CATEGORIA
+        # ----------------------------------------------------------------------
 
-        for i, opt in enumerate(q_data["options"]):
+        self.lbl_category.config(
+            text=q_data["category"]
+        )
+
+        # ----------------------------------------------------------------------
+        # PERGUNTA
+        # ----------------------------------------------------------------------
+
+        self.lbl_question.config(
+            text=q_data["question"]
+        )
+
+        # ----------------------------------------------------------------------
+        # ALTERNATIVAS
+        # ----------------------------------------------------------------------
+
+        for i, option in enumerate(
+            q_data["options"]
+        ):
 
             self.buttons[i].config(
-                text=f"[ {chr(65 + i)} ]  {opt}",
+                text=(
+                    f"[ {chr(65 + i)} ]   "
+                    f"{option}"
+                ),
                 bg=COLOR_BTN_BG,
                 fg=COLOR_TEXT_MUTED,
                 state="normal"
             )
 
 
-    # ==============================================================================
-    # --- VERIFICAR RESPOSTA ---
-    # ==============================================================================
+    # ==========================================================================
+    # VERIFICAR RESPOSTA
+    # ==========================================================================
 
-    def check_answer(self, selected_idx):
+    def check_answer(
+        self,
+        selected_idx
+    ):
 
         if self.finalizando:
             return
 
-        q_data = QUESTIONS[self.current_q]
+        q_data = QUESTIONS[
+            self.current_q
+        ]
 
-        correct_idx = q_data["answer"]
+        correct_idx = q_data[
+            "answer"
+        ]
 
+        # ----------------------------------------------------------------------
+        # DESABILITA BOTÕES
+        # ----------------------------------------------------------------------
 
         for btn in self.buttons:
 
@@ -475,12 +1000,18 @@ class CyberQuizApp:
                 state="disabled"
             )
 
-
-        # --------------------------------------------------------------------------
+        # ======================================================================
         # ACERTO
-        # --------------------------------------------------------------------------
+        # ======================================================================
 
         if selected_idx == correct_idx:
+
+            self.buttons[
+                selected_idx
+            ].config(
+                bg=COLOR_CORRECT,
+                fg="#000000"
+            )
 
             self.score += 100
 
@@ -488,34 +1019,38 @@ class CyberQuizApp:
                 text=f"SCORE: {self.score}"
             )
 
-            self.buttons[selected_idx].config(
-                bg=COLOR_CORRECT,
-                fg="#000000"
-            )
-
-
-        # --------------------------------------------------------------------------
+        # ======================================================================
         # ERRO
-        # --------------------------------------------------------------------------
+        # ======================================================================
 
         else:
 
-            self.lives -= 1
-
-            self.lbl_firewall.config(
-                text=f"🛡️ FIREWALL: {'█ ' * self.lives}"
-            )
-
-            self.buttons[selected_idx].config(
+            self.buttons[
+                selected_idx
+            ].config(
                 bg=COLOR_INCORRECT,
                 fg=COLOR_TEXT_MAIN
             )
 
-            self.buttons[correct_idx].config(
+            self.buttons[
+                correct_idx
+            ].config(
                 bg=COLOR_CORRECT,
                 fg="#000000"
             )
 
+            self.lives -= 1
+
+            self.lbl_firewall.config(
+                text=(
+                    f"🛡️ FIREWALL: "
+                    f"{'█ ' * self.lives}"
+                )
+            )
+
+            # ------------------------------------------------------------------
+            # GAME OVER
+            # ------------------------------------------------------------------
 
             if self.lives <= 0:
 
@@ -526,6 +1061,9 @@ class CyberQuizApp:
 
                 return
 
+        # ----------------------------------------------------------------------
+        # PRÓXIMA QUESTÃO
+        # ----------------------------------------------------------------------
 
         self.current_q += 1
 
@@ -535,9 +1073,9 @@ class CyberQuizApp:
         )
 
 
-    # ==============================================================================
-    # --- GAME OVER ---
-    # ==============================================================================
+    # ==========================================================================
+    # GAME OVER
+    # ==========================================================================
 
     def game_over(self):
 
@@ -548,20 +1086,25 @@ class CyberQuizApp:
 
         messagebox.showerror(
             "Game Over ⚠️",
+
             "O firewall caiu e o sistema foi comprometido!\n\n"
             "Tente novamente.",
+
             parent=self.root
         )
 
-        # IMPORTANTE:
-        # Não destruir a janela.
-        # Apenas encerra o loop atual.
-        self.root.quit()
+        # ----------------------------------------------------------------------
+        # NÃO DESTRUÍMOS A JANELA.
+        #
+        # O main.py é responsável pelo controle da aplicação.
+        # ----------------------------------------------------------------------
+
+        return
 
 
-    # ==============================================================================
-    # --- FINALIZAR FASE ---
-    # ==============================================================================
+    # ==========================================================================
+    # FINALIZAR FASE
+    # ==========================================================================
 
     def finalizar_fase(self):
 
@@ -572,28 +1115,42 @@ class CyberQuizApp:
 
         messagebox.showinfo(
             "FASE 5 CONCLUÍDA! 🏆",
+
             "Você protegeu a rede com sucesso!\n\n"
+
             "Você concluiu o treinamento de navegação segura, "
-            "HTTPS, phishing, typosquatting e defesa contra links maliciosos.\n\n"
+            "HTTPS, phishing, typosquatting e defesa contra "
+            "links maliciosos.\n\n"
+
             f"Pontuação Final: {self.score}\n\n"
+
             "Preparando a próxima fase...",
+
             parent=self.root
         )
 
-
-        # NÃO destrói a janela.
+        # ----------------------------------------------------------------------
+        # NÃO DESTRUÍMOS A JANELA.
+        #
         # A próxima fase assume o controle.
+        # ----------------------------------------------------------------------
 
         if self.proxima_fase:
 
-            self.proxima_fase()
+            self.root.after(
+                100,
+                self.proxima_fase
+            )
 
 
 # ==============================================================================
-# --- FUNÇÃO COMPATÍVEL COM O MAIN.PY ---
+# FUNÇÃO USADA PELO MAIN.PY
 # ==============================================================================
 
-def executar(root, proxima_fase=None):
+def executar(
+    root,
+    proxima_fase=None
+):
 
     return CyberQuizApp(
         root,
@@ -602,32 +1159,15 @@ def executar(root, proxima_fase=None):
 
 
 # ==============================================================================
-# --- EXECUÇÃO INDIVIDUAL ---
+# TESTE INDIVIDUAL
 # ==============================================================================
 
 if __name__ == "__main__":
 
     root = tk.Tk()
 
-    window_width = 680
-    window_height = 600
-
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-
-    position_right = int(
-        screen_width / 2 - window_width / 2
+    executar(
+        root
     )
-
-    position_top = int(
-        screen_height / 2 - window_height / 2
-    )
-
-    root.geometry(
-        f"{window_width}x{window_height}"
-        f"+{position_right}+{position_top}"
-    )
-
-    app = CyberQuizApp(root)
 
     root.mainloop()

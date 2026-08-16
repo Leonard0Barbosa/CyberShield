@@ -26,6 +26,7 @@ COLOR_WARNING = "#FFD166"
 # ==============================================================================
 
 QUIZ_FASE_7 = [
+
     {
         "category": "🗄️ SEGURANÇA EM BANCO DE DADOS",
 
@@ -182,52 +183,287 @@ QUIZ_FASE_7 = [
 
 class Phase7App:
 
-    def __init__(self, root):
+    def __init__(self, root, ao_concluir=None):
 
         self.root = root
+        self.ao_concluir = ao_concluir
 
         self.root.title(
             "CyberShield: Fase 7 — Banco de Dados & Acessos"
         )
 
         self.root.geometry("700x640")
-        self.root.resizable(False, False)
+
+        self.root.minsize(
+            660,
+            560
+        )
+
+        self.root.resizable(
+            True,
+            True
+        )
+
+        # ----------------------------------------------------------------------
+        # TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.fullscreen = False
+
+        self.root.bind(
+            "<F11>",
+            self.toggle_fullscreen
+        )
+
+        self.root.bind(
+            "<Escape>",
+            self.exit_fullscreen
+        )
+
+        # ----------------------------------------------------------------------
+        # ESTADO
+        # ----------------------------------------------------------------------
 
         self.current_q = 0
 
-        # Callback usado pelo main.py
-        self.ao_concluir = None
-
-        # Atributos para o Simulador ABAC
         self.abac_role_var = None
         self.abac_time_var = None
         self.abac_loc_var = None
         self.abac_sens_var = None
 
+        self.resize_job = None
+
         self.setup_ui()
         self.load_step_sqli_lab()
 
+        self.root.bind(
+            "<Configure>",
+            self.on_window_resize
+        )
+
+        self.root.update_idletasks()
+        self.update_layout()
+
 
     # ==========================================================================
-    # --- INTERFACE PRINCIPAL ---
+    # --- TELA CHEIA
+    # ==========================================================================
+
+    def toggle_fullscreen(self, event=None):
+
+        self.fullscreen = not self.fullscreen
+
+        self.root.attributes(
+            "-fullscreen",
+            self.fullscreen
+        )
+
+        if self.fullscreen:
+
+            self.btn_fullscreen.config(
+                text="🗗 SAIR DA TELA CHEIA"
+            )
+
+        else:
+
+            self.btn_fullscreen.config(
+                text="⛶ TELA CHEIA"
+            )
+
+        self.root.update_idletasks()
+        self.update_layout()
+
+        return "break"
+
+
+    def exit_fullscreen(self, event=None):
+
+        if self.fullscreen:
+
+            self.fullscreen = False
+
+            self.root.attributes(
+                "-fullscreen",
+                False
+            )
+
+            self.btn_fullscreen.config(
+                text="⛶ TELA CHEIA"
+            )
+
+            self.root.update_idletasks()
+            self.update_layout()
+
+        return "break"
+
+
+    # ==========================================================================
+    # --- REDIMENSIONAMENTO
+    # ==========================================================================
+
+    def on_window_resize(self, event=None):
+
+        if event is not None:
+
+            if event.widget != self.root:
+                return
+
+        if self.resize_job:
+
+            try:
+                self.root.after_cancel(
+                    self.resize_job
+                )
+            except Exception:
+                pass
+
+        self.resize_job = self.root.after(
+            50,
+            self.update_layout
+        )
+
+
+    def update_layout(self):
+
+        self.resize_job = None
+
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+
+        if width < 1 or height < 1:
+            return
+
+        self.draw_cyber_background(
+            width,
+            height
+        )
+
+        # ----------------------------------------------------------------------
+        # HEADER
+        # ----------------------------------------------------------------------
+
+        header_width = max(
+            500,
+            int(width * 0.94)
+        )
+
+        header_width = min(
+            header_width,
+            width - 30
+        )
+
+        self.bg_canvas.coords(
+            self.header_window,
+            width / 2,
+            max(
+                35,
+                height * 0.055
+            )
+        )
+
+        self.bg_canvas.itemconfig(
+            self.header_window,
+            width=header_width
+        )
+
+        # ----------------------------------------------------------------------
+        # CARD
+        # ----------------------------------------------------------------------
+
+        card_width = min(
+            int(width * 0.92),
+            1200
+        )
+
+        card_height = min(
+            int(height * 0.80),
+            760
+        )
+
+        card_width = max(
+            card_width,
+            620
+        )
+
+        card_height = max(
+            card_height,
+            430
+        )
+
+        card_width = min(
+            card_width,
+            width - 30
+        )
+
+        card_height = min(
+            card_height,
+            height - 100
+        )
+
+        card_y = height * 0.54
+
+        self.bg_canvas.coords(
+            self.card_window,
+            width / 2,
+            card_y
+        )
+
+        self.bg_canvas.itemconfig(
+            self.card_window,
+            width=card_width,
+            height=card_height
+        )
+
+        # ----------------------------------------------------------------------
+        # WRAPLENGTH
+        # ----------------------------------------------------------------------
+
+        content_wrap = max(
+            450,
+            card_width - 60
+        )
+
+        for widget in self.card_frame.winfo_children():
+
+            if isinstance(
+                widget,
+                tk.Label
+            ):
+
+                try:
+
+                    current_wrap = int(
+                        widget.cget(
+                            "wraplength"
+                        )
+                    )
+
+                    if current_wrap > 0:
+
+                        widget.config(
+                            wraplength=content_wrap
+                        )
+
+                except Exception:
+                    pass
+
+
+    # ==========================================================================
+    # --- INTERFACE PRINCIPAL
     # ==========================================================================
 
     def setup_ui(self):
 
         self.bg_canvas = tk.Canvas(
             self.root,
-            width=700,
-            height=640,
-            highlightthickness=0
+            highlightthickness=0,
+            bd=0
         )
 
         self.bg_canvas.pack(
             fill="both",
             expand=True
         )
-
-        self.draw_cyber_background()
-
 
         # ----------------------------------------------------------------------
         # HEADER
@@ -238,13 +474,16 @@ class Phase7App:
             bg=COLOR_BG_TOP
         )
 
-        self.bg_canvas.create_window(
+        self.header_window = self.bg_canvas.create_window(
             350,
             35,
             window=self.status_frame,
             width=660
         )
 
+        # ----------------------------------------------------------------------
+        # TÍTULO
+        # ----------------------------------------------------------------------
 
         self.lbl_header = tk.Label(
             self.status_frame,
@@ -254,8 +493,54 @@ class Phase7App:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_header.pack(side="left")
+        self.lbl_header.pack(
+            side="left"
+        )
 
+        # ----------------------------------------------------------------------
+        # TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.btn_fullscreen = tk.Button(
+            self.status_frame,
+            text="⛶ TELA CHEIA",
+            font=("Consolas", 9, "bold"),
+            bg=COLOR_BTN_BG,
+            fg=COLOR_TEXT_MUTED,
+            activebackground=COLOR_BTN_HOVER,
+            activeforeground=COLOR_TEXT_MAIN,
+            relief="flat",
+            bd=0,
+            cursor="hand2",
+            command=self.toggle_fullscreen
+        )
+
+        self.btn_fullscreen.pack(
+            side="right",
+            padx=(10, 0)
+        )
+
+        self.btn_fullscreen.bind(
+            "<Enter>",
+            lambda e:
+            self.btn_fullscreen.config(
+                bg=COLOR_BTN_HOVER,
+                fg=COLOR_TEXT_MAIN
+            )
+        )
+
+        self.btn_fullscreen.bind(
+            "<Leave>",
+            lambda e:
+            self.btn_fullscreen.config(
+                bg=COLOR_BTN_BG,
+                fg=COLOR_TEXT_MUTED
+            )
+        )
+
+        # ----------------------------------------------------------------------
+        # ETAPA
+        # ----------------------------------------------------------------------
 
         self.lbl_mode = tk.Label(
             self.status_frame,
@@ -265,11 +550,13 @@ class Phase7App:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_mode.pack(side="right")
-
+        self.lbl_mode.pack(
+            side="right",
+            padx=20
+        )
 
         # ----------------------------------------------------------------------
-        # CARD PRINCIPAL
+        # CARD
         # ----------------------------------------------------------------------
 
         self.card_frame = tk.Frame(
@@ -280,7 +567,7 @@ class Phase7App:
             bd=0
         )
 
-        self.bg_canvas.create_window(
+        self.card_window = self.bg_canvas.create_window(
             350,
             330,
             window=self.card_frame,
@@ -290,101 +577,179 @@ class Phase7App:
 
 
     # ==========================================================================
-    # --- FUNDO CYBER
+    # --- FUNDO CYBER RESPONSIVO
     # ==========================================================================
 
-    def draw_cyber_background(self):
+    def draw_cyber_background(
+        self,
+        width=None,
+        height=None
+    ):
 
-        width = 700
-        height = 640
+        if width is None:
+            width = max(
+                self.root.winfo_width(),
+                680
+            )
 
-        r1, g1, b1 = self.hex_to_rgb(COLOR_BG_TOP)
-        r2, g2, b2 = self.hex_to_rgb(COLOR_BG_BOTTOM)
+        if height is None:
+            height = max(
+                self.root.winfo_height(),
+                600
+            )
 
+        self.bg_canvas.delete(
+            "background"
+        )
+
+        r1, g1, b1 = self.hex_to_rgb(
+            COLOR_BG_TOP
+        )
+
+        r2, g2, b2 = self.hex_to_rgb(
+            COLOR_BG_BOTTOM
+        )
+
+        # ----------------------------------------------------------------------
+        # GRADIENTE
+        # ----------------------------------------------------------------------
 
         for y in range(height):
 
             r = int(
-                r1 + (r2 - r1) * (y / height)
+                r1 +
+                (r2 - r1) *
+                (y / height)
             )
 
             g = int(
-                g1 + (g2 - g1) * (y / height)
+                g1 +
+                (g2 - g1) *
+                (y / height)
             )
 
             b = int(
-                b1 + (b2 - b1) * (y / height)
+                b1 +
+                (b2 - b1) *
+                (y / height)
             )
 
-            color = f"#{r:02x}{g:02x}{b:02x}"
+            color = (
+                f"#{r:02x}{g:02x}{b:02x}"
+            )
 
             self.bg_canvas.create_line(
                 0,
                 y,
                 width,
                 y,
-                fill=color
+                fill=color,
+                tags="background"
             )
 
+        # ----------------------------------------------------------------------
+        # CIRCUITOS
+        # ----------------------------------------------------------------------
 
         line_color = "#0B3254"
         glow_dot = COLOR_CYAN_GLOW
 
+        x1 = int(width * 0.04)
+        x2 = int(width * 0.25)
+        x3 = int(width * 0.32)
+        x4 = int(width * 0.68)
+
+        y1 = int(height * 0.045)
+        y2 = int(height * 0.09)
 
         self.bg_canvas.create_line(
-            30,
-            25,
-            180,
-            25,
-            230,
-            50,
-            480,
-            50,
+            x1,
+            y1,
+            x2,
+            y1,
+            x3,
+            y2,
+            x4,
+            y2,
             fill=line_color,
-            width=1.5
+            width=2,
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            177,
-            22,
-            183,
-            28,
+            x2 - 3,
+            y1 - 3,
+            x2 + 3,
+            y1 + 3,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            477,
-            47,
-            483,
-            53,
+            x4 - 3,
+            y2 - 3,
+            x4 + 3,
+            y2 + 3,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
 
+        # ----------------------------------------------------------------------
+        # CIRCUITO INFERIOR
+        # ----------------------------------------------------------------------
+
+        y3 = int(height * 0.94)
+        y4 = int(height * 0.91)
+
+        x5 = int(width * 0.06)
+        x6 = int(width * 0.25)
+        x7 = int(width * 0.32)
+        x8 = int(width * 0.78)
 
         self.bg_canvas.create_line(
-            50,
-            610,
-            200,
-            610,
-            250,
-            590,
-            550,
-            590,
+            x5,
+            y3,
+            x6,
+            y3,
+            x7,
+            y4,
+            x8,
+            y4,
             fill=line_color,
-            width=1.5
+            width=2,
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            247,
-            587,
-            253,
-            593,
+            x7 - 3,
+            y4 - 3,
+            x7 + 3,
+            y4 + 3,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
 
+        self.bg_canvas.create_oval(
+            x8 - 3,
+            y4 - 3,
+            x8 + 3,
+            y4 + 3,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+        self.bg_canvas.tag_lower(
+            "background"
+        )
+
+
+    # ==========================================================================
+    # --- HEX → RGB
+    # ==========================================================================
 
     @staticmethod
     def hex_to_rgb(hex_str):
@@ -392,7 +757,10 @@ class Phase7App:
         hex_str = hex_str.lstrip("#")
 
         return tuple(
-            int(hex_str[i:i + 2], 16)
+            int(
+                hex_str[i:i + 2],
+                16
+            )
             for i in (0, 2, 4)
         )
 
@@ -404,6 +772,7 @@ class Phase7App:
     def clear_card(self):
 
         for widget in self.card_frame.winfo_children():
+
             widget.destroy()
 
 
@@ -480,7 +849,6 @@ class Phase7App:
             text="ETAPA 1/3 — LABORATÓRIO DE INJEÇÃO SQL"
         )
 
-
         lbl_title = tk.Label(
             self.card_frame,
             text="💉 LABORATÓRIO DE INJEÇÃO SQL (SQLi) VS PREPARED STATEMENTS",
@@ -494,7 +862,6 @@ class Phase7App:
             padx=20,
             pady=(12, 4)
         )
-
 
         lbl_desc = tk.Label(
             self.card_frame,
@@ -516,7 +883,6 @@ class Phase7App:
             pady=2
         )
 
-
         frame_input = tk.Frame(
             self.card_frame,
             bg=COLOR_CARD_BG
@@ -528,15 +894,15 @@ class Phase7App:
             pady=5
         )
 
-
         tk.Label(
             frame_input,
             text="Entrada do Usuário:",
             font=("Segoe UI", 9, "bold"),
             fg=COLOR_TEXT_MUTED,
             bg=COLOR_CARD_BG
-        ).pack(anchor="w")
-
+        ).pack(
+            anchor="w"
+        )
 
         self.entry_user_input = tk.Entry(
             frame_input,
@@ -563,7 +929,6 @@ class Phase7App:
             self.update_live_sqli
         )
 
-
         btn_quick_payload = tk.Button(
             frame_input,
             text="⚡ Inserir Payload SQLi: ' OR '1'='1",
@@ -582,7 +947,6 @@ class Phase7App:
             pady=2
         )
 
-
         tk.Label(
             self.card_frame,
             text="1. Consulta Vulnerável (Concatenação de Strings):",
@@ -594,7 +958,6 @@ class Phase7App:
             padx=20,
             pady=(4, 1)
         )
-
 
         self.lbl_vuln_sql = tk.Label(
             self.card_frame,
@@ -615,7 +978,6 @@ class Phase7App:
             pady=2
         )
 
-
         tk.Label(
             self.card_frame,
             text="2. Consulta Segura (Prepared Statement / Parametrizada):",
@@ -627,7 +989,6 @@ class Phase7App:
             padx=20,
             pady=(4, 1)
         )
-
 
         self.lbl_safe_sql = tk.Label(
             self.card_frame,
@@ -648,7 +1009,6 @@ class Phase7App:
             pady=2
         )
 
-
         self.lbl_sqli_status = tk.Label(
             self.card_frame,
             text="",
@@ -662,9 +1022,7 @@ class Phase7App:
             pady=4
         )
 
-
         self.update_live_sqli()
-
 
         btn_next1 = self.create_custom_button(
             self.card_frame,
@@ -676,6 +1034,11 @@ class Phase7App:
             fill="x",
             padx=20,
             pady=(6, 12)
+        )
+
+        self.root.after(
+            50,
+            self.update_layout
         )
 
 
@@ -696,8 +1059,13 @@ class Phase7App:
 
     def update_live_sqli(self, event=None):
 
-        user_in = self.entry_user_input.get()
+        if not hasattr(
+            self,
+            "entry_user_input"
+        ):
+            return
 
+        user_in = self.entry_user_input.get()
 
         vuln_query = (
             f"SELECT * FROM usuarios WHERE "
@@ -708,17 +1076,17 @@ class Phase7App:
             text=vuln_query
         )
 
-
         safe_query = (
             "SELECT * FROM usuarios WHERE "
             "username = ? AND status = 'ATIVO';\n"
-            "[Parâmetro 1 = " + repr(user_in) + "]"
+            "[Parâmetro 1 = " +
+            repr(user_in) +
+            "]"
         )
 
         self.lbl_safe_sql.config(
             text=safe_query
         )
-
 
         if (
             "'" in user_in
@@ -758,7 +1126,6 @@ class Phase7App:
             text="ETAPA 2/3 — CONTROLE DE ACESSO ABAC"
         )
 
-
         lbl_title = tk.Label(
             self.card_frame,
             text="🛡️ MINIGAME: AVALIADOR DE POLÍTICA DINÂMICA (ABAC)",
@@ -772,7 +1139,6 @@ class Phase7App:
             padx=20,
             pady=(10, 2)
         )
-
 
         lbl_desc = tk.Label(
             self.card_frame,
@@ -794,7 +1160,6 @@ class Phase7App:
             pady=2
         )
 
-
         grid_frame = tk.Frame(
             self.card_frame,
             bg=COLOR_CARD_BG
@@ -805,7 +1170,6 @@ class Phase7App:
             padx=20,
             pady=6
         )
-
 
         # Cargo
 
@@ -851,7 +1215,6 @@ class Phase7App:
             pady=3
         )
 
-
         # Horário
 
         tk.Label(
@@ -894,7 +1257,6 @@ class Phase7App:
             padx=10,
             pady=3
         )
-
 
         # Local
 
@@ -939,7 +1301,6 @@ class Phase7App:
             pady=3
         )
 
-
         # Recurso
 
         tk.Label(
@@ -983,7 +1344,6 @@ class Phase7App:
             pady=3
         )
 
-
         btn_eval = self.create_custom_button(
             self.card_frame,
             "⚙️ Testar Política de Acesso (Motor ABAC)",
@@ -995,7 +1355,6 @@ class Phase7App:
             padx=20,
             pady=6
         )
-
 
         self.lbl_abac_result = tk.Label(
             self.card_frame,
@@ -1014,7 +1373,6 @@ class Phase7App:
             pady=4
         )
 
-
         self.btn_next2 = self.create_custom_button(
             self.card_frame,
             "Ir para o Quiz Conceitual Expandido ➔",
@@ -1031,6 +1389,11 @@ class Phase7App:
             state="disabled"
         )
 
+        self.root.after(
+            50,
+            self.update_layout
+        )
+
 
     def evaluate_abac(self):
 
@@ -1039,13 +1402,13 @@ class Phase7App:
         loc = self.abac_loc_var.get()
         sens = self.abac_sens_var.get()
 
-
         if sens == "Mural Público":
 
             messagebox.showinfo(
                 "ACESSO PERMITIDO! 🔓",
                 "Recurso Público: Acesso concedido a todos os usuários "
-                "sem restrições contextuais."
+                "sem restrições contextuais.",
+                parent=self.root
             )
 
             self.lbl_abac_result.config(
@@ -1061,24 +1424,20 @@ class Phase7App:
 
             reasons = []
 
-
             if role != "Gerente":
                 reasons.append(
                     "❌ Cargo inadequado (Exige 'Gerente')."
                 )
-
 
             if time != "Comercial (08h-18h)":
                 reasons.append(
                     "❌ Fora do horário autorizado (Exige 'Comercial')."
                 )
 
-
             if loc != "VPN Interna":
                 reasons.append(
                     "❌ Local não confiável (Exige 'VPN Interna')."
                 )
-
 
             if not reasons:
 
@@ -1088,7 +1447,8 @@ class Phase7App:
                     "de segurança ABAC!\n\n"
                     "- Cargo: Gerente\n"
                     "- Horário: Comercial\n"
-                    "- Origem: VPN Interna"
+                    "- Origem: VPN Interna",
+                    parent=self.root
                 )
 
                 self.lbl_abac_result.config(
@@ -1102,13 +1462,16 @@ class Phase7App:
 
             else:
 
-                reason_str = "\n".join(reasons)
+                reason_str = "\n".join(
+                    reasons
+                )
 
                 messagebox.showerror(
                     "ACESSO NEGADO! 🚫",
                     "A política ABAC bloqueou a solicitação devido "
                     "aos seguintes atributos:\n\n"
-                    f"{reason_str}"
+                    f"{reason_str}",
+                    parent=self.root
                 )
 
                 self.lbl_abac_result.config(
@@ -1126,13 +1489,15 @@ class Phase7App:
         self.clear_card()
 
         self.lbl_mode.config(
-            text=f"ETAPA 3/3 — QUIZ "
-                 f"({self.current_q + 1}/{len(QUIZ_FASE_7)})"
+            text=(
+                f"ETAPA 3/3 — QUIZ "
+                f"({self.current_q + 1}/{len(QUIZ_FASE_7)})"
+            )
         )
 
-
-        q_data = QUIZ_FASE_7[self.current_q]
-
+        q_data = QUIZ_FASE_7[
+            self.current_q
+        ]
 
         lbl_cat = tk.Label(
             self.card_frame,
@@ -1147,7 +1512,6 @@ class Phase7App:
             padx=20,
             pady=(15, 5)
         )
-
 
         lbl_q = tk.Label(
             self.card_frame,
@@ -1165,11 +1529,11 @@ class Phase7App:
             pady=10
         )
 
-
         self.quiz_buttons = []
 
-
-        for i, opt in enumerate(q_data["options"]):
+        for i, opt in enumerate(
+            q_data["options"]
+        ):
 
             btn = tk.Button(
                 self.card_frame,
@@ -1208,30 +1572,43 @@ class Phase7App:
                 self.on_hover_leave(b)
             )
 
-            self.quiz_buttons.append(btn)
+            self.quiz_buttons.append(
+                btn
+            )
+
+        self.root.after(
+            50,
+            self.update_layout
+        )
 
 
     # ==========================================================================
     # --- VERIFICAR RESPOSTA
     # ==========================================================================
 
-    def check_quiz_answer(self, selected_idx):
+    def check_quiz_answer(
+        self,
+        selected_idx
+    ):
 
         for btn in self.quiz_buttons:
+
             btn.config(
                 state="disabled"
             )
 
-
-        q_data = QUIZ_FASE_7[self.current_q]
+        q_data = QUIZ_FASE_7[
+            self.current_q
+        ]
 
         correct_idx = q_data["answer"]
 
-        selected_btn = self.quiz_buttons[selected_idx]
-
+        selected_btn = self.quiz_buttons[
+            selected_idx
+        ]
 
         # ----------------------------------------------------------------------
-        # RESPOSTA CORRETA
+        # CORRETA
         # ----------------------------------------------------------------------
 
         if selected_idx == correct_idx:
@@ -1243,43 +1620,34 @@ class Phase7App:
 
             self.root.update()
 
-
             messagebox.showinfo(
                 "Resposta Correta! 🎯",
                 f"{q_data['explanations'][selected_idx]}\n\n"
-                f"{q_data['tip']}"
+                f"{q_data['tip']}",
+                parent=self.root
             )
 
-
             self.current_q += 1
-
 
             if self.current_q < len(QUIZ_FASE_7):
 
                 self.load_quiz_mode()
-
 
             else:
 
                 messagebox.showinfo(
                     "Fase 7 Concluída com Excelência! 🏆",
                     "Parabéns! Você dominou a proteção contra SQL Injection, "
-                    "Hashing de Senhas, Controles ABAC e o Princípio do Menor Privilégio!"
+                    "Hashing de Senhas, Controles ABAC e o Princípio do Menor Privilégio!",
+                    parent=self.root
                 )
 
-                # ==============================================================
-                # IMPORTANTE:
-                # NÃO destruir a janela.
-                #
-                # O main.py será responsável por trocar para a Fase 8.
-                # ==============================================================
-
                 if self.ao_concluir:
+
                     self.ao_concluir()
 
-
         # ----------------------------------------------------------------------
-        # RESPOSTA INCORRETA
+        # INCORRETA
         # ----------------------------------------------------------------------
 
         else:
@@ -1289,22 +1657,22 @@ class Phase7App:
                 fg="#FFFFFF"
             )
 
-            self.quiz_buttons[correct_idx].config(
+            self.quiz_buttons[
+                correct_idx
+            ].config(
                 bg=COLOR_CORRECT,
                 fg="#000000"
             )
 
             self.root.update()
 
-
             messagebox.showerror(
                 "Resposta Incorreta! ⚠️",
                 f"{q_data['explanations'][selected_idx]}\n\n"
-                f"{q_data['tip']}"
+                f"{q_data['tip']}",
+                parent=self.root
             )
 
-
-            # Continua na mesma questão
             self.load_quiz_mode()
 
 
@@ -1312,8 +1680,27 @@ class Phase7App:
 # --- FUNÇÃO PADRÃO PARA O MAIN.PY
 # ==============================================================================
 
-def executar(root, ao_concluir):
+def executar(
+    root,
+    ao_concluir=None
+):
 
-    app = Phase7App(root)
+    return Phase7App(
+        root,
+        ao_concluir
+    )
 
-    app.ao_concluir = ao_concluir
+
+# ==============================================================================
+# --- TESTE INDIVIDUAL
+# ==============================================================================
+
+if __name__ == "__main__":
+
+    root = tk.Tk()
+
+    executar(
+        root
+    )
+
+    root.mainloop()

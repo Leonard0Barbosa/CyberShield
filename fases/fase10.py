@@ -142,9 +142,24 @@ class BossFinal:
             "CYBERSHIELD — FASE 10 — BOSS FINAL"
         )
 
-        self.root.geometry("800x600")
-        self.root.resizable(False, False)
-        self.root.configure(bg=BG)
+        # ====================================================
+        # TELA CHEIA
+        # ====================================================
+
+        self.root.attributes(
+            "-fullscreen",
+            True
+        )
+
+        self.root.configure(
+            bg=BG
+        )
+
+        # ESC sai do modo tela cheia
+        self.root.bind(
+            "<Escape>",
+            self.sair_fullscreen
+        )
 
         # ====================================================
         # STATUS DA BATALHA
@@ -167,6 +182,18 @@ class BossFinal:
 
 
     # ========================================================
+    # SAIR DO FULLSCREEN
+    # ========================================================
+
+    def sair_fullscreen(self, event=None):
+
+        self.root.attributes(
+            "-fullscreen",
+            False
+        )
+
+
+    # ========================================================
     # LIMPAR JANELA
     # ========================================================
 
@@ -184,7 +211,9 @@ class BossFinal:
 
         self.limpar_janela()
 
-        self.root.configure(bg=BG)
+        self.root.configure(
+            bg=BG
+        )
 
         self.frame_inicio = tk.Frame(
             self.root,
@@ -199,15 +228,17 @@ class BossFinal:
         tk.Label(
             self.frame_inicio,
             text="⚠  ALERTA DE SEGURANÇA MÁXIMO  ⚠",
-            font=("Consolas", 11, "bold"),
+            font=("Consolas", 15, "bold"),
             fg=RED,
             bg=BG
-        ).pack(pady=(35, 12))
+        ).pack(
+            pady=(80, 20)
+        )
 
         tk.Label(
             self.frame_inicio,
             text="☠",
-            font=("Arial", 55, "bold"),
+            font=("Arial", 80, "bold"),
             fg=RED,
             bg=BG
         ).pack()
@@ -215,15 +246,17 @@ class BossFinal:
         tk.Label(
             self.frame_inicio,
             text="BOSS FINAL",
-            font=("Consolas", 32, "bold"),
+            font=("Consolas", 40, "bold"),
             fg=RED,
             bg=BG
-        ).pack(pady=2)
+        ).pack(
+            pady=5
+        )
 
         tk.Label(
             self.frame_inicio,
             text="CYBERSHIELD // FASE 10",
-            font=("Consolas", 13, "bold"),
+            font=("Consolas", 16, "bold"),
             fg=WHITE,
             bg=BG
         ).pack()
@@ -231,15 +264,17 @@ class BossFinal:
         tk.Label(
             self.frame_inicio,
             text="UMA AMEAÇA CRÍTICA FOI DETECTADA.",
-            font=("Consolas", 10, "bold"),
+            font=("Consolas", 13, "bold"),
             fg=GRAY,
             bg=BG
-        ).pack(pady=(22, 3))
+        ).pack(
+            pady=(30, 5)
+        )
 
         tk.Label(
             self.frame_inicio,
             text="O SISTEMA DEPENDE DE VOCÊ.",
-            font=("Consolas", 10, "bold"),
+            font=("Consolas", 13, "bold"),
             fg=RED,
             bg=BG
         ).pack()
@@ -248,20 +283,22 @@ class BossFinal:
             self.frame_inicio,
             bg=RED,
             height=2,
-            width=480
-        ).pack(pady=22)
+            width=600
+        ).pack(
+            pady=30
+        )
 
         self.btn_iniciar = tk.Button(
             self.frame_inicio,
             text="⚔  INICIAR BATALHA",
-            font=("Consolas", 12, "bold"),
+            font=("Consolas", 14, "bold"),
             fg=WHITE,
             bg=RED_DARK,
             activeforeground=WHITE,
             activebackground=RED_HOVER,
             relief="flat",
-            padx=35,
-            pady=11,
+            padx=45,
+            pady=14,
             cursor="hand2",
             takefocus=False,
             command=self.iniciar
@@ -272,10 +309,20 @@ class BossFinal:
         tk.Label(
             self.frame_inicio,
             text="⚠ ÚLTIMA LINHA DE DEFESA ⚠",
-            font=("Consolas", 8, "bold"),
+            font=("Consolas", 10, "bold"),
             fg="#660000",
             bg=BG
-        ).pack(pady=25)
+        ).pack(
+            pady=30
+        )
+
+        tk.Label(
+            self.frame_inicio,
+            text="ESC — SAIR DA TELA CHEIA",
+            font=("Consolas", 8),
+            fg="#441111",
+            bg=BG
+        ).pack()
 
 
     # ========================================================
@@ -286,9 +333,16 @@ class BossFinal:
 
         self.vida_jogador = 100
         self.vida_boss = 100
+
         self.questao_atual = 0
         self.respondida = False
         self.fase_finalizada = False
+
+        # Garante que continue em tela cheia
+        self.root.attributes(
+            "-fullscreen",
+            True
+        )
 
         self.criar_interface()
 
@@ -303,23 +357,28 @@ class BossFinal:
 
         self.limpar_janela()
 
-        self.root.configure(bg=BG)
+        self.root.configure(
+            bg=BG
+        )
 
         tk.Label(
             self.root,
             text="☠  CYBERSHIELD // BOSS FINAL  ☠",
-            font=("Consolas", 17, "bold"),
+            font=("Consolas", 22, "bold"),
             fg=RED,
             bg=BG
-        ).pack(pady=(10, 2))
+        ).pack(
+            pady=(20, 3)
+        )
 
         tk.Label(
             self.root,
             text="SISTEMA EM ESTADO CRÍTICO",
-            font=("Consolas", 8, "bold"),
+            font=("Consolas", 10, "bold"),
             fg=RED,
             bg=BG
         ).pack()
+
 
         # ====================================================
         # STATUS
@@ -332,9 +391,10 @@ class BossFinal:
 
         self.status.pack(
             fill="x",
-            padx=25,
-            pady=8
+            padx=100,
+            pady=20
         )
+
 
         # ====================================================
         # PLAYER
@@ -349,33 +409,37 @@ class BossFinal:
             side="left",
             fill="x",
             expand=True,
-            padx=8
+            padx=20
         )
 
         tk.Label(
             self.player_frame,
             text="🛡 PLAYER",
-            font=("Consolas", 9, "bold"),
+            font=("Consolas", 11, "bold"),
             fg=CYAN,
             bg=BG
-        ).pack(anchor="w")
+        ).pack(
+            anchor="w"
+        )
 
         self.player_bar_bg = tk.Canvas(
             self.player_frame,
-            width=280,
-            height=18,
+            width=350,
+            height=22,
             bg="#260909",
             highlightthickness=1,
             highlightbackground="#521010"
         )
 
-        self.player_bar_bg.pack(pady=3)
+        self.player_bar_bg.pack(
+            pady=5
+        )
 
         self.player_bar = self.player_bar_bg.create_rectangle(
             0,
             0,
-            280,
-            18,
+            350,
+            22,
             fill=CYAN,
             outline=""
         )
@@ -383,12 +447,13 @@ class BossFinal:
         self.player_hp = tk.Label(
             self.player_frame,
             text="100 / 100 HP",
-            font=("Consolas", 8, "bold"),
+            font=("Consolas", 9, "bold"),
             fg=WHITE,
             bg=BG
         )
 
         self.player_hp.pack()
+
 
         # ====================================================
         # BOSS
@@ -403,33 +468,37 @@ class BossFinal:
             side="right",
             fill="x",
             expand=True,
-            padx=8
+            padx=20
         )
 
         tk.Label(
             self.boss_frame,
             text="☠ BOSS",
-            font=("Consolas", 9, "bold"),
+            font=("Consolas", 11, "bold"),
             fg=RED,
             bg=BG
-        ).pack(anchor="e")
+        ).pack(
+            anchor="e"
+        )
 
         self.boss_bar_bg = tk.Canvas(
             self.boss_frame,
-            width=280,
-            height=18,
+            width=350,
+            height=22,
             bg="#260909",
             highlightthickness=1,
             highlightbackground="#521010"
         )
 
-        self.boss_bar_bg.pack(pady=3)
+        self.boss_bar_bg.pack(
+            pady=5
+        )
 
         self.boss_bar = self.boss_bar_bg.create_rectangle(
             0,
             0,
-            280,
-            18,
+            350,
+            22,
             fill=RED,
             outline=""
         )
@@ -437,12 +506,13 @@ class BossFinal:
         self.boss_hp = tk.Label(
             self.boss_frame,
             text="100 / 100 HP",
-            font=("Consolas", 8, "bold"),
+            font=("Consolas", 9, "bold"),
             fg=WHITE,
             bg=BG
         )
 
         self.boss_hp.pack()
+
 
         # ====================================================
         # CARD
@@ -458,35 +528,38 @@ class BossFinal:
         self.card.pack(
             fill="both",
             expand=True,
-            padx=30,
-            pady=8
+            padx=100,
+            pady=20
         )
+
 
         self.lbl_numero = tk.Label(
             self.card,
             text="",
-            font=("Consolas", 9, "bold"),
+            font=("Consolas", 11, "bold"),
             fg=RED,
             bg=CARD
         )
 
         self.lbl_numero.pack(
-            pady=(10, 3)
+            pady=(25, 8)
         )
+
 
         self.lbl_questao = tk.Label(
             self.card,
             text="",
-            font=("Segoe UI", 11, "bold"),
+            font=("Segoe UI", 15, "bold"),
             fg=WHITE,
             bg=CARD,
-            wraplength=650,
+            wraplength=1000,
             justify="center"
         )
 
         self.lbl_questao.pack(
-            pady=5
+            pady=15
         )
+
 
         self.frame_opcoes = tk.Frame(
             self.card,
@@ -495,33 +568,35 @@ class BossFinal:
 
         self.frame_opcoes.pack(
             fill="x",
-            padx=60,
-            pady=8
+            padx=150,
+            pady=20
         )
+
 
         self.lbl_evento = tk.Label(
             self.card,
             text="",
-            font=("Consolas", 9, "bold"),
+            font=("Consolas", 11, "bold"),
             fg=WHITE,
             bg=CARD
         )
 
         self.lbl_evento.pack(
-            pady=4
+            pady=10
         )
+
 
         self.btn_proxima = tk.Button(
             self.card,
             text="PRÓXIMA RODADA  ➜",
-            font=("Consolas", 9, "bold"),
+            font=("Consolas", 11, "bold"),
             fg=WHITE,
             bg=RED_DARK,
             activeforeground=WHITE,
             activebackground=RED_HOVER,
             relief="flat",
-            padx=22,
-            pady=6,
+            padx=30,
+            pady=10,
             cursor="hand2",
             takefocus=False,
             command=self.proxima
@@ -536,11 +611,14 @@ class BossFinal:
 
         self.respondida = False
 
-        dados = QUESTOES[self.questao_atual]
+        dados = QUESTOES[
+            self.questao_atual
+        ]
 
         self.lbl_numero.config(
             text=(
-                f"AMEAÇA {self.questao_atual + 1} / "
+                f"AMEAÇA "
+                f"{self.questao_atual + 1} / "
                 f"{len(QUESTOES)}"
             )
         )
@@ -555,31 +633,37 @@ class BossFinal:
 
         self.btn_proxima.pack_forget()
 
+
         for widget in self.frame_opcoes.winfo_children():
+
             widget.destroy()
 
-        for i, opcao in enumerate(dados["opcoes"]):
+
+        for i, opcao in enumerate(
+            dados["opcoes"]
+        ):
 
             botao = tk.Button(
                 self.frame_opcoes,
                 text=opcao,
-                font=("Segoe UI", 9, "bold"),
+                font=("Segoe UI", 11, "bold"),
                 fg=WHITE,
                 bg=BUTTON,
                 activeforeground=WHITE,
                 activebackground=BUTTON_HOVER,
                 relief="flat",
                 anchor="w",
-                padx=12,
-                pady=7,
+                padx=15,
+                pady=10,
                 cursor="hand2",
                 takefocus=False,
-                command=lambda indice=i: self.responder(indice)
+                command=lambda indice=i:
+                self.responder(indice)
             )
 
             botao.pack(
                 fill="x",
-                pady=3
+                pady=5
             )
 
 
@@ -597,14 +681,18 @@ class BossFinal:
 
         self.respondida = True
 
-        dados = QUESTOES[self.questao_atual]
+        dados = QUESTOES[
+            self.questao_atual
+        ]
 
         botoes = self.frame_opcoes.winfo_children()
 
         for botao in botoes:
+
             botao.config(
                 state="disabled"
             )
+
 
         # ====================================================
         # ACERTO
@@ -612,13 +700,21 @@ class BossFinal:
 
         if escolha == dados["correta"]:
 
-            dano = random.randint(22, 34)
+            dano = random.randint(
+                22,
+                34
+            )
 
-            critico = random.random() < 0.15
+            critico = (
+                random.random() < 0.15
+            )
 
             if critico:
 
-                dano += random.randint(8, 15)
+                dano += random.randint(
+                    8,
+                    15
+                )
 
                 self.lbl_evento.config(
                     text=(
@@ -647,13 +743,17 @@ class BossFinal:
 
             self.animar_boss()
 
+
         # ====================================================
         # ERRO
         # ====================================================
 
         else:
 
-            dano = random.randint(18, 32)
+            dano = random.randint(
+                18,
+                32
+            )
 
             self.vida_jogador -= dano
 
@@ -669,18 +769,22 @@ class BossFinal:
                 bg=RED_DARK
             )
 
-            botoes[dados["correta"]].config(
+            botoes[
+                dados["correta"]
+            ].config(
                 bg=GREEN,
                 fg="#001B0B"
             )
 
             self.animar_player()
 
+
         # ====================================================
         # ATUALIZAR STATUS
         # ====================================================
 
         self.atualizar_status()
+
 
         # ====================================================
         # DERROTA
@@ -695,6 +799,7 @@ class BossFinal:
 
             return
 
+
         # ====================================================
         # VITÓRIA
         # ====================================================
@@ -708,12 +813,13 @@ class BossFinal:
 
             return
 
+
         # ====================================================
         # CONTINUAR
         # ====================================================
 
         self.btn_proxima.pack(
-            pady=4
+            pady=8
         )
 
 
@@ -731,7 +837,9 @@ class BossFinal:
             100,
             lambda: (
                 self.card.winfo_exists()
-                and self.card.config(bg=CARD)
+                and self.card.config(
+                    bg=CARD
+                )
             )
         )
 
@@ -748,7 +856,9 @@ class BossFinal:
 
         self.root.after(
             100,
-            lambda: self.root.configure(bg=BG)
+            lambda: self.root.configure(
+                bg=BG
+            )
         )
 
 
@@ -760,20 +870,31 @@ class BossFinal:
 
         self.vida_jogador = max(
             0,
-            min(100, self.vida_jogador)
+            min(
+                100,
+                self.vida_jogador
+            )
         )
 
         self.vida_boss = max(
             0,
-            min(100, self.vida_boss)
+            min(
+                100,
+                self.vida_boss
+            )
         )
+
 
         # ====================================================
         # PLAYER
         # ====================================================
 
         largura_player = (
-            280 * (self.vida_jogador / 100)
+            350 *
+            (
+                self.vida_jogador /
+                100
+            )
         )
 
         self.player_bar_bg.coords(
@@ -781,19 +902,26 @@ class BossFinal:
             0,
             0,
             largura_player,
-            18
+            22
         )
 
         self.player_hp.config(
-            text=f"{self.vida_jogador} / 100 HP"
+            text=(
+                f"{self.vida_jogador} / 100 HP"
+            )
         )
+
 
         # ====================================================
         # BOSS
         # ====================================================
 
         largura_boss = (
-            280 * (self.vida_boss / 100)
+            350 *
+            (
+                self.vida_boss /
+                100
+            )
         )
 
         self.boss_bar_bg.coords(
@@ -801,11 +929,13 @@ class BossFinal:
             0,
             0,
             largura_boss,
-            18
+            22
         )
 
         self.boss_hp.config(
-            text=f"{self.vida_boss} / 100 HP"
+            text=(
+                f"{self.vida_boss} / 100 HP"
+            )
         )
 
 
@@ -821,14 +951,18 @@ class BossFinal:
         if self.vida_jogador <= 0:
 
             self.derrota()
+
             return
 
         if self.vida_boss <= 0:
 
             self.vitoria()
+
             return
 
+
         self.questao_atual += 1
+
 
         # ====================================================
         # TODAS AS QUESTÕES TERMINARAM
@@ -845,6 +979,7 @@ class BossFinal:
                 ),
                 fg=RED
             )
+
 
         self.carregar_questao()
 
@@ -869,33 +1004,37 @@ class BossFinal:
             bg="#001A0A"
         )
 
+
         tk.Label(
             self.root,
             text="🏆",
-            font=("Arial", 55),
+            font=("Arial", 80),
             fg=GREEN,
             bg="#001A0A"
         ).pack(
-            pady=(70, 5)
+            pady=(120, 10)
         )
+
 
         tk.Label(
             self.root,
             text="BOSS DERROTADO",
-            font=("Consolas", 30, "bold"),
+            font=("Consolas", 40, "bold"),
             fg=GREEN,
             bg="#001A0A"
         ).pack()
 
+
         tk.Label(
             self.root,
             text="CYBERSHIELD FOI SALVO",
-            font=("Consolas", 13, "bold"),
+            font=("Consolas", 17, "bold"),
             fg=WHITE,
             bg="#001A0A"
         ).pack(
-            pady=10
+            pady=15
         )
+
 
         tk.Label(
             self.root,
@@ -903,13 +1042,14 @@ class BossFinal:
                 "A ameaça foi contida.\n"
                 "A infraestrutura está segura."
             ),
-            font=("Segoe UI", 11),
+            font=("Segoe UI", 14),
             fg=GRAY,
             bg="#001A0A",
             justify="center"
         ).pack(
-            pady=15
+            pady=20
         )
+
 
         # ====================================================
         # PRÓXIMA FASE
@@ -920,19 +1060,19 @@ class BossFinal:
             tk.Button(
                 self.root,
                 text="CONTINUAR ➜",
-                font=("Consolas", 10, "bold"),
+                font=("Consolas", 12, "bold"),
                 fg=WHITE,
                 bg="#075C2B",
                 activeforeground=WHITE,
                 activebackground="#0A7A3A",
                 relief="flat",
-                padx=30,
-                pady=8,
+                padx=40,
+                pady=10,
                 takefocus=False,
                 cursor="hand2",
                 command=self.proxima_fase
             ).pack(
-                pady=15
+                pady=20
             )
 
         else:
@@ -940,12 +1080,23 @@ class BossFinal:
             tk.Label(
                 self.root,
                 text="🏆 MISSÃO CONCLUÍDA",
-                font=("Consolas", 10, "bold"),
+                font=("Consolas", 12, "bold"),
                 fg=GREEN,
                 bg="#001A0A"
             ).pack(
-                pady=10
+                pady=15
             )
+
+
+        tk.Label(
+            self.root,
+            text="ESC — SAIR DA TELA CHEIA",
+            font=("Consolas", 8),
+            fg="#285C3A",
+            bg="#001A0A"
+        ).pack(
+            pady=10
+        )
 
 
     # ========================================================
@@ -968,33 +1119,37 @@ class BossFinal:
             bg="#080000"
         )
 
+
         tk.Label(
             self.root,
             text="☠",
-            font=("Arial", 55),
+            font=("Arial", 80),
             fg=RED,
             bg="#080000"
         ).pack(
-            pady=(70, 5)
+            pady=(120, 10)
         )
+
 
         tk.Label(
             self.root,
             text="SISTEMA COMPROMETIDO",
-            font=("Consolas", 27, "bold"),
+            font=("Consolas", 36, "bold"),
             fg=RED,
             bg="#080000"
         ).pack()
 
+
         tk.Label(
             self.root,
             text="BOSS FINAL — DERROTA",
-            font=("Consolas", 13, "bold"),
+            font=("Consolas", 17, "bold"),
             fg=WHITE,
             bg="#080000"
         ).pack(
-            pady=10
+            pady=15
         )
+
 
         tk.Label(
             self.root,
@@ -1002,13 +1157,14 @@ class BossFinal:
                 "A defesa falhou.\n"
                 "A infraestrutura foi comprometida."
             ),
-            font=("Segoe UI", 11),
+            font=("Segoe UI", 14),
             fg=GRAY,
             bg="#080000",
             justify="center"
         ).pack(
-            pady=15
+            pady=20
         )
+
 
         # ====================================================
         # TENTAR NOVAMENTE
@@ -1017,27 +1173,42 @@ class BossFinal:
         tk.Button(
             self.root,
             text="TENTAR NOVAMENTE",
-            font=("Consolas", 10, "bold"),
+            font=("Consolas", 12, "bold"),
             fg=WHITE,
             bg=RED_DARK,
             activeforeground=WHITE,
             activebackground=RED_HOVER,
             relief="flat",
-            padx=30,
-            pady=8,
+            padx=40,
+            pady=10,
             takefocus=False,
             cursor="hand2",
             command=self.iniciar
         ).pack(
-            pady=15
+            pady=20
+        )
+
+
+        tk.Label(
+            self.root,
+            text="ESC — SAIR DA TELA CHEIA",
+            font=("Consolas", 8),
+            fg="#441111",
+            bg="#080000"
+        ).pack(
+            pady=10
         )
 
 
 # ============================================================
 # FUNÇÃO EXECUTAR
+# PADRÃO DO MAIN.PY
 # ============================================================
 
-def executar(root, proxima_fase):
+def executar(
+    root,
+    proxima_fase
+):
 
     BossFinal(
         root,

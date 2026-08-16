@@ -249,10 +249,40 @@ class Phase8App:
             "700x640"
         )
 
-        self.root.resizable(
-            False,
-            False
+        self.root.minsize(
+            700,
+            640
         )
+
+        self.root.resizable(
+            True,
+            True
+        )
+
+
+        # ==========================================================================
+        # TELA CHEIA — ADICIONADO IGUAL À FASE 3
+        # ==========================================================================
+
+        self.fullscreen = False
+
+        self.root.bind(
+            "<F11>",
+            self.toggle_fullscreen
+        )
+
+        self.root.bind(
+            "<Escape>",
+            self.exit_fullscreen
+        )
+
+
+        # ==========================================================================
+        # CONTROLE DE REDIMENSIONAMENTO
+        # ==========================================================================
+
+        self.resize_job = None
+
 
         self.current_q = 0
 
@@ -260,9 +290,248 @@ class Phase8App:
 
         self.lives = 3
 
+
         self.setup_ui()
 
         self.load_quiz_mode()
+
+
+        self.root.bind(
+            "<Configure>",
+            self.on_window_resize
+        )
+
+
+    # ==========================================================================
+    # TELA CHEIA
+    # ==========================================================================
+
+    def toggle_fullscreen(self, event=None):
+
+        self.fullscreen = not self.fullscreen
+
+        self.root.attributes(
+            "-fullscreen",
+            self.fullscreen
+        )
+
+        if self.fullscreen:
+
+            self.btn_fullscreen.config(
+                text="🗗 SAIR DA TELA CHEIA"
+            )
+
+        else:
+
+            self.btn_fullscreen.config(
+                text="⛶ TELA CHEIA"
+            )
+
+        self.root.update_idletasks()
+
+        self.update_layout()
+
+        return "break"
+
+
+    def exit_fullscreen(self, event=None):
+
+        if self.fullscreen:
+
+            self.fullscreen = False
+
+            self.root.attributes(
+                "-fullscreen",
+                False
+            )
+
+            self.btn_fullscreen.config(
+                text="⛶ TELA CHEIA"
+            )
+
+            self.root.update_idletasks()
+
+            self.update_layout()
+
+        return "break"
+
+
+    # ==========================================================================
+    # REDIMENSIONAMENTO
+    # ==========================================================================
+
+    def on_window_resize(self, event=None):
+
+        if event is not None:
+
+            if event.widget != self.root:
+                return
+
+        if self.resize_job:
+
+            try:
+
+                self.root.after_cancel(
+                    self.resize_job
+                )
+
+            except Exception:
+                pass
+
+
+        self.resize_job = self.root.after(
+            50,
+            self.update_layout
+        )
+
+
+    # ==========================================================================
+    # ATUALIZAR LAYOUT
+    # ==========================================================================
+
+    def update_layout(self):
+
+        self.resize_job = None
+
+        width = self.root.winfo_width()
+
+        height = self.root.winfo_height()
+
+
+        if width < 1 or height < 1:
+
+            return
+
+
+        # ----------------------------------------------------------------------
+        # FUNDO
+        # ----------------------------------------------------------------------
+
+        self.draw_cyber_background(
+            width,
+            height
+        )
+
+
+        # ----------------------------------------------------------------------
+        # HEADER
+        # ----------------------------------------------------------------------
+
+        header_width = max(
+            500,
+            int(width * 0.94)
+        )
+
+        header_width = min(
+            header_width,
+            width - 30
+        )
+
+
+        self.bg_canvas.coords(
+            self.header_window,
+            width / 2,
+            max(
+                35,
+                height * 0.055
+            )
+        )
+
+
+        self.bg_canvas.itemconfig(
+            self.header_window,
+            width=header_width
+        )
+
+
+        # ----------------------------------------------------------------------
+        # CARD
+        # ----------------------------------------------------------------------
+
+        card_width = min(
+            int(width * 0.92),
+            1200
+        )
+
+        card_height = min(
+            int(height * 0.78),
+            720
+        )
+
+
+        card_width = max(
+            card_width,
+            620
+        )
+
+        card_height = max(
+            card_height,
+            430
+        )
+
+
+        card_width = min(
+            card_width,
+            width - 30
+        )
+
+        card_height = min(
+            card_height,
+            height - 100
+        )
+
+
+        card_y = height * 0.54
+
+
+        self.bg_canvas.coords(
+            self.card_window,
+            width / 2,
+            card_y
+        )
+
+
+        self.bg_canvas.itemconfig(
+            self.card_window,
+            width=card_width,
+            height=card_height
+        )
+
+
+        # ----------------------------------------------------------------------
+        # AJUSTE DA PERGUNTA
+        # ----------------------------------------------------------------------
+
+        if hasattr(
+            self,
+            "lbl_question"
+        ):
+
+            self.lbl_question.config(
+                wraplength=max(
+                    500,
+                    card_width - 60
+                )
+            )
+
+
+        # ----------------------------------------------------------------------
+        # AJUSTE DOS BOTÕES
+        # ----------------------------------------------------------------------
+
+        if hasattr(
+            self,
+            "quiz_buttons"
+        ):
+
+            for btn in self.quiz_buttons:
+
+                btn.pack_configure(
+                    padx=max(
+                        20,
+                        int(card_width * 0.03)
+                    )
+                )
 
 
     # ==========================================================================
@@ -273,9 +542,8 @@ class Phase8App:
 
         self.bg_canvas = tk.Canvas(
             self.root,
-            width=700,
-            height=640,
-            highlightthickness=0
+            highlightthickness=0,
+            bd=0
         )
 
         self.bg_canvas.pack(
@@ -283,7 +551,11 @@ class Phase8App:
             expand=True
         )
 
-        self.draw_cyber_background()
+
+        self.draw_cyber_background(
+            700,
+            640
+        )
 
 
         # ----------------------------------------------------------------------
@@ -295,7 +567,8 @@ class Phase8App:
             bg=COLOR_BG_TOP
         )
 
-        self.bg_canvas.create_window(
+
+        self.header_window = self.bg_canvas.create_window(
             350,
             35,
             window=self.status_frame,
@@ -315,6 +588,52 @@ class Phase8App:
             side="left"
         )
 
+
+        # ----------------------------------------------------------------------
+        # BOTÃO TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.btn_fullscreen = tk.Button(
+            self.status_frame,
+            text="⛶ TELA CHEIA",
+            font=("Consolas", 9, "bold"),
+            bg=COLOR_BTN_BG,
+            fg=COLOR_TEXT_MUTED,
+            activebackground=COLOR_BTN_HOVER,
+            activeforeground=COLOR_TEXT_MAIN,
+            relief="flat",
+            bd=0,
+            cursor="hand2",
+            command=self.toggle_fullscreen
+        )
+
+        self.btn_fullscreen.pack(
+            side="right",
+            padx=(10, 0)
+        )
+
+
+        self.btn_fullscreen.bind(
+            "<Enter>",
+            lambda e: self.btn_fullscreen.config(
+                bg=COLOR_BTN_HOVER,
+                fg=COLOR_TEXT_MAIN
+            )
+        )
+
+
+        self.btn_fullscreen.bind(
+            "<Leave>",
+            lambda e: self.btn_fullscreen.config(
+                bg=COLOR_BTN_BG,
+                fg=COLOR_TEXT_MUTED
+            )
+        )
+
+
+        # ----------------------------------------------------------------------
+        # STATUS
+        # ----------------------------------------------------------------------
 
         self.lbl_status = tk.Label(
             self.status_frame,
@@ -341,7 +660,8 @@ class Phase8App:
             bd=0
         )
 
-        self.bg_canvas.create_window(
+
+        self.card_window = self.bg_canvas.create_window(
             350,
             330,
             window=self.card_frame,
@@ -354,10 +674,24 @@ class Phase8App:
     # FUNDO CYBER
     # ==========================================================================
 
-    def draw_cyber_background(self):
+    def draw_cyber_background(
+        self,
+        width=700,
+        height=640
+    ):
 
-        width = 700
-        height = 640
+        # ----------------------------------------------------------------------
+        # LIMPA FUNDO ANTERIOR
+        # ----------------------------------------------------------------------
+
+        self.bg_canvas.delete(
+            "background"
+        )
+
+
+        # ----------------------------------------------------------------------
+        # CONVERTE CORES
+        # ----------------------------------------------------------------------
 
         r1, g1, b1 = self.hex_to_rgb(
             COLOR_BG_TOP
@@ -386,7 +720,10 @@ class Phase8App:
                 b1 + (b2 - b1) * (y / height)
             )
 
-            color = f"#{r:02x}{g:02x}{b:02x}"
+
+            color = (
+                f"#{r:02x}{g:02x}{b:02x}"
+            )
 
 
             self.bg_canvas.create_line(
@@ -394,7 +731,8 @@ class Phase8App:
                 y,
                 width,
                 y,
-                fill=color
+                fill=color,
+                tags="background"
             )
 
 
@@ -407,58 +745,107 @@ class Phase8App:
         glow_dot = COLOR_CYAN_GLOW
 
 
-        self.bg_canvas.create_line(
-            30,
-            25,
-            180,
-            25,
-            230,
-            50,
-            480,
-            50,
-            fill=line_color,
-            width=1.5
-        )
+        # Circuito superior
 
-        self.bg_canvas.create_oval(
-            177,
-            22,
-            183,
-            28,
-            fill=glow_dot,
-            outline=""
-        )
+        x1 = int(width * 0.04)
+        x2 = int(width * 0.25)
+        x3 = int(width * 0.32)
+        x4 = int(width * 0.68)
 
-        self.bg_canvas.create_oval(
-            477,
-            47,
-            483,
-            53,
-            fill=glow_dot,
-            outline=""
-        )
+        y1 = int(height * 0.045)
+        y2 = int(height * 0.08)
 
 
         self.bg_canvas.create_line(
-            50,
-            610,
-            200,
-            610,
-            250,
-            590,
-            550,
-            590,
+            x1,
+            y1,
+            x2,
+            y1,
+            x3,
+            y2,
+            x4,
+            y2,
             fill=line_color,
-            width=1.5
+            width=2,
+            tags="background"
         )
 
+
         self.bg_canvas.create_oval(
-            247,
-            587,
-            253,
-            593,
+            x2 - 3,
+            y1 - 3,
+            x2 + 3,
+            y1 + 3,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
+        )
+
+
+        self.bg_canvas.create_oval(
+            x4 - 3,
+            y2 - 3,
+            x4 + 3,
+            y2 + 3,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+
+        # ----------------------------------------------------------------------
+        # CIRCUITO INFERIOR
+        # ----------------------------------------------------------------------
+
+        y3 = int(height * 0.94)
+
+        y4 = int(height * 0.91)
+
+        x5 = int(width * 0.06)
+        x6 = int(width * 0.25)
+        x7 = int(width * 0.32)
+        x8 = int(width * 0.72)
+
+
+        self.bg_canvas.create_line(
+            x5,
+            y3,
+            x6,
+            y3,
+            x7,
+            y4,
+            x8,
+            y4,
+            fill=line_color,
+            width=2,
+            tags="background"
+        )
+
+
+        self.bg_canvas.create_oval(
+            x7 - 3,
+            y4 - 3,
+            x7 + 3,
+            y4 + 3,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+
+        self.bg_canvas.create_oval(
+            x8 - 3,
+            y4 - 3,
+            x8 + 3,
+            y4 + 3,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+
+        self.bg_canvas.tag_lower(
+            "background"
         )
 
 
@@ -525,6 +912,7 @@ class Phase8App:
             lambda e, b=btn:
             self.on_hover_enter(b)
         )
+
 
         btn.bind(
             "<Leave>",
@@ -597,6 +985,7 @@ class Phase8App:
             bg=COLOR_CARD_BG
         )
 
+
         lbl_cat.pack(
             anchor="w",
             padx=20,
@@ -608,7 +997,7 @@ class Phase8App:
         # PERGUNTA
         # ----------------------------------------------------------------------
 
-        lbl_q = tk.Label(
+        self.lbl_question = tk.Label(
             self.card_frame,
             text=q_data["question"],
             font=("Segoe UI", 10),
@@ -618,7 +1007,8 @@ class Phase8App:
             justify="left"
         )
 
-        lbl_q.pack(
+
+        self.lbl_question.pack(
             anchor="w",
             padx=20,
             pady=10
@@ -669,6 +1059,7 @@ class Phase8App:
                 self.on_hover_enter(b)
             )
 
+
             btn.bind(
                 "<Leave>",
                 lambda e, b=btn:
@@ -676,7 +1067,19 @@ class Phase8App:
             )
 
 
-            self.quiz_buttons.append(btn)
+            self.quiz_buttons.append(
+                btn
+            )
+
+
+        # ----------------------------------------------------------------------
+        # ATUALIZA LAYOUT
+        # ----------------------------------------------------------------------
+
+        self.root.after(
+            10,
+            self.update_layout
+        )
 
 
     # ==========================================================================
@@ -731,7 +1134,9 @@ class Phase8App:
                 f"\n\n"
                 f"{q_data['tip']}"
                 f"\n\n"
-                f"+100 PTS"
+                f"+100 PTS",
+
+                parent=self.root
             )
 
 
@@ -775,13 +1180,13 @@ class Phase8App:
 
                     f"SCORE FINAL: {self.score}\n\n"
 
-                    "Prepare-se para a Fase 9!"
+                    "Prepare-se para a Fase 9!",
+
+                    parent=self.root
                 )
 
 
                 # ==============================================================
-                # IMPORTANTE
-                #
                 # NÃO destruir a janela.
                 #
                 # O MAIN será responsável pela transição.
@@ -817,7 +1222,9 @@ class Phase8App:
                 f"\n\n"
                 f"{q_data['tip']}"
                 f"\n\n"
-                f"🛡️ Firewall restante: {self.lives}"
+                f"🛡️ Firewall restante: {self.lives}",
+
+                parent=self.root
             )
 
 
@@ -850,7 +1257,9 @@ class Phase8App:
 
                     "O firewall foi completamente comprometido!\n\n"
                     "Você perdeu todas as suas defesas.\n\n"
-                    "A Fase 8 será reiniciada."
+                    "A Fase 8 será reiniciada.",
+
+                    parent=self.root
                 )
 
 
@@ -881,9 +1290,12 @@ class Phase8App:
                     fg="#000000"
                 )
 
+
                 self.root.update()
 
+
                 # Volta para a mesma questão depois da explicação
+
                 self.load_quiz_mode()
 
 
@@ -893,10 +1305,25 @@ class Phase8App:
 
 def executar(
     root,
-    proxima_fase
+    proxima_fase=None
 ):
 
-    Phase8App(
+    return Phase8App(
         root,
         proxima_fase
     )
+
+
+# ==============================================================================
+# TESTE INDIVIDUAL
+# ==============================================================================
+
+if __name__ == "__main__":
+
+    root = tk.Tk()
+
+    executar(
+        root
+    )
+
+    root.mainloop()
