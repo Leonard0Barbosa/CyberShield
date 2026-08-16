@@ -90,18 +90,82 @@ class CyberQuizApp:
         self.proxima_fase = proxima_fase
 
         self.root.title("CyberShield: Fase 1")
-        self.root.geometry("660x560")
-        self.root.resizable(False, False)
+
+        # ----------------------------------------------------------------------
+        # TAMANHO INICIAL
+        # ----------------------------------------------------------------------
+
+        self.root.geometry("1000x700")
+        self.root.minsize(800, 600)
+
+        # ----------------------------------------------------------------------
+        # TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.fullscreen = False
+
+        self.root.bind(
+            "<F11>",
+            self.toggle_fullscreen
+        )
+
+        self.root.bind(
+            "<Escape>",
+            self.exit_fullscreen
+        )
+
+        # ----------------------------------------------------------------------
+        # VARIÁVEIS DO JOGO
+        # ----------------------------------------------------------------------
 
         self.current_q = 0
         self.lives = 3
         self.score = 0
 
-        # Evita chamar a próxima fase duas vezes
         self.finalizando = False
+
+        # ----------------------------------------------------------------------
+        # INTERFACE
+        # ----------------------------------------------------------------------
 
         self.setup_ui()
         self.load_question()
+
+    # ==========================================================================
+    # TELA CHEIA
+    # ==========================================================================
+
+    def toggle_fullscreen(self, event=None):
+
+        self.fullscreen = not self.fullscreen
+
+        self.root.attributes(
+            "-fullscreen",
+            self.fullscreen
+        )
+
+        self.root.after(
+            50,
+            self.update_interface
+        )
+
+    # --------------------------------------------------------------------------
+
+    def exit_fullscreen(self, event=None):
+
+        if self.fullscreen:
+
+            self.fullscreen = False
+
+            self.root.attributes(
+                "-fullscreen",
+                False
+            )
+
+            self.root.after(
+                50,
+                self.update_interface
+            )
 
     # ==========================================================================
     # INTERFACE
@@ -111,9 +175,8 @@ class CyberQuizApp:
 
         self.bg_canvas = tk.Canvas(
             self.root,
-            width=660,
-            height=560,
-            highlightthickness=0
+            highlightthickness=0,
+            bd=0
         )
 
         self.bg_canvas.pack(
@@ -121,7 +184,14 @@ class CyberQuizApp:
             expand=True
         )
 
-        self.draw_cyber_background()
+        # ----------------------------------------------------------------------
+        # DESENHO DO FUNDO
+        # ----------------------------------------------------------------------
+
+        self.bg_canvas.bind(
+            "<Configure>",
+            self.on_resize
+        )
 
         # ----------------------------------------------------------------------
         # HEADER
@@ -132,12 +202,16 @@ class CyberQuizApp:
             bg=COLOR_BG_TOP
         )
 
-        self.bg_canvas.create_window(
-            330,
-            35,
+        self.status_window = self.bg_canvas.create_window(
+            0,
+            0,
             window=self.status_frame,
-            width=620
+            anchor="nw"
         )
+
+        # ----------------------------------------------------------------------
+        # FASE
+        # ----------------------------------------------------------------------
 
         self.lbl_phase = tk.Label(
             self.status_frame,
@@ -147,7 +221,13 @@ class CyberQuizApp:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_phase.pack(side="left")
+        self.lbl_phase.pack(
+            side="left"
+        )
+
+        # ----------------------------------------------------------------------
+        # FIREWALL
+        # ----------------------------------------------------------------------
 
         self.lbl_firewall = tk.Label(
             self.status_frame,
@@ -157,7 +237,13 @@ class CyberQuizApp:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_firewall.pack(side="right")
+        self.lbl_firewall.pack(
+            side="right"
+        )
+
+        # ----------------------------------------------------------------------
+        # SCORE
+        # ----------------------------------------------------------------------
 
         self.lbl_score = tk.Label(
             self.status_frame,
@@ -173,6 +259,32 @@ class CyberQuizApp:
         )
 
         # ----------------------------------------------------------------------
+        # BOTÃO TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.btn_fullscreen = tk.Button(
+            self.bg_canvas,
+            text="⛶  TELA CHEIA (F11)",
+            font=("Consolas", 9, "bold"),
+            fg=COLOR_TEXT_MAIN,
+            bg=COLOR_BTN_BG,
+            activeforeground=COLOR_TEXT_MAIN,
+            activebackground=COLOR_BTN_HOVER,
+            relief="flat",
+            cursor="hand2",
+            padx=15,
+            pady=6,
+            command=self.toggle_fullscreen
+        )
+
+        self.fullscreen_window = self.bg_canvas.create_window(
+            0,
+            0,
+            window=self.btn_fullscreen,
+            anchor="ne"
+        )
+
+        # ----------------------------------------------------------------------
         # CARD
         # ----------------------------------------------------------------------
 
@@ -184,12 +296,11 @@ class CyberQuizApp:
             bd=0
         )
 
-        self.bg_canvas.create_window(
-            330,
-            290,
+        self.card_window = self.bg_canvas.create_window(
+            0,
+            0,
             window=self.card_frame,
-            width=620,
-            height=430
+            anchor="center"
         )
 
         # ----------------------------------------------------------------------
@@ -206,8 +317,8 @@ class CyberQuizApp:
 
         self.lbl_progress.pack(
             anchor="e",
-            padx=20,
-            pady=(12, 0)
+            padx=25,
+            pady=(15, 0)
         )
 
         # ----------------------------------------------------------------------
@@ -224,8 +335,8 @@ class CyberQuizApp:
 
         self.lbl_category.pack(
             anchor="w",
-            padx=20,
-            pady=(4, 5)
+            padx=25,
+            pady=(5, 8)
         )
 
         # ----------------------------------------------------------------------
@@ -238,14 +349,14 @@ class CyberQuizApp:
             font=("Segoe UI", 12),
             fg=COLOR_TEXT_MAIN,
             bg=COLOR_CARD_BG,
-            wraplength=570,
+            wraplength=850,
             justify="left"
         )
 
         self.lbl_question.pack(
             anchor="w",
-            padx=20,
-            pady=10
+            padx=25,
+            pady=12
         )
 
         # ----------------------------------------------------------------------
@@ -260,7 +371,7 @@ class CyberQuizApp:
         self.btn_frame.pack(
             fill="both",
             expand=True,
-            padx=20,
+            padx=25,
             pady=10
         )
 
@@ -288,7 +399,7 @@ class CyberQuizApp:
             btn.pack(
                 fill="x",
                 pady=6,
-                ipady=4
+                ipady=7
             )
 
             btn.bind(
@@ -303,6 +414,128 @@ class CyberQuizApp:
 
             self.buttons.append(btn)
 
+        # ----------------------------------------------------------------------
+        # ATUALIZA TAMANHO
+        # ----------------------------------------------------------------------
+
+        self.root.after(
+            100,
+            self.update_interface
+        )
+
+    # ==========================================================================
+    # REDIMENSIONAMENTO
+    # ==========================================================================
+
+    def on_resize(self, event=None):
+
+        self.update_interface()
+
+    # --------------------------------------------------------------------------
+
+    def update_interface(self):
+
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+
+        if width < 100:
+            return
+
+        if height < 100:
+            return
+
+        # ----------------------------------------------------------------------
+        # REDESENHA FUNDO
+        # ----------------------------------------------------------------------
+
+        self.draw_cyber_background(
+            width,
+            height
+        )
+
+        # ----------------------------------------------------------------------
+        # HEADER
+        # ----------------------------------------------------------------------
+
+        header_width = max(
+            500,
+            width - 60
+        )
+
+        self.bg_canvas.coords(
+            self.status_window,
+            30,
+            30
+        )
+
+        self.bg_canvas.itemconfig(
+            self.status_window,
+            width=header_width
+        )
+
+        # ----------------------------------------------------------------------
+        # BOTÃO FULLSCREEN
+        # ----------------------------------------------------------------------
+
+        self.bg_canvas.coords(
+            self.fullscreen_window,
+            width - 25,
+            25
+        )
+
+        # ----------------------------------------------------------------------
+        # TAMANHO DO CARD
+        # ----------------------------------------------------------------------
+
+        card_width = min(
+            900,
+            max(
+                650,
+                width - 100
+            )
+        )
+
+        card_height = min(
+            570,
+            max(
+                430,
+                height - 180
+            )
+        )
+
+        # ----------------------------------------------------------------------
+        # POSIÇÃO DO CARD
+        # ----------------------------------------------------------------------
+
+        card_x = width / 2
+
+        card_y = height / 2 + 25
+
+        self.bg_canvas.coords(
+            self.card_window,
+            card_x,
+            card_y
+        )
+
+        self.bg_canvas.itemconfig(
+            self.card_window,
+            width=card_width,
+            height=card_height
+        )
+
+        # ----------------------------------------------------------------------
+        # AJUSTA TEXTO
+        # ----------------------------------------------------------------------
+
+        question_wrap = max(
+            500,
+            card_width - 80
+        )
+
+        self.lbl_question.config(
+            wraplength=question_wrap
+        )
+
     # ==========================================================================
     # HOVER
     # ==========================================================================
@@ -315,6 +548,8 @@ class CyberQuizApp:
                 bg=COLOR_BTN_HOVER,
                 fg=COLOR_TEXT_MAIN
             )
+
+    # --------------------------------------------------------------------------
 
     def on_hover_leave(self, btn):
 
@@ -329,13 +564,37 @@ class CyberQuizApp:
     # FUNDO
     # ==========================================================================
 
-    def draw_cyber_background(self):
+    def draw_cyber_background(
+        self,
+        width=None,
+        height=None
+    ):
 
-        width = 660
-        height = 560
+        if width is None:
 
-        r1, g1, b1 = self.hex_to_rgb(COLOR_BG_TOP)
-        r2, g2, b2 = self.hex_to_rgb(COLOR_BG_BOTTOM)
+            width = self.root.winfo_width()
+
+        if height is None:
+
+            height = self.root.winfo_height()
+
+        if width < 10:
+            return
+
+        if height < 10:
+            return
+
+        self.bg_canvas.delete(
+            "background"
+        )
+
+        r1, g1, b1 = self.hex_to_rgb(
+            COLOR_BG_TOP
+        )
+
+        r2, g2, b2 = self.hex_to_rgb(
+            COLOR_BG_BOTTOM
+        )
 
         # ----------------------------------------------------------------------
         # DEGRADÊ
@@ -343,9 +602,23 @@ class CyberQuizApp:
 
         for y in range(height):
 
-            r = int(r1 + (r2 - r1) * (y / height))
-            g = int(g1 + (g2 - g1) * (y / height))
-            b = int(b1 + (b2 - b1) * (y / height))
+            r = int(
+                r1 +
+                (r2 - r1) *
+                (y / height)
+            )
+
+            g = int(
+                g1 +
+                (g2 - g1) *
+                (y / height)
+            )
+
+            b = int(
+                b1 +
+                (b2 - b1) *
+                (y / height)
+            )
 
             color = f"#{r:02x}{g:02x}{b:02x}"
 
@@ -354,7 +627,8 @@ class CyberQuizApp:
                 y,
                 width,
                 y,
-                fill=color
+                fill=color,
+                tags="background"
             )
 
         # ----------------------------------------------------------------------
@@ -364,69 +638,100 @@ class CyberQuizApp:
         line_color = "#0B3254"
         glow_dot = COLOR_CYAN_GLOW
 
+        # Circuito superior
+
+        x1 = int(width * 0.04)
+        x2 = int(width * 0.25)
+        x3 = int(width * 0.35)
+        x4 = int(width * 0.70)
+
         self.bg_canvas.create_line(
-            30,
+            x1,
             25,
-            180,
+            x2,
             25,
-            230,
+            x3,
             50,
-            430,
+            x4,
             50,
             fill=line_color,
-            width=1.5
+            width=2,
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            177,
+            x2 - 3,
             22,
-            183,
+            x2 + 3,
             28,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            427,
+            x4 - 3,
             47,
-            433,
+            x4 + 3,
             53,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
+
+        # ----------------------------------------------------------------------
+        # CIRCUITO INFERIOR
+        # ----------------------------------------------------------------------
+
+        y_bottom = height - 35
 
         self.bg_canvas.create_line(
-            50,
-            530,
-            200,
-            530,
-            250,
-            510,
-            500,
-            510,
-            550,
-            535,
+            int(width * 0.05),
+            y_bottom,
+            int(width * 0.25),
+            y_bottom,
+            int(width * 0.32),
+            y_bottom - 20,
+            int(width * 0.78),
+            y_bottom - 20,
+            int(width * 0.90),
+            y_bottom + 5,
             fill=line_color,
-            width=1.5
+            width=2,
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            247,
-            507,
-            253,
-            513,
+            int(width * 0.32) - 3,
+            y_bottom - 23,
+            int(width * 0.32) + 3,
+            y_bottom - 17,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            497,
-            507,
-            503,
-            513,
+            int(width * 0.78) - 3,
+            y_bottom - 23,
+            int(width * 0.78) + 3,
+            y_bottom - 17,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
+
+        # ----------------------------------------------------------------------
+        # MANDA O FUNDO PARA TRÁS
+        # ----------------------------------------------------------------------
+
+        self.bg_canvas.tag_lower(
+            "background"
+        )
+
+    # ==========================================================================
+    # CONVERTER HEX
+    # ==========================================================================
 
     @staticmethod
     def hex_to_rgb(hex_str):
@@ -444,15 +749,22 @@ class CyberQuizApp:
 
     def load_question(self):
 
-        # Se acabaram as perguntas
         if self.current_q >= len(QUESTIONS):
+
             self.finalizar_fase()
+
             return
 
-        q_data = QUESTIONS[self.current_q]
+        q_data = QUESTIONS[
+            self.current_q
+        ]
 
         self.lbl_progress.config(
-            text=f"QUESTÃO {self.current_q + 1}/{len(QUESTIONS)}"
+            text=(
+                f"QUESTÃO "
+                f"{self.current_q + 1}/"
+                f"{len(QUESTIONS)}"
+            )
         )
 
         self.lbl_category.config(
@@ -463,10 +775,15 @@ class CyberQuizApp:
             text=q_data["question"]
         )
 
-        for i, option in enumerate(q_data["options"]):
+        for i, option in enumerate(
+            q_data["options"]
+        ):
 
             self.buttons[i].config(
-                text=f"[ {chr(65 + i)} ]   {option}",
+                text=(
+                    f"[ {chr(65 + i)} ]   "
+                    f"{option}"
+                ),
                 bg=COLOR_BTN_BG,
                 fg=COLOR_TEXT_MUTED,
                 state="normal"
@@ -481,17 +798,29 @@ class CyberQuizApp:
         if self.finalizando:
             return
 
-        # Desativa os botões para impedir duplo clique
-        for btn in self.buttons:
-            btn.config(state="disabled")
+        # ----------------------------------------------------------------------
+        # DESABILITA BOTÕES
+        # ----------------------------------------------------------------------
 
-        q_data = QUESTIONS[self.current_q]
+        for btn in self.buttons:
+
+            btn.config(
+                state="disabled"
+            )
+
+        q_data = QUESTIONS[
+            self.current_q
+        ]
 
         correct_idx = q_data["answer"]
 
-        explanation = q_data["explanations"][selected_idx]
+        explanation = q_data[
+            "explanations"
+        ][selected_idx]
 
-        selected_btn = self.buttons[selected_idx]
+        selected_btn = self.buttons[
+            selected_idx
+        ]
 
         # ----------------------------------------------------------------------
         # ACERTO
@@ -514,7 +843,8 @@ class CyberQuizApp:
 
             messagebox.showinfo(
                 "Resposta Correta! ✅",
-                f"Parabéns! Você acertou!\n\n{explanation}",
+                f"Parabéns! Você acertou!\n\n"
+                f"{explanation}",
                 parent=self.root
             )
 
@@ -529,8 +859,9 @@ class CyberQuizApp:
                 fg="#FFFFFF"
             )
 
-            # Mostra também a resposta correta
-            self.buttons[correct_idx].config(
+            self.buttons[
+                correct_idx
+            ].config(
                 bg=COLOR_CORRECT,
                 fg="#000000"
             )
@@ -540,7 +871,10 @@ class CyberQuizApp:
             self.lives -= 1
 
             self.lbl_firewall.config(
-                text=f"🛡️ FIREWALL: {'█ ' * self.lives}"
+                text=(
+                    f"🛡️ FIREWALL: "
+                    f"{'█ ' * self.lives}"
+                )
             )
 
             messagebox.showwarning(
@@ -558,13 +892,22 @@ class CyberQuizApp:
                 messagebox.showerror(
                     "Game Over",
                     "O firewall caiu!\n\n"
-                    "Você perdeu todas as vidas e não pode avançar.",
+                    "Você perdeu todas as vidas "
+                    "e não pode avançar.",
                     parent=self.root
                 )
 
-                # Aqui a fase pode ser encerrada.
-                # O mainloop continua pertencendo ao main.py.
-                self.root.destroy()
+                # ----------------------------------------------------------------
+                # A janela continua pertencendo ao main.
+                #
+                # Para voltar ao estado inicial, limpamos a interface.
+                # Não destruímos a root.
+                # ----------------------------------------------------------------
+
+                self.root.after(
+                    100,
+                    self.resetar_fase
+                )
 
                 return
 
@@ -577,12 +920,32 @@ class CyberQuizApp:
         self.load_question()
 
     # ==========================================================================
+    # RESETAR FASE
+    # ==========================================================================
+
+    def resetar_fase(self):
+
+        self.current_q = 0
+        self.lives = 3
+        self.score = 0
+        self.finalizando = False
+
+        self.lbl_firewall.config(
+            text=f"🛡️ FIREWALL: {'█ ' * self.lives}"
+        )
+
+        self.lbl_score.config(
+            text=f"SCORE: {self.score}"
+        )
+
+        self.load_question()
+
+    # ==========================================================================
     # FINALIZAR FASE
     # ==========================================================================
 
     def finalizar_fase(self):
 
-        # Impede duplicação
         if self.finalizando:
             return
 
@@ -598,18 +961,9 @@ class CyberQuizApp:
             parent=self.root
         )
 
-        # ======================================================================
-        # IMPORTANTE:
-        #
-        # NÃO usamos:
-        #
-        # self.root.destroy()
-        #
-        # porque quem controla a troca de janelas é o main.py.
-        #
-        # A próxima fase é chamada depois de 100ms para permitir que
-        # a janela termine de processar a mensagem.
-        # ======================================================================
+        # ----------------------------------------------------------------------
+        # CHAMA A PRÓXIMA FASE
+        # ----------------------------------------------------------------------
 
         if self.proxima_fase:
 
@@ -620,7 +974,6 @@ class CyberQuizApp:
 
         else:
 
-            # Caso queira executar a Fase 1 sozinha
             messagebox.showinfo(
                 "Fim",
                 "A Fase 1 foi concluída!",
@@ -632,7 +985,10 @@ class CyberQuizApp:
 # FUNÇÃO USADA PELO MAIN.PY
 # ==============================================================================
 
-def executar(root, proxima_fase=None):
+def executar(
+    root,
+    proxima_fase=None
+):
 
     return CyberQuizApp(
         root,
@@ -648,6 +1004,8 @@ if __name__ == "__main__":
 
     root = tk.Tk()
 
-    executar(root)
+    executar(
+        root
+    )
 
     root.mainloop()
