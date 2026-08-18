@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
 
+import pygame
+import os
+import glob
+
 
 # ==============================================================================
 # CORES
@@ -26,6 +30,7 @@ COLOR_INCORRECT = "#FF3366"
 # ==============================================================================
 
 QUESTIONS = [
+
     {
         "category": "🛡️ PRINCÍPIOS DE SEGURANÇA",
 
@@ -44,6 +49,7 @@ QUESTIONS = [
         "answer": 2,
 
         "explanations": [
+
             (
                 "❌ INCORRETO!\n\n"
                 "A disponibilidade garante que o sistema esteja acessível. "
@@ -89,14 +95,22 @@ class CyberQuizApp:
         self.root = root
         self.proxima_fase = proxima_fase
 
-        self.root.title("CyberShield: Fase 1")
+        self.root.title(
+            "CyberShield: Fase 1"
+        )
 
         # ----------------------------------------------------------------------
         # TAMANHO INICIAL
         # ----------------------------------------------------------------------
 
-        self.root.geometry("1000x700")
-        self.root.minsize(800, 600)
+        self.root.geometry(
+            "1000x700"
+        )
+
+        self.root.minsize(
+            800,
+            600
+        )
 
         # ----------------------------------------------------------------------
         # TELA CHEIA
@@ -129,7 +143,116 @@ class CyberQuizApp:
         # ----------------------------------------------------------------------
 
         self.setup_ui()
+
         self.load_question()
+
+        # ----------------------------------------------------------------------
+        # MÚSICA
+        # ----------------------------------------------------------------------
+
+        self.iniciar_musica()
+
+
+    # ==========================================================================
+    # MÚSICA
+    # ==========================================================================
+
+    def iniciar_musica(self):
+
+        try:
+
+            # Inicializa o mixer do pygame
+            pygame.mixer.init()
+
+            # ------------------------------------------------------------------
+            # LOCALIZA A PASTA ASSETS
+            #
+            # Estrutura esperada:
+            #
+            # projeto/
+            # ├── main.py
+            # ├── fases/
+            # │   └── fase1.py
+            # └── assets/
+            #     └── musica.mp3
+            # ------------------------------------------------------------------
+
+            pasta_assets = os.path.abspath(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    "..",
+                    "assets"
+                )
+            )
+
+            # Procura arquivos MP3 dentro da pasta assets
+            arquivos_mp3 = glob.glob(
+                os.path.join(
+                    pasta_assets,
+                    "*.mp3"
+                )
+            )
+
+            # ------------------------------------------------------------------
+            # SE NÃO ENCONTRAR A MÚSICA
+            # ------------------------------------------------------------------
+
+            if not arquivos_mp3:
+
+                print(
+                    "⚠️ Nenhum arquivo .mp3 encontrado em:"
+                )
+
+                print(
+                    pasta_assets
+                )
+
+                return
+
+            # ------------------------------------------------------------------
+            # PEGA O PRIMEIRO MP3 ENCONTRADO
+            # ------------------------------------------------------------------
+
+            caminho_musica = arquivos_mp3[0]
+
+            print(
+                "🎵 Música encontrada:"
+            )
+
+            print(
+                caminho_musica
+            )
+
+            # ------------------------------------------------------------------
+            # CARREGA A MÚSICA
+            # ------------------------------------------------------------------
+
+            pygame.mixer.music.load(
+                caminho_musica
+            )
+
+            # ------------------------------------------------------------------
+            # TOCA EM LOOP INFINITO
+            # ------------------------------------------------------------------
+
+            pygame.mixer.music.play(
+                loops=-1
+            )
+
+            print(
+                "🎵 Música iniciada em loop!"
+            )
+
+        except Exception as erro:
+
+            print(
+                "⚠️ Erro ao iniciar a música:"
+            )
+
+            print(
+                erro
+            )
+
 
     # ==========================================================================
     # TELA CHEIA
@@ -149,6 +272,9 @@ class CyberQuizApp:
             self.update_interface
         )
 
+        return "break"
+
+
     # --------------------------------------------------------------------------
 
     def exit_fullscreen(self, event=None):
@@ -166,6 +292,9 @@ class CyberQuizApp:
                 50,
                 self.update_interface
             )
+
+        return "break"
+
 
     # ==========================================================================
     # INTERFACE
@@ -393,7 +522,8 @@ class CyberQuizApp:
                 padx=15,
                 bd=1,
                 highlightbackground=COLOR_CARD_BORDER,
-                command=lambda idx=i: self.check_answer(idx)
+                command=lambda idx=i:
+                self.check_answer(idx)
             )
 
             btn.pack(
@@ -404,15 +534,19 @@ class CyberQuizApp:
 
             btn.bind(
                 "<Enter>",
-                lambda e, b=btn: self.on_hover_enter(b)
+                lambda e, b=btn:
+                self.on_hover_enter(b)
             )
 
             btn.bind(
                 "<Leave>",
-                lambda e, b=btn: self.on_hover_leave(b)
+                lambda e, b=btn:
+                self.on_hover_leave(b)
             )
 
-            self.buttons.append(btn)
+            self.buttons.append(
+                btn
+            )
 
         # ----------------------------------------------------------------------
         # ATUALIZA TAMANHO
@@ -423,6 +557,7 @@ class CyberQuizApp:
             self.update_interface
         )
 
+
     # ==========================================================================
     # REDIMENSIONAMENTO
     # ==========================================================================
@@ -430,6 +565,7 @@ class CyberQuizApp:
     def on_resize(self, event=None):
 
         self.update_interface()
+
 
     # --------------------------------------------------------------------------
 
@@ -508,7 +644,6 @@ class CyberQuizApp:
         # ----------------------------------------------------------------------
 
         card_x = width / 2
-
         card_y = height / 2 + 25
 
         self.bg_canvas.coords(
@@ -536,6 +671,7 @@ class CyberQuizApp:
             wraplength=question_wrap
         )
 
+
     # ==========================================================================
     # HOVER
     # ==========================================================================
@@ -549,6 +685,7 @@ class CyberQuizApp:
                 fg=COLOR_TEXT_MAIN
             )
 
+
     # --------------------------------------------------------------------------
 
     def on_hover_leave(self, btn):
@@ -559,6 +696,7 @@ class CyberQuizApp:
                 bg=COLOR_BTN_BG,
                 fg=COLOR_TEXT_MUTED
             )
+
 
     # ==========================================================================
     # FUNDO
@@ -579,9 +717,11 @@ class CyberQuizApp:
             height = self.root.winfo_height()
 
         if width < 10:
+
             return
 
         if height < 10:
+
             return
 
         self.bg_canvas.delete(
@@ -620,7 +760,9 @@ class CyberQuizApp:
                 (y / height)
             )
 
-            color = f"#{r:02x}{g:02x}{b:02x}"
+            color = (
+                f"#{r:02x}{g:02x}{b:02x}"
+            )
 
             self.bg_canvas.create_line(
                 0,
@@ -640,10 +782,21 @@ class CyberQuizApp:
 
         # Circuito superior
 
-        x1 = int(width * 0.04)
-        x2 = int(width * 0.25)
-        x3 = int(width * 0.35)
-        x4 = int(width * 0.70)
+        x1 = int(
+            width * 0.04
+        )
+
+        x2 = int(
+            width * 0.25
+        )
+
+        x3 = int(
+            width * 0.35
+        )
+
+        x4 = int(
+            width * 0.70
+        )
 
         self.bg_canvas.create_line(
             x1,
@@ -729,6 +882,7 @@ class CyberQuizApp:
             "background"
         )
 
+
     # ==========================================================================
     # CONVERTER HEX
     # ==========================================================================
@@ -739,9 +893,13 @@ class CyberQuizApp:
         hex_str = hex_str.lstrip("#")
 
         return tuple(
-            int(hex_str[i:i + 2], 16)
+            int(
+                hex_str[i:i + 2],
+                16
+            )
             for i in (0, 2, 4)
         )
+
 
     # ==========================================================================
     # CARREGAR QUESTÃO
@@ -789,13 +947,18 @@ class CyberQuizApp:
                 state="normal"
             )
 
+
     # ==========================================================================
     # VERIFICAR RESPOSTA
     # ==========================================================================
 
-    def check_answer(self, selected_idx):
+    def check_answer(
+        self,
+        selected_idx
+    ):
 
         if self.finalizando:
+
             return
 
         # ----------------------------------------------------------------------
@@ -812,7 +975,9 @@ class CyberQuizApp:
             self.current_q
         ]
 
-        correct_idx = q_data["answer"]
+        correct_idx = q_data[
+            "answer"
+        ]
 
         explanation = q_data[
             "explanations"
@@ -900,7 +1065,6 @@ class CyberQuizApp:
                 # ----------------------------------------------------------------
                 # A janela continua pertencendo ao main.
                 #
-                # Para voltar ao estado inicial, limpamos a interface.
                 # Não destruímos a root.
                 # ----------------------------------------------------------------
 
@@ -918,6 +1082,7 @@ class CyberQuizApp:
         self.current_q += 1
 
         self.load_question()
+
 
     # ==========================================================================
     # RESETAR FASE
@@ -940,6 +1105,7 @@ class CyberQuizApp:
 
         self.load_question()
 
+
     # ==========================================================================
     # FINALIZAR FASE
     # ==========================================================================
@@ -947,17 +1113,20 @@ class CyberQuizApp:
     def finalizar_fase(self):
 
         if self.finalizando:
+
             return
 
         self.finalizando = True
 
         messagebox.showinfo(
             "FASE 1 CONCLUÍDA! 🏆",
+
             "Excelente trabalho!\n\n"
             "Você concluiu os fundamentos de segurança "
             "da informação.\n\n"
             f"Pontuação da Fase 1: {self.score}\n\n"
             "Preparando a próxima fase...",
+
             parent=self.root
         )
 

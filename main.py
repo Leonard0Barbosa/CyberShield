@@ -1,4 +1,8 @@
 import tkinter as tk
+from tkinter import messagebox
+import os
+import pygame
+
 
 from fases import introdução
 from fases import fase1
@@ -14,12 +18,117 @@ from fases import fase10
 
 
 # ============================================================
-# LIMPAR A JANELA ATUAL
+# MÚSICA
+# ============================================================
+
+CAMINHO_MUSICA = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "assets",
+    "AUD-20260817-WA0003.mp3"
+)
+
+
+# ============================================================
+# INICIALIZAR ÁUDIO
+# ============================================================
+
+try:
+
+    pygame.mixer.init()
+
+    print("🔊 Sistema de áudio inicializado.")
+
+except Exception as erro:
+
+    print("❌ Erro ao inicializar o áudio:")
+    print(erro)
+
+
+# ============================================================
+# INICIAR MÚSICA
+# ============================================================
+
+def iniciar_musica():
+
+    print("================================")
+    print("🎵 TENTANDO INICIAR A MÚSICA")
+    print("================================")
+
+    print(
+        "Caminho:",
+        CAMINHO_MUSICA
+    )
+
+    # Verifica se o arquivo realmente existe
+    if not os.path.exists(CAMINHO_MUSICA):
+
+        print("❌ MÚSICA NÃO ENCONTRADA!")
+
+        print(
+            "Verifique se o arquivo está em:"
+        )
+
+        print(
+            os.path.join(
+                "assets",
+                "AUD-20260817-WA0003.mp3"
+            )
+        )
+
+        return
+
+    print("✅ Arquivo de música encontrado!")
+
+    try:
+
+        pygame.mixer.music.load(
+            CAMINHO_MUSICA
+        )
+
+        print("✅ Música carregada!")
+
+        pygame.mixer.music.set_volume(
+            0.7
+        )
+
+        pygame.mixer.music.play(
+            loops=-1
+        )
+
+        print("🎵 MÚSICA TOCANDO EM LOOP!")
+
+    except Exception as erro:
+
+        print("❌ ERRO AO TOCAR A MÚSICA:")
+        print(erro)
+
+
+# ============================================================
+# PARAR MÚSICA
+# ============================================================
+
+def parar_musica():
+
+    try:
+
+        pygame.mixer.music.stop()
+
+        print("🔇 Música parada.")
+
+    except Exception as erro:
+
+        print("Erro ao parar música:")
+        print(erro)
+
+
+# ============================================================
+# LIMPAR JANELA
 # ============================================================
 
 def limpar_janela(root):
 
     for widget in root.winfo_children():
+
         widget.destroy()
 
 
@@ -37,9 +146,8 @@ def trocar_fase(root, proxima_fase_func):
     )
 
 
-
 # ============================================================
-# FASE 1
+# INTRODUÇÃO
 # ============================================================
 
 def iniciar_introdução(root):
@@ -52,11 +160,18 @@ def iniciar_introdução(root):
         )
     )
 
+
 # ============================================================
 # FASE 1
 # ============================================================
 
 def iniciar_fase_1(root):
+
+    # ========================================================
+    # A MÚSICA COMEÇA EXATAMENTE AQUI
+    # ========================================================
+
+    iniciar_musica()
 
     fase1.executar(
         root,
@@ -193,6 +308,9 @@ def iniciar_fase_9(root):
 
 def iniciar_fase_10(root):
 
+    # Para a música ao entrar na Fase 10
+    parar_musica()
+
     fase10.executar(
         root,
         lambda: finalizar_jogo(root)
@@ -204,6 +322,8 @@ def iniciar_fase_10(root):
 # ============================================================
 
 def finalizar_jogo(root):
+
+    parar_musica()
 
     limpar_janela(root)
 

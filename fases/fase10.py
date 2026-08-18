@@ -1,5 +1,7 @@
 import tkinter as tk
 import random
+import os
+import pygame
 
 
 # ============================================================
@@ -137,6 +139,24 @@ class BossFinal:
 
         self.root = root
         self.proxima_fase = proxima_fase
+
+        # ====================================================
+        # MÚSICA DA FASE 10 — BOSS FINAL
+        # ====================================================
+        self.music_started = False
+        try:
+            pygame.mixer.init()
+            music_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                "assets",
+                "Boss.mp3"
+            )
+            pygame.mixer.music.load(music_path)
+            pygame.mixer.music.set_volume(0.35)
+            pygame.mixer.music.play(-1)
+            self.music_started = True
+        except Exception as e:
+            print(f"Não foi possível iniciar a música da Fase 10: {e}")
 
         self.root.title(
             "CYBERSHIELD — FASE 10 — BOSS FINAL"
@@ -1055,6 +1075,22 @@ class BossFinal:
         # PRÓXIMA FASE
         # ====================================================
 
+        if self.music_started:
+            pygame.mixer.music.stop()
+
+        # Música da tela de vitória
+        try:
+            vitoria_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                "assets",
+                "vitoria.mp3"
+            )
+            pygame.mixer.music.load(vitoria_path)
+            pygame.mixer.music.set_volume(0.35)
+            pygame.mixer.music.play(0)
+        except Exception as e:
+            print(f"Não foi possível iniciar a música de vitória: {e}")
+
         if self.proxima_fase is not None:
 
             tk.Button(
@@ -1112,6 +1148,23 @@ class BossFinal:
             return
 
         self.fase_finalizada = True
+
+        # Para a música do Boss antes da música de derrota
+        if self.music_started:
+            pygame.mixer.music.stop()
+
+        # Música da tela de derrota
+        try:
+            derrota_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                "assets",
+                "derrota.mp3"
+            )
+            pygame.mixer.music.load(derrota_path)
+            pygame.mixer.music.set_volume(0.35)
+            pygame.mixer.music.play(0)
+        except Exception as e:
+            print(f"Não foi possível iniciar a música de derrota: {e}")
 
         self.limpar_janela()
 
