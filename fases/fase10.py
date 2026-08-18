@@ -143,20 +143,32 @@ class BossFinal:
         # ====================================================
         # MÚSICA DA FASE 10 — BOSS FINAL
         # ====================================================
+
         self.music_started = False
+
         try:
             pygame.mixer.init()
+
             music_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.abspath(__file__)
+                    )
+                ),
                 "assets",
                 "Boss.mp3"
             )
+
             pygame.mixer.music.load(music_path)
             pygame.mixer.music.set_volume(0.35)
             pygame.mixer.music.play(-1)
+
             self.music_started = True
+
         except Exception as e:
-            print(f"Não foi possível iniciar a música da Fase 10: {e}")
+            print(
+                f"Não foi possível iniciar a música da Fase 10: {e}"
+            )
 
         self.root.title(
             "CYBERSHIELD — FASE 10 — BOSS FINAL"
@@ -175,7 +187,6 @@ class BossFinal:
             bg=BG
         )
 
-        # ESC sai do modo tela cheia
         self.root.bind(
             "<Escape>",
             self.sair_fullscreen
@@ -191,7 +202,6 @@ class BossFinal:
         self.questao_atual = 0
         self.respondida = False
 
-        # Guarda se a fase já terminou
         self.fase_finalizada = False
 
         # ====================================================
@@ -358,7 +368,6 @@ class BossFinal:
         self.respondida = False
         self.fase_finalizada = False
 
-        # Garante que continue em tela cheia
         self.root.attributes(
             "-fullscreen",
             True
@@ -399,7 +408,6 @@ class BossFinal:
             bg=BG
         ).pack()
 
-
         # ====================================================
         # STATUS
         # ====================================================
@@ -414,7 +422,6 @@ class BossFinal:
             padx=100,
             pady=20
         )
-
 
         # ====================================================
         # PLAYER
@@ -474,7 +481,6 @@ class BossFinal:
 
         self.player_hp.pack()
 
-
         # ====================================================
         # BOSS
         # ====================================================
@@ -533,9 +539,8 @@ class BossFinal:
 
         self.boss_hp.pack()
 
-
         # ====================================================
-        # CARD
+        # CARD PRINCIPAL
         # ====================================================
 
         self.card = tk.Frame(
@@ -549,9 +554,12 @@ class BossFinal:
             fill="both",
             expand=True,
             padx=100,
-            pady=20
+            pady=(10, 20)
         )
 
+        # ====================================================
+        # NÚMERO DA QUESTÃO
+        # ====================================================
 
         self.lbl_numero = tk.Label(
             self.card,
@@ -565,6 +573,9 @@ class BossFinal:
             pady=(25, 8)
         )
 
+        # ====================================================
+        # PERGUNTA
+        # ====================================================
 
         self.lbl_questao = tk.Label(
             self.card,
@@ -580,6 +591,9 @@ class BossFinal:
             pady=15
         )
 
+        # ====================================================
+        # OPÇÕES
+        # ====================================================
 
         self.frame_opcoes = tk.Frame(
             self.card,
@@ -589,9 +603,12 @@ class BossFinal:
         self.frame_opcoes.pack(
             fill="x",
             padx=150,
-            pady=20
+            pady=(15, 10)
         )
 
+        # ====================================================
+        # EVENTO
+        # ====================================================
 
         self.lbl_evento = tk.Label(
             self.card,
@@ -602,21 +619,46 @@ class BossFinal:
         )
 
         self.lbl_evento.pack(
-            pady=10
+            pady=(5, 5)
         )
 
+        # ====================================================
+        # ÁREA FIXA DO BOTÃO
+        # ====================================================
+        #
+        # Esta área fica sempre na parte inferior do card.
+        # O botão fica centralizado dentro dela.
+        #
+
+        self.frame_proxima = tk.Frame(
+            self.card,
+            bg=CARD,
+            height=70
+        )
+
+        self.frame_proxima.pack(
+            fill="x",
+            side="bottom",
+            pady=(5, 20)
+        )
+
+        self.frame_proxima.pack_propagate(False)
+
+        # ====================================================
+        # BOTÃO PRÓXIMA RODADA
+        # ====================================================
 
         self.btn_proxima = tk.Button(
-            self.card,
+            self.frame_proxima,
             text="PRÓXIMA RODADA  ➜",
-            font=("Consolas", 11, "bold"),
+            font=("Consolas", 12, "bold"),
             fg=WHITE,
             bg=RED_DARK,
             activeforeground=WHITE,
             activebackground=RED_HOVER,
             relief="flat",
-            padx=30,
-            pady=10,
+            padx=45,
+            pady=11,
             cursor="hand2",
             takefocus=False,
             command=self.proxima
@@ -651,13 +693,12 @@ class BossFinal:
             text=""
         )
 
+        # Esconde o botão enquanto a questão
+        # ainda não foi respondida.
         self.btn_proxima.pack_forget()
 
-
         for widget in self.frame_opcoes.winfo_children():
-
             widget.destroy()
-
 
         for i, opcao in enumerate(
             dados["opcoes"]
@@ -708,11 +749,9 @@ class BossFinal:
         botoes = self.frame_opcoes.winfo_children()
 
         for botao in botoes:
-
             botao.config(
                 state="disabled"
             )
-
 
         # ====================================================
         # ACERTO
@@ -763,7 +802,6 @@ class BossFinal:
 
             self.animar_boss()
 
-
         # ====================================================
         # ERRO
         # ====================================================
@@ -798,13 +836,11 @@ class BossFinal:
 
             self.animar_player()
 
-
         # ====================================================
         # ATUALIZAR STATUS
         # ====================================================
 
         self.atualizar_status()
-
 
         # ====================================================
         # DERROTA
@@ -819,7 +855,6 @@ class BossFinal:
 
             return
 
-
         # ====================================================
         # VITÓRIA
         # ====================================================
@@ -833,12 +868,12 @@ class BossFinal:
 
             return
 
-
         # ====================================================
-        # CONTINUAR
+        # MOSTRAR BOTÃO CENTRALIZADO
         # ====================================================
 
         self.btn_proxima.pack(
+            anchor="center",
             pady=8
         )
 
@@ -904,7 +939,6 @@ class BossFinal:
             )
         )
 
-
         # ====================================================
         # PLAYER
         # ====================================================
@@ -930,7 +964,6 @@ class BossFinal:
                 f"{self.vida_jogador} / 100 HP"
             )
         )
-
 
         # ====================================================
         # BOSS
@@ -980,9 +1013,7 @@ class BossFinal:
 
             return
 
-
         self.questao_atual += 1
-
 
         # ====================================================
         # TODAS AS QUESTÕES TERMINARAM
@@ -999,7 +1030,6 @@ class BossFinal:
                 ),
                 fg=RED
             )
-
 
         self.carregar_questao()
 
@@ -1024,7 +1054,6 @@ class BossFinal:
             bg="#001A0A"
         )
 
-
         tk.Label(
             self.root,
             text="🏆",
@@ -1035,7 +1064,6 @@ class BossFinal:
             pady=(120, 10)
         )
 
-
         tk.Label(
             self.root,
             text="BOSS DERROTADO",
@@ -1043,7 +1071,6 @@ class BossFinal:
             fg=GREEN,
             bg="#001A0A"
         ).pack()
-
 
         tk.Label(
             self.root,
@@ -1054,7 +1081,6 @@ class BossFinal:
         ).pack(
             pady=15
         )
-
 
         tk.Label(
             self.root,
@@ -1070,26 +1096,44 @@ class BossFinal:
             pady=20
         )
 
-
         # ====================================================
-        # PRÓXIMA FASE
+        # MÚSICA DE VITÓRIA
         # ====================================================
 
         if self.music_started:
             pygame.mixer.music.stop()
 
-        # Música da tela de vitória
         try:
+
             vitoria_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.abspath(__file__)
+                    )
+                ),
                 "assets",
                 "vitoria.mp3"
             )
-            pygame.mixer.music.load(vitoria_path)
-            pygame.mixer.music.set_volume(0.35)
+
+            pygame.mixer.music.load(
+                vitoria_path
+            )
+
+            pygame.mixer.music.set_volume(
+                0.35
+            )
+
             pygame.mixer.music.play(0)
+
         except Exception as e:
-            print(f"Não foi possível iniciar a música de vitória: {e}")
+
+            print(
+                f"Não foi possível iniciar a música de vitória: {e}"
+            )
+
+        # ====================================================
+        # PRÓXIMA FASE
+        # ====================================================
 
         if self.proxima_fase is not None:
 
@@ -1123,7 +1167,6 @@ class BossFinal:
                 pady=15
             )
 
-
         tk.Label(
             self.root,
             text="ESC — SAIR DA TELA CHEIA",
@@ -1149,29 +1192,50 @@ class BossFinal:
 
         self.fase_finalizada = True
 
-        # Para a música do Boss antes da música de derrota
+        # ====================================================
+        # PARAR MÚSICA DO BOSS
+        # ====================================================
+
         if self.music_started:
             pygame.mixer.music.stop()
 
-        # Música da tela de derrota
+        # ====================================================
+        # MÚSICA DE DERROTA
+        # ====================================================
+
         try:
+
             derrota_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.abspath(__file__)
+                    )
+                ),
                 "assets",
                 "derrota.mp3"
             )
-            pygame.mixer.music.load(derrota_path)
-            pygame.mixer.music.set_volume(0.35)
+
+            pygame.mixer.music.load(
+                derrota_path
+            )
+
+            pygame.mixer.music.set_volume(
+                0.35
+            )
+
             pygame.mixer.music.play(0)
+
         except Exception as e:
-            print(f"Não foi possível iniciar a música de derrota: {e}")
+
+            print(
+                f"Não foi possível iniciar a música de derrota: {e}"
+            )
 
         self.limpar_janela()
 
         self.root.configure(
             bg="#080000"
         )
-
 
         tk.Label(
             self.root,
@@ -1183,7 +1247,6 @@ class BossFinal:
             pady=(120, 10)
         )
 
-
         tk.Label(
             self.root,
             text="SISTEMA COMPROMETIDO",
@@ -1191,7 +1254,6 @@ class BossFinal:
             fg=RED,
             bg="#080000"
         ).pack()
-
 
         tk.Label(
             self.root,
@@ -1202,7 +1264,6 @@ class BossFinal:
         ).pack(
             pady=15
         )
-
 
         tk.Label(
             self.root,
@@ -1217,7 +1278,6 @@ class BossFinal:
         ).pack(
             pady=20
         )
-
 
         # ====================================================
         # TENTAR NOVAMENTE
@@ -1240,7 +1300,6 @@ class BossFinal:
         ).pack(
             pady=20
         )
-
 
         tk.Label(
             self.root,
