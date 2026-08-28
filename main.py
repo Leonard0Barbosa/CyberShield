@@ -2,9 +2,10 @@ import tkinter as tk
 from tkinter import messagebox
 import os
 import pygame
+import sqlite3
 
 
-from fases import introdução
+from MENU import introdução
 from fases import fase1
 from fases import fase2
 from fases import fase3
