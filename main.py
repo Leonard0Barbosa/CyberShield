@@ -4,6 +4,7 @@ import os
 import pygame
 import sqlite3
 
+con = sqlite3.connect("database.db")
 
 from MENU import introdução
 from fases import fase1
