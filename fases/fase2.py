@@ -7,7 +7,7 @@ from tkinter import messagebox
 
 
 # ==============================================================================
-# --- PADRÃO DE DESIGN (CYBER NETWORK - AZUL SUAVE & CIANO NEON) ---
+# --- PADRÃO DE DESIGN
 # ==============================================================================
 
 COLOR_BG_TOP = "#030D22"
@@ -20,23 +20,24 @@ COLOR_BTN_HOVER = "#0077B6"
 COLOR_TEXT_MAIN = "#FFFFFF"
 COLOR_TEXT_MUTED = "#8ECAE6"
 COLOR_HEALTH = "#00F5D4"
+
 COLOR_CORRECT = "#00E676"
 COLOR_INCORRECT = "#FF3366"
 COLOR_WARNING = "#FFD166"
 
 
 # ==============================================================================
-# --- DADOS DAS PERGUNTAS DA FASE 2 ---
+# --- DADOS DAS PERGUNTAS DA FASE 2
 # ==============================================================================
 
 QUIZ_QUESTIONS = [
+
     {
         "category": "🟢 FASE 2 (NÍVEL 1) — MÚLTIPLOS FATORES (MFA)",
 
-        "question": (
+        "question":
             "Qual das opções abaixo oferece a melhor redução de risco "
-            "no acesso a uma conta?"
-        ),
+            "no acesso a uma conta?",
 
         "options": [
             "A) Trocar a senha toda semana por uma frase curta",
@@ -49,33 +50,32 @@ QUIZ_QUESTIONS = [
         "answer": 2,
 
         "explanations": [
-            "❌ INCORRETO: Senhas curtas continuam vulneráveis a "
-            "força bruta, independente da frequência de troca.",
+            "❌ INCORRETO: Senhas curtas continuam vulneráveis a força bruta, "
+            "independente da frequência de troca.",
 
             "❌ INCORRETO: Reutilizar a mesma senha em múltiplos serviços "
             "cria o risco de vazamento em cascata.",
 
-            "✅ CORRETO! A combinação de uma senha exclusiva com MFA "
-            "cria duas camadas independentes de proteção.",
+            "✅ CORRETO! A combinação de uma senha exclusiva com MFA cria "
+            "duas camadas independentes de proteção.",
 
-            "❌ INCORRETO: Arquivos de texto sem criptografia podem "
-            "ser facilmente capturados por malwares locais."
+            "❌ INCORRETO: Arquivos de texto sem criptografia podem ser "
+            "facilmente capturados por malwares locais."
         ]
     },
 
     {
         "category": "🟢 FASE 2 (NÍVEL 2) — GERENCIADORES DE SENHAS",
 
-        "question": (
+        "question":
             "Qual é a principal vantagem de utilizar um Gerenciador "
-            "de Senhas homologado?"
-        ),
+            "de Senhas homologado?",
 
         "options": [
             "A) Permite memorizar dezenas de senhas complexas sem anotações",
 
-            "B) Gera e armazena senhas longas, aleatórias e únicas "
-            "para cada serviço sob um cofre criptografado",
+            "B) Gera e armazena senhas longas, aleatórias e únicas para "
+            "cada serviço sob um cofre criptografado",
 
             "C) Elimina a necessidade de usar senhas ou códigos de verificação",
 
@@ -85,34 +85,32 @@ QUIZ_QUESTIONS = [
         "answer": 1,
 
         "explanations": [
-            "❌ INCORRETO: Você não precisa memorizá-las; "
-            "o cofre faz isso por você.",
+            "❌ INCORRETO: Você não precisa memorizá-las; o cofre faz isso por você.",
 
-            "✅ CORRETO! O gerenciador elimina o reuso de senhas "
-            "e armazena tudo sob uma única senha-mestre forte.",
+            "✅ CORRETO! O gerenciador elimina o reuso de senhas e armazena "
+            "tudo sob uma única senha-mestre forte.",
 
             "❌ INCORRETO: A senha-mestre e o MFA ainda são essenciais "
             "para proteger o cofre.",
 
-            "❌ INCORRETO: O gerenciador protege credenciais, "
-            "não a execução de arquivos maliciosos no sistema."
+            "❌ INCORRETO: O gerenciador protege credenciais, não a execução "
+            "de arquivos maliciosos no sistema."
         ]
     },
 
     {
-        "category": "🟢 FASE 2 (NÍVEL 3) — CREDENTIAL STUFFING",
+        "category": "🟢 FASE 2 (NÍVEL 3) — ENGENHARIA E CRED STUFFING",
 
-        "question": "O que é um ataque de 'Credential Stuffing'?",
+        "question":
+            "O que é um ataque de 'Credential Stuffing'?",
 
         "options": [
-            "A) Tentativa de adivinhar o PIN de 4 dígitos "
-            "do celular por força bruta",
+            "A) Tentativa de adivinhar o PIN de 4 dígitos do celular por força bruta",
 
-            "B) Automatização que testa pares de login/senha vazados "
-            "de um site em vários outros serviços",
+            "B) Automatização que testa pares de login/senha vazados de um "
+            "site em vários outros serviços",
 
-            "C) Criptografia maliciosa dos arquivos do computador "
-            "para exigir resgate",
+            "C) Criptografia maliciosa dos arquivos do computador para exigir resgate",
 
             "D) Redirecionamento da navegação para um roteador wi-fi falso"
         ],
@@ -120,23 +118,21 @@ QUIZ_QUESTIONS = [
         "answer": 1,
 
         "explanations": [
-            "❌ INCORRETO: Esse é um ataque direto de PIN "
-            "ou força bruta simples.",
+            "❌ INCORRETO: Esse é um ataque direto de PIN ou força bruta simples.",
 
-            "✅ CORRETO! Atacantes usam vazamentos antigos para "
-            "invadir contas de pessoas que reutilizam a mesma senha.",
+            "✅ CORRETO! Atacantes usam vazamentos antigos para invadir contas "
+            "de pessoas que reutilizam a mesma senha.",
 
             "❌ INCORRETO: Isso descreve a atuação de um Ransomware.",
 
-            "❌ INCORRETO: Trata-se de um ataque Man-in-the-Middle "
-            "ou Rogue AP."
+            "❌ INCORRETO: Trata-se de um ataque Man-in-the-Middle ou Rogue AP."
         ]
     }
 ]
 
 
 # ==============================================================================
-# --- APLICAÇÃO DA FASE 2 ---
+# --- APLICAÇÃO DA FASE 2
 # ==============================================================================
 
 class Phase2App:
@@ -150,8 +146,35 @@ class Phase2App:
             "CyberShield: Fase 2 — Gestão e Proteção de Senhas"
         )
 
+        # ----------------------------------------------------------------------
+        # TAMANHO INICIAL
+        # ----------------------------------------------------------------------
+
         self.root.geometry("700x640")
-        self.root.resizable(False, False)
+        self.root.minsize(700, 640)
+
+        # Permite redimensionar normalmente
+        self.root.resizable(True, True)
+
+        # ----------------------------------------------------------------------
+        # CONTROLE DE TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.fullscreen = False
+
+        self.root.bind(
+            "<F11>",
+            self.toggle_fullscreen
+        )
+
+        self.root.bind(
+            "<Escape>",
+            self.exit_fullscreen
+        )
+
+        # ----------------------------------------------------------------------
+        # VARIÁVEIS
+        # ----------------------------------------------------------------------
 
         self.current_q = 0
 
@@ -159,40 +182,145 @@ class Phase2App:
         self.mfa_time_left = 30
         self.mfa_timer_job = None
 
+        # ----------------------------------------------------------------------
+        # INTERFACE
+        # ----------------------------------------------------------------------
+
         self.setup_ui()
+
         self.load_step_brute_force()
 
+    # ==========================================================================
+    # --- TELA CHEIA
+    # ==========================================================================
+
+    def toggle_fullscreen(self, event=None):
+
+        self.fullscreen = not self.fullscreen
+
+        self.root.attributes(
+            "-fullscreen",
+            self.fullscreen
+        )
+
+        self.update_layout()
+
+    def exit_fullscreen(self, event=None):
+
+        if self.fullscreen:
+
+            self.fullscreen = False
+
+            self.root.attributes(
+                "-fullscreen",
+                False
+            )
+
+            self.update_layout()
 
     # ==========================================================================
-    # --- INTERFACE PRINCIPAL ---
+    # --- ATUALIZAR LAYOUT
+    # ==========================================================================
+
+    def update_layout(self):
+
+        self.root.update_idletasks()
+
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+
+        if width < 700:
+            width = 700
+
+        if height < 640:
+            height = 640
+
+        self.bg_canvas.config(
+            width=width,
+            height=height
+        )
+
+        # ----------------------------------------------------------------------
+        # HEADER
+        # ----------------------------------------------------------------------
+
+        self.bg_canvas.coords(
+            self.status_window,
+            width // 2,
+            35
+        )
+
+        self.bg_canvas.itemconfig(
+            self.status_window,
+            width=width - 40
+        )
+
+        # ----------------------------------------------------------------------
+        # CARD
+        # ----------------------------------------------------------------------
+
+        card_width = min(
+            width - 40,
+            1200
+        )
+
+        card_height = min(
+            height - 100,
+            800
+        )
+
+        self.bg_canvas.coords(
+            self.card_window,
+            width // 2,
+            height // 2 + 25
+        )
+
+        self.bg_canvas.itemconfig(
+            self.card_window,
+            width=card_width,
+            height=card_height
+        )
+
+        self.draw_cyber_background()
+
+    # ==========================================================================
+    # --- INTERFACE PRINCIPAL
     # ==========================================================================
 
     def setup_ui(self):
 
         self.bg_canvas = tk.Canvas(
             self.root,
-            width=700,
-            height=640,
-            highlightthickness=0
+            highlightthickness=0,
+            bd=0
         )
 
-        self.bg_canvas.pack(fill="both", expand=True)
+        self.bg_canvas.pack(
+            fill="both",
+            expand=True
+        )
 
         self.draw_cyber_background()
 
+        # ----------------------------------------------------------------------
         # HEADER
+        # ----------------------------------------------------------------------
 
         self.status_frame = tk.Frame(
             self.bg_canvas,
             bg=COLOR_BG_TOP
         )
 
-        self.bg_canvas.create_window(
+        self.status_window = self.bg_canvas.create_window(
             350,
             35,
             window=self.status_frame,
             width=660
         )
+
+        # ----------------------------------------------------------------------
+        # TÍTULO
+        # ----------------------------------------------------------------------
 
         self.lbl_header = tk.Label(
             self.status_frame,
@@ -202,7 +330,52 @@ class Phase2App:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_header.pack(side="left")
+        self.lbl_header.pack(
+            side="left"
+        )
+
+        # ----------------------------------------------------------------------
+        # BOTÃO TELA CHEIA
+        # ----------------------------------------------------------------------
+
+        self.btn_fullscreen = tk.Button(
+            self.status_frame,
+            text="⛶ TELA CHEIA",
+            font=("Segoe UI", 9, "bold"),
+            bg=COLOR_BTN_BG,
+            fg=COLOR_TEXT_MUTED,
+            activebackground=COLOR_BTN_HOVER,
+            activeforeground=COLOR_TEXT_MAIN,
+            relief="flat",
+            cursor="hand2",
+            bd=0,
+            command=self.toggle_fullscreen
+        )
+
+        self.btn_fullscreen.pack(
+            side="right",
+            padx=(10, 0)
+        )
+
+        self.btn_fullscreen.bind(
+            "<Enter>",
+            lambda e: self.btn_fullscreen.config(
+                bg=COLOR_BTN_HOVER,
+                fg=COLOR_TEXT_MAIN
+            )
+        )
+
+        self.btn_fullscreen.bind(
+            "<Leave>",
+            lambda e: self.btn_fullscreen.config(
+                bg=COLOR_BTN_BG,
+                fg=COLOR_TEXT_MUTED
+            )
+        )
+
+        # ----------------------------------------------------------------------
+        # ETAPA
+        # ----------------------------------------------------------------------
 
         self.lbl_mode = tk.Label(
             self.status_frame,
@@ -212,9 +385,14 @@ class Phase2App:
             bg=COLOR_BG_TOP
         )
 
-        self.lbl_mode.pack(side="right")
+        self.lbl_mode.pack(
+            side="right",
+            padx=10
+        )
 
+        # ----------------------------------------------------------------------
         # CARD
+        # ----------------------------------------------------------------------
 
         self.card_frame = tk.Frame(
             self.bg_canvas,
@@ -224,7 +402,7 @@ class Phase2App:
             bd=0
         )
 
-        self.bg_canvas.create_window(
+        self.card_window = self.bg_canvas.create_window(
             350,
             330,
             window=self.card_frame,
@@ -232,23 +410,73 @@ class Phase2App:
             height=520
         )
 
+        # ----------------------------------------------------------------------
+        # ATUALIZAÇÃO AUTOMÁTICA AO REDIMENSIONAR
+        # ----------------------------------------------------------------------
+
+        self.root.bind(
+            "<Configure>",
+            self.on_window_resize
+        )
 
     # ==========================================================================
-    # --- FUNDO ---
+    # --- REDIMENSIONAMENTO
+    # ==========================================================================
+
+    def on_window_resize(self, event=None):
+
+        if not self.root.winfo_exists():
+            return
+
+        self.root.after_idle(
+            self.update_layout
+        )
+
+    # ==========================================================================
+    # --- FUNDO
     # ==========================================================================
 
     def draw_cyber_background(self):
 
-        width, height = 700, 640
+        self.bg_canvas.delete(
+            "background"
+        )
 
-        r1, g1, b1 = self.hex_to_rgb(COLOR_BG_TOP)
-        r2, g2, b2 = self.hex_to_rgb(COLOR_BG_BOTTOM)
+        width = max(
+            self.root.winfo_width(),
+            700
+        )
+
+        height = max(
+            self.root.winfo_height(),
+            640
+        )
+
+        r1, g1, b1 = self.hex_to_rgb(
+            COLOR_BG_TOP
+        )
+
+        r2, g2, b2 = self.hex_to_rgb(
+            COLOR_BG_BOTTOM
+        )
+
+        # ----------------------------------------------------------------------
+        # DEGRADÊ
+        # ----------------------------------------------------------------------
 
         for y in range(height):
 
-            r = int(r1 + (r2 - r1) * (y / height))
-            g = int(g1 + (g2 - g1) * (y / height))
-            b = int(b1 + (b2 - b1) * (y / height))
+            r = int(
+                r1 + (r2 - r1) * (y / height)
+            )
+
+            g = int(
+                g1 + (g2 - g1) * (y / height)
+            )
+
+            b = int(
+                b1 + (b2 - b1) * (y / height)
+            )
 
             color = f"#{r:02x}{g:02x}{b:02x}"
 
@@ -257,51 +485,74 @@ class Phase2App:
                 y,
                 width,
                 y,
-                fill=color
+                fill=color,
+                tags="background"
             )
+
+        # ----------------------------------------------------------------------
+        # CIRCUITOS
+        # ----------------------------------------------------------------------
 
         line_color = "#0B3254"
         glow_dot = COLOR_CYAN_GLOW
 
-        self.bg_canvas.create_line(
-            30, 25,
-            180, 25,
-            230, 50,
-            480, 50,
-            fill=line_color,
-            width=1.5
-        )
-
-        self.bg_canvas.create_oval(
-            177, 22,
-            183, 28,
-            fill=glow_dot,
-            outline=""
-        )
-
-        self.bg_canvas.create_oval(
-            477, 47,
-            483, 53,
-            fill=glow_dot,
-            outline=""
-        )
+        # Superior esquerdo
 
         self.bg_canvas.create_line(
-            50, 610,
-            200, 610,
-            250, 590,
-            550, 590,
+            30,
+            25,
+            180,
+            25,
+            230,
+            50,
+            min(width - 30, 480),
+            50,
             fill=line_color,
-            width=1.5
+            width=1.5,
+            tags="background"
         )
 
         self.bg_canvas.create_oval(
-            247, 587,
-            253, 593,
+            177,
+            22,
+            183,
+            28,
             fill=glow_dot,
-            outline=""
+            outline="",
+            tags="background"
         )
 
+        # Inferior
+
+        y_bottom = height - 30
+
+        self.bg_canvas.create_line(
+            50,
+            y_bottom,
+            200,
+            y_bottom,
+            250,
+            y_bottom - 20,
+            max(550, width - 150),
+            y_bottom - 20,
+            fill=line_color,
+            width=1.5,
+            tags="background"
+        )
+
+        self.bg_canvas.create_oval(
+            247,
+            y_bottom - 23,
+            253,
+            y_bottom - 17,
+            fill=glow_dot,
+            outline="",
+            tags="background"
+        )
+
+        self.bg_canvas.tag_lower(
+            "background"
+        )
 
     @staticmethod
     def hex_to_rgb(hex_str):
@@ -313,9 +564,8 @@ class Phase2App:
             for i in (0, 2, 4)
         )
 
-
     # ==========================================================================
-    # --- FUNÇÕES AUXILIARES ---
+    # --- LIMPAR CARD
     # ==========================================================================
 
     def clear_card(self):
@@ -323,17 +573,30 @@ class Phase2App:
         if self.mfa_timer_job:
 
             try:
-                self.root.after_cancel(self.mfa_timer_job)
-            except tk.TclError:
+
+                self.root.after_cancel(
+                    self.mfa_timer_job
+                )
+
+            except Exception:
                 pass
 
             self.mfa_timer_job = None
 
         for widget in self.card_frame.winfo_children():
+
             widget.destroy()
 
+    # ==========================================================================
+    # --- BOTÃO PADRÃO
+    # ==========================================================================
 
-    def create_custom_button(self, parent, text, command):
+    def create_custom_button(
+        self,
+        parent,
+        text,
+        command
+    ):
 
         btn = tk.Button(
             parent,
@@ -352,16 +615,17 @@ class Phase2App:
 
         btn.bind(
             "<Enter>",
-            lambda e, b=btn: self.on_hover_enter(b)
+            lambda e, b=btn:
+            self.on_hover_enter(b)
         )
 
         btn.bind(
             "<Leave>",
-            lambda e, b=btn: self.on_hover_leave(b)
+            lambda e, b=btn:
+            self.on_hover_leave(b)
         )
 
         return btn
-
 
     def on_hover_enter(self, btn):
 
@@ -372,7 +636,6 @@ class Phase2App:
                 fg=COLOR_TEXT_MAIN
             )
 
-
     def on_hover_leave(self, btn):
 
         if btn["state"] == "normal":
@@ -382,9 +645,8 @@ class Phase2App:
                 fg=COLOR_TEXT_MUTED
             )
 
-
     # ==========================================================================
-    # --- ETAPA 1: FORÇA BRUTA ---
+    # --- ETAPA 1: FORÇA BRUTA
     # ==========================================================================
 
     def load_step_brute_force(self):
@@ -419,7 +681,7 @@ class Phase2App:
             font=("Segoe UI", 9),
             fg=COLOR_TEXT_MAIN,
             bg=COLOR_CARD_BG,
-            wraplength=600,
+            wraplength=1000,
             justify="left"
         )
 
@@ -440,7 +702,10 @@ class Phase2App:
             justify="center"
         )
 
-        self.entry_pass.insert(0, "gato")
+        self.entry_pass.insert(
+            0,
+            "gato"
+        )
 
         self.entry_pass.pack(
             fill="x",
@@ -490,8 +755,13 @@ class Phase2App:
             pady=(5, 15)
         )
 
-        self.btn_next1.config(state="disabled")
+        self.btn_next1.config(
+            state="disabled"
+        )
 
+    # ==========================================================================
+    # --- FORÇA BRUTA
+    # ==========================================================================
 
     def run_brute_force(self):
 
@@ -502,19 +772,27 @@ class Phase2App:
             or len(senha) > 4
             or not senha.isalpha()
         ):
+
             messagebox.showwarning(
                 "Aviso",
-                "Informe uma palavra contendo de 1 a 4 letras minúsculas."
+                "Por favor, informe uma palavra contendo "
+                "de 1 a 4 letras minúsculas.",
+                parent=self.root
             )
+
             return
 
         caracteres = string.ascii_lowercase
 
         inicio = time.time()
+
         tentativas = 0
         descoberta = None
 
-        for comp in range(1, len(senha) + 1):
+        for comp in range(
+            1,
+            len(senha) + 1
+        ):
 
             for comb in itertools.product(
                 caracteres,
@@ -528,6 +806,7 @@ class Phase2App:
                 if palpite == senha:
 
                     descoberta = palpite
+
                     break
 
             if descoberta:
@@ -536,15 +815,34 @@ class Phase2App:
         tempo_gasto = time.time() - inicio
 
         log = (
-            "[!] Iniciando simulação de força bruta...\n"
-            f"[❌] SENHA ENCONTRADA: '{descoberta}'\n"
-            f"[*] Total de combinações testadas: {tentativas:,}\n"
-            f"[*] Tempo total de processamento: {tempo_gasto:.4f} segundos\n\n"
-            "⚠️ CONCLUSÃO TÉCNICA: Senhas curtas e previsíveis "
-            "possuem baixa resistência contra tentativas automatizadas."
+            "[!] Iniciando varredura por força bruta "
+            "na wordlist automatizada...\n"
         )
 
-        self.txt_console.config(state="normal")
+        log += (
+            f"[❌] SENHA DESCRIPTOGRAFADA: "
+            f"'{descoberta}'\n"
+        )
+
+        log += (
+            f"[*] Total de combinações testadas: "
+            f"{tentativas:,}\n"
+        )
+
+        log += (
+            f"[*] Tempo total de processamento: "
+            f"{tempo_gasto:.4f} segundos\n\n"
+        )
+
+        log += (
+            "⚠️ CONCLUSÃO TÉCNICA: Senhas curtas de padrão "
+            "simples fornecem zero proteção contra ferramentas "
+            "cibernéticas de varredura."
+        )
+
+        self.txt_console.config(
+            state="normal"
+        )
 
         self.txt_console.delete(
             "1.0",
@@ -564,9 +862,8 @@ class Phase2App:
             state="normal"
         )
 
-
     # ==========================================================================
-    # --- ETAPA 2: SENHA FORTE ---
+    # --- ETAPA 2: SENHA FORTE
     # ==========================================================================
 
     def load_step_password_checker(self):
@@ -601,7 +898,7 @@ class Phase2App:
             font=("Segoe UI", 9),
             fg=COLOR_TEXT_MAIN,
             bg=COLOR_CARD_BG,
-            wraplength=600,
+            wraplength=1000,
             justify="left"
         )
 
@@ -741,6 +1038,9 @@ class Phase2App:
             state="disabled"
         )
 
+    # ==========================================================================
+    # --- AVALIAR SENHA
+    # ==========================================================================
 
     def evaluate_password_strength(self, event=None):
 
@@ -750,33 +1050,39 @@ class Phase2App:
         has_upper = any(c.isupper() for c in pwd)
         has_lower = any(c.islower() for c in pwd)
         has_digit = any(c.isdigit() for c in pwd)
+
         has_symbol = any(
             c in "!@#$%^&*()_+-=[]{}|;:,.<>?"
             for c in pwd
         )
 
         self.lbl_req_len.config(
-            text=f"{'✅' if has_len else '❌'} Pelo menos 8 caracteres",
+            text=f"{'✅' if has_len else '❌'} "
+                 "Pelo menos 8 caracteres",
             fg=COLOR_CORRECT if has_len else COLOR_INCORRECT
         )
 
         self.lbl_req_upper.config(
-            text=f"{'✅' if has_upper else '❌'} Pelo menos 1 letra maiúscula (A-Z)",
+            text=f"{'✅' if has_upper else '❌'} "
+                 "Pelo menos 1 letra maiúscula (A-Z)",
             fg=COLOR_CORRECT if has_upper else COLOR_INCORRECT
         )
 
         self.lbl_req_lower.config(
-            text=f"{'✅' if has_lower else '❌'} Pelo menos 1 letra minúscula (a-z)",
+            text=f"{'✅' if has_lower else '❌'} "
+                 "Pelo menos 1 letra minúscula (a-z)",
             fg=COLOR_CORRECT if has_lower else COLOR_INCORRECT
         )
 
         self.lbl_req_digit.config(
-            text=f"{'✅' if has_digit else '❌'} Pelo menos 1 número (0-9)",
+            text=f"{'✅' if has_digit else '❌'} "
+                 "Pelo menos 1 número (0-9)",
             fg=COLOR_CORRECT if has_digit else COLOR_INCORRECT
         )
 
         self.lbl_req_symbol.config(
-            text=f"{'✅' if has_symbol else '❌'} Pelo menos 1 símbolo (!@#$%^&*)",
+            text=f"{'✅' if has_symbol else '❌'} "
+                 "Pelo menos 1 símbolo (!@#$%^&*)",
             fg=COLOR_CORRECT if has_symbol else COLOR_INCORRECT
         )
 
@@ -788,17 +1094,24 @@ class Phase2App:
             has_symbol
         ])
 
-        self.canvas_strength.delete("all")
+        self.canvas_strength.delete(
+            "all"
+        )
 
         w = self.canvas_strength.winfo_width()
 
         fill_w = (w / 5) * score
 
         if score <= 2:
+
             color = COLOR_INCORRECT
+
         elif score <= 4:
+
             color = COLOR_WARNING
+
         else:
+
             color = COLOR_CORRECT
 
         self.canvas_strength.create_rectangle(
@@ -811,10 +1124,20 @@ class Phase2App:
         )
 
         if score == 5:
-            self.btn_next2.config(state="normal")
-        else:
-            self.btn_next2.config(state="disabled")
 
+            self.btn_next2.config(
+                state="normal"
+            )
+
+        else:
+
+            self.btn_next2.config(
+                state="disabled"
+            )
+
+    # ==========================================================================
+    # --- GERAR SENHA
+    # ==========================================================================
 
     def generate_strong_password(self):
 
@@ -836,9 +1159,13 @@ class Phase2App:
             for _ in range(8)
         ]
 
-        random.shuffle(password)
+        random.shuffle(
+            password
+        )
 
-        res = "".join(password)
+        res = "".join(
+            password
+        )
 
         self.entry_strong_pass.delete(
             0,
@@ -852,9 +1179,8 @@ class Phase2App:
 
         self.evaluate_password_strength()
 
-
     # ==========================================================================
-    # --- ETAPA 3: MFA ---
+    # --- ETAPA 3: LOGIN MFA
     # ==========================================================================
 
     def load_step_mfa_login(self):
@@ -884,12 +1210,12 @@ class Phase2App:
             text=(
                 "Mesmo com a senha correta, o acesso exige um "
                 "código token temporário (MFA). Insira as "
-                "credenciais e solicite o token:"
+                "credenciais e clique em 'Gerar Token':"
             ),
             font=("Segoe UI", 9),
             fg=COLOR_TEXT_MAIN,
             bg=COLOR_CARD_BG,
-            wraplength=600,
+            wraplength=1000,
             justify="left"
         )
 
@@ -988,7 +1314,9 @@ class Phase2App:
             weight=1
         )
 
+        # ----------------------------------------------------------------------
         # TOKEN
+        # ----------------------------------------------------------------------
 
         self.frame_token_box = tk.Frame(
             self.card_frame,
@@ -1043,7 +1371,9 @@ class Phase2App:
             font=("Segoe UI", 9, "bold"),
             fg=COLOR_TEXT_MAIN,
             bg=COLOR_CARD_BG
-        ).pack(side="left")
+        ).pack(
+            side="left"
+        )
 
         self.entry_token_user = tk.Entry(
             frame_mfa_input,
@@ -1074,26 +1404,26 @@ class Phase2App:
             pady=5
         )
 
+    # ==========================================================================
+    # --- SOLICITAR TOKEN MFA
+    # ==========================================================================
 
     def request_mfa_token(self):
 
-        if self.mfa_timer_job:
-
-            try:
-                self.root.after_cancel(
-                    self.mfa_timer_job
-                )
-            except tk.TclError:
-                pass
-
         self.generated_mfa_token = str(
-            random.randint(100000, 999999)
+            random.randint(
+                100000,
+                999999
+            )
         )
 
         self.mfa_time_left = 30
 
         self.update_mfa_timer()
 
+    # ==========================================================================
+    # --- TIMER MFA
+    # ==========================================================================
 
     def update_mfa_timer(self):
 
@@ -1101,7 +1431,8 @@ class Phase2App:
 
             self.lbl_mfa_display.config(
                 text=(
-                    f"📲 TOKEN MFA: {self.generated_mfa_token} "
+                    f"📲 TOKEN MFA: "
+                    f"{self.generated_mfa_token} "
                     f"(Expira em {self.mfa_time_left}s)"
                 ),
                 fg=COLOR_HEALTH
@@ -1118,25 +1449,31 @@ class Phase2App:
 
             self.generated_mfa_token = ""
 
-            self.mfa_timer_job = None
-
             self.lbl_mfa_display.config(
                 text="📲 TOKEN EXPIRADO! Solicite um novo código.",
                 fg=COLOR_INCORRECT
             )
 
+            self.mfa_timer_job = None
+
+    # ==========================================================================
+    # --- LOGIN MFA
+    # ==========================================================================
 
     def verify_full_login(self):
 
         u = self.entry_login_user.get().strip()
+
         p = self.entry_login_pass.get().strip()
+
         tok = self.entry_token_user.get().strip()
 
         if not u or not p:
 
             messagebox.showwarning(
                 "Erro de Validação",
-                "Preencha o usuário e a senha!"
+                "Preencha o usuário e a senha!",
+                parent=self.root
             )
 
             return
@@ -1145,7 +1482,8 @@ class Phase2App:
 
             messagebox.showerror(
                 "Acesso Negado",
-                "Solicite um Token MFA válido antes de tentar o acesso."
+                "Solicite um Token MFA válido antes de tentar o acesso.",
+                parent=self.root
             )
 
             return
@@ -1155,9 +1493,9 @@ class Phase2App:
             messagebox.showinfo(
                 "Autenticação Concluída! 🔐",
                 "Login bem-sucedido!\n\n"
-                "A combinação da senha exclusiva com a "
-                "validação em dois fatores (MFA) impediu "
-                "o acesso não autorizado."
+                "A combinação da senha exclusiva com a validação "
+                "em dois fatores (MFA) impediu o acesso não autorizado.",
+                parent=self.root
             )
 
             self.load_quiz_mode()
@@ -1167,12 +1505,12 @@ class Phase2App:
             messagebox.showerror(
                 "Falha no Login ❌",
                 "Código MFA incorreto ou expirado! "
-                "Verifique e tente novamente."
+                "Verifique e tente novamente.",
+                parent=self.root
             )
 
-
     # ==========================================================================
-    # --- ETAPA 4: QUIZ ---
+    # --- ETAPA 4: QUIZ
     # ==========================================================================
 
     def load_quiz_mode(self):
@@ -1186,7 +1524,9 @@ class Phase2App:
             )
         )
 
-        q_data = QUIZ_QUESTIONS[self.current_q]
+        q_data = QUIZ_QUESTIONS[
+            self.current_q
+        ]
 
         lbl_cat = tk.Label(
             self.card_frame,
@@ -1208,7 +1548,7 @@ class Phase2App:
             font=("Segoe UI", 11),
             fg=COLOR_TEXT_MAIN,
             bg=COLOR_CARD_BG,
-            wraplength=600,
+            wraplength=1000,
             justify="left"
         )
 
@@ -1220,7 +1560,9 @@ class Phase2App:
 
         self.quiz_buttons = []
 
-        for i, opt in enumerate(q_data["options"]):
+        for i, opt in enumerate(
+            q_data["options"]
+        ):
 
             btn = tk.Button(
                 self.card_frame,
@@ -1236,7 +1578,8 @@ class Phase2App:
                 padx=15,
                 bd=1,
                 highlightbackground=COLOR_CARD_BORDER,
-                command=lambda idx=i: self.check_quiz_answer(idx)
+                command=lambda idx=i:
+                self.check_quiz_answer(idx)
             )
 
             btn.pack(
@@ -1248,27 +1591,44 @@ class Phase2App:
 
             btn.bind(
                 "<Enter>",
-                lambda e, b=btn: self.on_hover_enter(b)
+                lambda e, b=btn:
+                self.on_hover_enter(b)
             )
 
             btn.bind(
                 "<Leave>",
-                lambda e, b=btn: self.on_hover_leave(b)
+                lambda e, b=btn:
+                self.on_hover_leave(b)
             )
 
-            self.quiz_buttons.append(btn)
+            self.quiz_buttons.append(
+                btn
+            )
 
+    # ==========================================================================
+    # --- VERIFICAR QUIZ
+    # ==========================================================================
 
-    def check_quiz_answer(self, selected_idx):
+    def check_quiz_answer(
+        self,
+        selected_idx
+    ):
 
         for btn in self.quiz_buttons:
-            btn.config(state="disabled")
 
-        q_data = QUIZ_QUESTIONS[self.current_q]
+            btn.config(
+                state="disabled"
+            )
+
+        q_data = QUIZ_QUESTIONS[
+            self.current_q
+        ]
 
         correct_idx = q_data["answer"]
 
-        selected_btn = self.quiz_buttons[selected_idx]
+        selected_btn = self.quiz_buttons[
+            selected_idx
+        ]
 
         if selected_idx == correct_idx:
 
@@ -1281,15 +1641,27 @@ class Phase2App:
 
             messagebox.showinfo(
                 "Resposta Correta! 🎯",
-                q_data["explanations"][selected_idx]
+                q_data["explanations"][selected_idx],
+                parent=self.root
             )
 
             self.current_q += 1
 
             if self.current_q < len(QUIZ_QUESTIONS):
+
                 self.load_quiz_mode()
+
             else:
-                self.advance_to_next_phase()
+
+                messagebox.showinfo(
+                    "Fase 2 Concluída com Sucesso! 🏆",
+                    "Parabéns! Você completou o Laboratório de Senhas, "
+                    "praticou criação segura, autenticação MFA e "
+                    "dominou a teoria!",
+                    parent=self.root
+                )
+
+                self.finalizar_fase()
 
         else:
 
@@ -1298,8 +1670,9 @@ class Phase2App:
                 fg="#FFFFFF"
             )
 
-            correct_btn = self.quiz_buttons[correct_idx]
-            correct_btn.config(
+            self.quiz_buttons[
+                correct_idx
+            ].config(
                 bg=COLOR_CORRECT,
                 fg="#000000"
             )
@@ -1307,37 +1680,70 @@ class Phase2App:
             self.root.update()
 
             messagebox.showerror(
-                "Resposta Incorreta ❌",
-                q_data["explanations"][selected_idx]
+                "Resposta Incorreta! ⚠️",
+                q_data["explanations"][selected_idx],
+                parent=self.root
             )
 
-            self.current_q += 1
+            self.load_quiz_mode()
 
-            if self.current_q < len(QUIZ_QUESTIONS):
-                self.load_quiz_mode()
-            else:
-                self.advance_to_next_phase()
+    # ==========================================================================
+    # --- FINALIZAÇÃO
+    # ==========================================================================
 
+    def finalizar_fase(self):
 
-    def advance_to_next_phase(self):
+        if self.mfa_timer_job:
 
-        messagebox.showinfo(
-            "Fase 2 Concluída! 🏆",
-            "Parabéns! Você concluiu todos os treinamentos "
-            "e perguntas da Fase 2."
-        )
+            try:
 
-        if callable(self.proxima_fase):
-            self.proxima_fase()
-        else:
-            self.root.destroy()
+                self.root.after_cancel(
+                    self.mfa_timer_job
+                )
+
+            except Exception:
+                pass
+
+            self.mfa_timer_job = None
+
+        # ----------------------------------------------------------------------
+        # NÃO destruir a janela.
+        # O main.py controla a troca de fases.
+        # ----------------------------------------------------------------------
+
+        if self.proxima_fase:
+
+            self.root.after(
+                100,
+                self.proxima_fase
+            )
 
 
 # ==============================================================================
-# --- EXECUÇÃO PRINCIPAL ---
+# --- FUNÇÃO USADA PELO MAIN.PY
+# ==============================================================================
+
+def executar(
+    root,
+    proxima_fase=None
+):
+
+    return Phase2App(
+        root,
+        proxima_fase
+    )
+
+
+# ==============================================================================
+# --- TESTE INDIVIDUAL
 # ==============================================================================
 
 if __name__ == "__main__":
+
     root = tk.Tk()
-    app = Phase2App(root)
+
+    executar(
+        root
+    )
+
     root.mainloop()

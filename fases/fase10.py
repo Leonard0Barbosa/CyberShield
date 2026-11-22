@@ -1,129 +1,1344 @@
 import tkinter as tk
-from tkinter import messagebox
+import random
+import os
+import pygame
 
-# --- CONFIGURAÇÕES DE DESIGN ---
-COLOR_BG_TOP = "#030D22"
-COLOR_CARD_BG = "#0D1F38"
-COLOR_HEALTH_PLAYER = "#00F5D4"     # Ciano Neon
-COLOR_HEALTH_BOSS = "#FF3366"       # Rosa Neon
-COLOR_TEXT = "#FFFFFF"
 
-# --- BANCO DE DADOS DA FASE 10 ---
-BOSS_BATTLE_DATA = [
+# ============================================================
+# CYBERSHIELD — FASE 10
+# BOSS FINAL
+# ============================================================
+
+
+# ============================================================
+# CORES
+# ============================================================
+
+BG = "#090000"
+CARD = "#1A0505"
+
+RED = "#FF1744"
+RED_DARK = "#8B0000"
+RED_HOVER = "#C4112F"
+
+WHITE = "#FFFFFF"
+GRAY = "#BDBDBD"
+
+CYAN = "#00E5FF"
+GREEN = "#00E676"
+YELLOW = "#FFD600"
+
+BUTTON = "#350909"
+BUTTON_HOVER = "#5A1111"
+
+
+# ============================================================
+# QUESTÕES
+# ============================================================
+
+QUESTOES = [
+
     {
-        "questao": "Acesso suspeito detectado na conta Admin. Ação imediata?", 
-        "opcoes": ["A) Ignorar", "B) Publicar na rede", "C) Bloquear credenciais", "D) Apagar tudo"], 
-        "resposta_correta": 2, 
-        "dificuldade": 1 
+        "questao": "ACESSO SUSPEITO DETECTADO NA CONTA ADMINISTRADOR.",
+        "opcoes": [
+            "A) Ignorar o alerta",
+            "B) Publicar o incidente na rede",
+            "C) Bloquear as credenciais comprometidas",
+            "D) Apagar todos os arquivos"
+        ],
+        "correta": 2
     },
+
     {
-        "questao": "Servidor sofrendo injeção SQL. O que priorizar?", 
-        "opcoes": ["A) Reiniciar servidor", "B) Isolar o servidor da rede", "C) Mudar o plano de fundo", "D) Ignorar logs"], 
-        "resposta_correta": 1, 
-        "dificuldade": 2 
+        "questao": "ATAQUE DE INJEÇÃO SQL DETECTADO NO SERVIDOR.",
+        "opcoes": [
+            "A) Isolar o servidor da rede",
+            "B) Mudar o plano de fundo",
+            "C) Ignorar os logs",
+            "D) Reiniciar todos os computadores"
+        ],
+        "correta": 0
     },
+
     {
-        "questao": "Ameaça Zero-Day ativa! Qual o protocolo de contenção?", 
-        "opcoes": ["A) Ficar parado", "B) Criar regras de WAF/Firewall", "C) Formatar toda a rede", "D) Falar com RH"], 
-        "resposta_correta": 1, 
-        "dificuldade": 3 
+        "questao": "VULNERABILIDADE ZERO-DAY SENDO EXPLORADA!",
+        "opcoes": [
+            "A) Esperar o ataque terminar",
+            "B) Criar regras de contenção no WAF/Firewall",
+            "C) Ignorar os alertas",
+            "D) Compartilhar a informação publicamente"
+        ],
+        "correta": 1
+    },
+
+    {
+        "questao": "UM FUNCIONÁRIO RECEBEU UM E-MAIL COM LINK SUSPEITO.",
+        "opcoes": [
+            "A) Clicar no link para verificar",
+            "B) Encaminhar para toda a empresa",
+            "C) Reportar o e-mail e não abrir o link",
+            "D) Responder pedindo a senha"
+        ],
+        "correta": 2
+    },
+
+    {
+        "questao": "RANSOMWARE DETECTADO EM UMA ESTAÇÃO CORPORATIVA.",
+        "opcoes": [
+            "A) Isolar imediatamente o computador da rede",
+            "B) Desativar o antivírus",
+            "C) Compartilhar os arquivos infectados",
+            "D) Ignorar o incidente"
+        ],
+        "correta": 0
+    },
+
+    {
+        "questao": "VÁRIAS TENTATIVAS DE LOGIN FORAM DETECTADAS NA CONTA ADMIN.",
+        "opcoes": [
+            "A) Liberar mais tentativas",
+            "B) Desativar os logs",
+            "C) Investigar e aplicar bloqueio/rate limiting",
+            "D) Compartilhar a conta"
+        ],
+        "correta": 2
+    },
+
+    {
+        "questao": "QUAL MEDIDA AUMENTA A SEGURANÇA DE UMA CONTA ADMINISTRATIVA?",
+        "opcoes": [
+            "A) Usar a mesma senha em todos os sistemas",
+            "B) Ativar autenticação multifator (MFA)",
+            "C) Compartilhar a senha pelo chat",
+            "D) Usar uma senha simples"
+        ],
+        "correta": 1
+    },
+
+    {
+        "questao": "TRÁFEGO ANORMAL FOI DETECTADO PELO FIREWALL.",
+        "opcoes": [
+            "A) Analisar os logs e investigar o tráfego",
+            "B) Apagar os logs",
+            "C) Desativar o firewall",
+            "D) Liberar o endereço suspeito"
+        ],
+        "correta": 0
     }
+
 ]
 
-class BossFightApp:
-    def __init__(self, root):
+
+# ============================================================
+# BOSS FINAL
+# ============================================================
+
+class BossFinal:
+
+    def __init__(self, root, proxima_fase=None):
+
         self.root = root
-        self.root.title("🛡️ BOSS FIGHT — FASE 10")
-        self.root.geometry("700x500")
-        self.root.configure(bg=COLOR_BG_TOP)
-        
+        self.proxima_fase = proxima_fase
+
+        # ====================================================
+        # MÚSICA DA FASE 10 — BOSS FINAL
+        # ====================================================
+
+        self.music_started = False
+
+        try:
+            pygame.mixer.init()
+
+            music_path = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.abspath(__file__)
+                    )
+                ),
+                "assets",
+                "Boss.mp3"
+            )
+
+            pygame.mixer.music.load(music_path)
+            pygame.mixer.music.set_volume(0.35)
+            pygame.mixer.music.play(-1)
+
+            self.music_started = True
+
+        except Exception as e:
+            print(
+                f"Não foi possível iniciar a música da Fase 10: {e}"
+            )
+
+        self.root.title(
+            "CYBERSHIELD — FASE 10 — BOSS FINAL"
+        )
+
+        # ====================================================
+        # TELA CHEIA
+        # ====================================================
+
+        self.root.attributes(
+            "-fullscreen",
+            True
+        )
+
+        self.root.configure(
+            bg=BG
+        )
+
+        self.root.bind(
+            "<Escape>",
+            self.sair_fullscreen
+        )
+
+        # ====================================================
+        # STATUS DA BATALHA
+        # ====================================================
+
         self.vida_jogador = 100
         self.vida_boss = 100
-        self.indice_questao = 0
-        
-        self.setup_header()
-        self.setup_card()
-        self.atualizar_barras()
 
-    def setup_header(self):
-        self.header = tk.Frame(self.root, bg=COLOR_BG_TOP, height=100)
-        self.header.pack(fill="x", pady=10)
-        
-        self.canvas_status = tk.Canvas(self.header, bg=COLOR_BG_TOP, height=80, highlightthickness=0)
-        self.canvas_status.pack(fill="x", padx=20)
-        
-        # --- PLAYER ---
-        self.canvas_status.create_text(120, 15, text="PLAYER", fill=COLOR_HEALTH_PLAYER, font=("Consolas", 10, "bold"), anchor="w")
-        self.barra_jogador = self.canvas_status.create_rectangle(120, 35, 320, 55, fill="#0F3356", outline="")
-        self.fill_jogador = self.canvas_status.create_rectangle(120, 35, 320, 55, fill=COLOR_HEALTH_PLAYER, outline="")
-        
-        # --- BOSS ---
-        self.canvas_status.create_text(580, 15, text="BOSS", fill=COLOR_HEALTH_BOSS, font=("Consolas", 10, "bold"), anchor="e")
-        self.barra_boss = self.canvas_status.create_rectangle(380, 35, 580, 55, fill="#0F3356", outline="")
-        self.fill_boss = self.canvas_status.create_rectangle(380, 35, 580, 55, fill=COLOR_HEALTH_BOSS, outline="")
+        self.questao_atual = 0
+        self.respondida = False
 
-    def setup_card(self):
-        self.card = tk.Frame(self.root, bg=COLOR_CARD_BG, highlightbackground="#144574", highlightthickness=2)
-        self.card.pack(pady=20, padx=50, fill="both", expand=True)
-        
-        self.lbl_questao = tk.Label(self.card, text="", font=("Segoe UI", 12), fg=COLOR_TEXT, bg=COLOR_CARD_BG, wraplength=500)
-        self.lbl_questao.pack(pady=40)
-        
-        self.frame_botoes = tk.Frame(self.card, bg=COLOR_CARD_BG)
-        self.frame_botoes.pack()
+        self.fase_finalizada = False
+
+        # ====================================================
+        # TELA INICIAL
+        # ====================================================
+
+        self.tela_inicial()
+
+
+    # ========================================================
+    # SAIR DO FULLSCREEN
+    # ========================================================
+
+    def sair_fullscreen(self, event=None):
+
+        self.root.attributes(
+            "-fullscreen",
+            False
+        )
+
+
+    # ========================================================
+    # LIMPAR JANELA
+    # ========================================================
+
+    def limpar_janela(self):
+
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+
+    # ========================================================
+    # TELA INICIAL
+    # ========================================================
+
+    def tela_inicial(self):
+
+        self.limpar_janela()
+
+        self.root.configure(
+            bg=BG
+        )
+
+        self.frame_inicio = tk.Frame(
+            self.root,
+            bg=BG
+        )
+
+        self.frame_inicio.pack(
+            fill="both",
+            expand=True
+        )
+
+        tk.Label(
+            self.frame_inicio,
+            text="⚠  ALERTA DE SEGURANÇA MÁXIMO  ⚠",
+            font=("Consolas", 15, "bold"),
+            fg=RED,
+            bg=BG
+        ).pack(
+            pady=(80, 20)
+        )
+
+        tk.Label(
+            self.frame_inicio,
+            text="☠",
+            font=("Arial", 80, "bold"),
+            fg=RED,
+            bg=BG
+        ).pack()
+
+        tk.Label(
+            self.frame_inicio,
+            text="BOSS FINAL",
+            font=("Consolas", 40, "bold"),
+            fg=RED,
+            bg=BG
+        ).pack(
+            pady=5
+        )
+
+        tk.Label(
+            self.frame_inicio,
+            text="CYBERSHIELD // FASE 10",
+            font=("Consolas", 16, "bold"),
+            fg=WHITE,
+            bg=BG
+        ).pack()
+
+        tk.Label(
+            self.frame_inicio,
+            text="UMA AMEAÇA CRÍTICA FOI DETECTADA.",
+            font=("Consolas", 13, "bold"),
+            fg=GRAY,
+            bg=BG
+        ).pack(
+            pady=(30, 5)
+        )
+
+        tk.Label(
+            self.frame_inicio,
+            text="O SISTEMA DEPENDE DE VOCÊ.",
+            font=("Consolas", 13, "bold"),
+            fg=RED,
+            bg=BG
+        ).pack()
+
+        tk.Frame(
+            self.frame_inicio,
+            bg=RED,
+            height=2,
+            width=600
+        ).pack(
+            pady=30
+        )
+
+        self.btn_iniciar = tk.Button(
+            self.frame_inicio,
+            text="⚔  INICIAR BATALHA",
+            font=("Consolas", 14, "bold"),
+            fg=WHITE,
+            bg=RED_DARK,
+            activeforeground=WHITE,
+            activebackground=RED_HOVER,
+            relief="flat",
+            padx=45,
+            pady=14,
+            cursor="hand2",
+            takefocus=False,
+            command=self.iniciar
+        )
+
+        self.btn_iniciar.pack()
+
+        tk.Label(
+            self.frame_inicio,
+            text="⚠ ÚLTIMA LINHA DE DEFESA ⚠",
+            font=("Consolas", 10, "bold"),
+            fg="#660000",
+            bg=BG
+        ).pack(
+            pady=30
+        )
+
+        tk.Label(
+            self.frame_inicio,
+            text="ESC — SAIR DA TELA CHEIA",
+            font=("Consolas", 8),
+            fg="#441111",
+            bg=BG
+        ).pack()
+
+
+    # ========================================================
+    # INICIAR
+    # ========================================================
+
+    def iniciar(self):
+
+        self.vida_jogador = 100
+        self.vida_boss = 100
+
+        self.questao_atual = 0
+        self.respondida = False
+        self.fase_finalizada = False
+
+        self.root.attributes(
+            "-fullscreen",
+            True
+        )
+
+        self.criar_interface()
+
         self.carregar_questao()
 
+
+    # ========================================================
+    # INTERFACE
+    # ========================================================
+
+    def criar_interface(self):
+
+        self.limpar_janela()
+
+        self.root.configure(
+            bg=BG
+        )
+
+        tk.Label(
+            self.root,
+            text="☠  CYBERSHIELD // BOSS FINAL  ☠",
+            font=("Consolas", 22, "bold"),
+            fg=RED,
+            bg=BG
+        ).pack(
+            pady=(20, 3)
+        )
+
+        tk.Label(
+            self.root,
+            text="SISTEMA EM ESTADO CRÍTICO",
+            font=("Consolas", 10, "bold"),
+            fg=RED,
+            bg=BG
+        ).pack()
+
+        # ====================================================
+        # STATUS
+        # ====================================================
+
+        self.status = tk.Frame(
+            self.root,
+            bg=BG
+        )
+
+        self.status.pack(
+            fill="x",
+            padx=100,
+            pady=20
+        )
+
+        # ====================================================
+        # PLAYER
+        # ====================================================
+
+        self.player_frame = tk.Frame(
+            self.status,
+            bg=BG
+        )
+
+        self.player_frame.pack(
+            side="left",
+            fill="x",
+            expand=True,
+            padx=20
+        )
+
+        tk.Label(
+            self.player_frame,
+            text="🛡 PLAYER",
+            font=("Consolas", 11, "bold"),
+            fg=CYAN,
+            bg=BG
+        ).pack(
+            anchor="w"
+        )
+
+        self.player_bar_bg = tk.Canvas(
+            self.player_frame,
+            width=350,
+            height=22,
+            bg="#260909",
+            highlightthickness=1,
+            highlightbackground="#521010"
+        )
+
+        self.player_bar_bg.pack(
+            pady=5
+        )
+
+        self.player_bar = self.player_bar_bg.create_rectangle(
+            0,
+            0,
+            350,
+            22,
+            fill=CYAN,
+            outline=""
+        )
+
+        self.player_hp = tk.Label(
+            self.player_frame,
+            text="100 / 100 HP",
+            font=("Consolas", 9, "bold"),
+            fg=WHITE,
+            bg=BG
+        )
+
+        self.player_hp.pack()
+
+        # ====================================================
+        # BOSS
+        # ====================================================
+
+        self.boss_frame = tk.Frame(
+            self.status,
+            bg=BG
+        )
+
+        self.boss_frame.pack(
+            side="right",
+            fill="x",
+            expand=True,
+            padx=20
+        )
+
+        tk.Label(
+            self.boss_frame,
+            text="☠ BOSS",
+            font=("Consolas", 11, "bold"),
+            fg=RED,
+            bg=BG
+        ).pack(
+            anchor="e"
+        )
+
+        self.boss_bar_bg = tk.Canvas(
+            self.boss_frame,
+            width=350,
+            height=22,
+            bg="#260909",
+            highlightthickness=1,
+            highlightbackground="#521010"
+        )
+
+        self.boss_bar_bg.pack(
+            pady=5
+        )
+
+        self.boss_bar = self.boss_bar_bg.create_rectangle(
+            0,
+            0,
+            350,
+            22,
+            fill=RED,
+            outline=""
+        )
+
+        self.boss_hp = tk.Label(
+            self.boss_frame,
+            text="100 / 100 HP",
+            font=("Consolas", 9, "bold"),
+            fg=WHITE,
+            bg=BG
+        )
+
+        self.boss_hp.pack()
+
+        # ====================================================
+        # CARD PRINCIPAL
+        # ====================================================
+
+        self.card = tk.Frame(
+            self.root,
+            bg=CARD,
+            highlightbackground=RED_DARK,
+            highlightthickness=2
+        )
+
+        self.card.pack(
+            fill="both",
+            expand=True,
+            padx=100,
+            pady=(10, 20)
+        )
+
+        # ====================================================
+        # NÚMERO DA QUESTÃO
+        # ====================================================
+
+        self.lbl_numero = tk.Label(
+            self.card,
+            text="",
+            font=("Consolas", 11, "bold"),
+            fg=RED,
+            bg=CARD
+        )
+
+        self.lbl_numero.pack(
+            pady=(25, 8)
+        )
+
+        # ====================================================
+        # PERGUNTA
+        # ====================================================
+
+        self.lbl_questao = tk.Label(
+            self.card,
+            text="",
+            font=("Segoe UI", 15, "bold"),
+            fg=WHITE,
+            bg=CARD,
+            wraplength=1000,
+            justify="center"
+        )
+
+        self.lbl_questao.pack(
+            pady=15
+        )
+
+        # ====================================================
+        # OPÇÕES
+        # ====================================================
+
+        self.frame_opcoes = tk.Frame(
+            self.card,
+            bg=CARD
+        )
+
+        self.frame_opcoes.pack(
+            fill="x",
+            padx=150,
+            pady=(15, 10)
+        )
+
+        # ====================================================
+        # EVENTO
+        # ====================================================
+
+        self.lbl_evento = tk.Label(
+            self.card,
+            text="",
+            font=("Consolas", 11, "bold"),
+            fg=WHITE,
+            bg=CARD
+        )
+
+        self.lbl_evento.pack(
+            pady=(5, 5)
+        )
+
+        # ====================================================
+        # ÁREA FIXA DO BOTÃO
+        # ====================================================
+        #
+        # Esta área fica sempre na parte inferior do card.
+        # O botão fica centralizado dentro dela.
+        #
+
+        self.frame_proxima = tk.Frame(
+            self.card,
+            bg=CARD,
+            height=70
+        )
+
+        self.frame_proxima.pack(
+            fill="x",
+            side="bottom",
+            pady=(5, 20)
+        )
+
+        self.frame_proxima.pack_propagate(False)
+
+        # ====================================================
+        # BOTÃO PRÓXIMA RODADA
+        # ====================================================
+
+        self.btn_proxima = tk.Button(
+            self.frame_proxima,
+            text="PRÓXIMA RODADA  ➜",
+            font=("Consolas", 12, "bold"),
+            fg=WHITE,
+            bg=RED_DARK,
+            activeforeground=WHITE,
+            activebackground=RED_HOVER,
+            relief="flat",
+            padx=45,
+            pady=11,
+            cursor="hand2",
+            takefocus=False,
+            command=self.proxima
+        )
+
+
+    # ========================================================
+    # CARREGAR QUESTÃO
+    # ========================================================
+
     def carregar_questao(self):
-        dados = BOSS_BATTLE_DATA[self.indice_questao]
-        self.lbl_questao.config(text=f"NÍVEL {dados['dificuldade']}: {dados['questao']}")
-        for w in self.frame_botoes.winfo_children(): w.destroy()
-        
-        for i, opt in enumerate(dados["opcoes"]):
-            tk.Button(self.frame_botoes, text=opt, width=40, bg="#1B3B6F", fg="white", 
-                      command=lambda idx=i: self.processar_turno(idx)).pack(pady=5)
 
-    def processar_turno(self, indice_escolhido):
-        dados = BOSS_BATTLE_DATA[self.indice_questao]
-        
-        if indice_escolhido == dados["resposta_correta"]:
-            self.vida_boss -= 34
-            messagebox.showinfo("DANO CRÍTICO!", "✅ Ação de defesa bem-sucedida!")
-        else:
-            dano = dados["dificuldade"] * 25
-            self.vida_jogador -= dano
-            
-            if dados["dificuldade"] == 3:
-                self.vida_jogador = 0
-                messagebox.showerror("FALHA CRÍTICA!", "💀 Você ignorou uma vulnerabilidade de Zero-Day. A rede caiu!")
+        self.respondida = False
+
+        dados = QUESTOES[
+            self.questao_atual
+        ]
+
+        self.lbl_numero.config(
+            text=(
+                f"AMEAÇA "
+                f"{self.questao_atual + 1} / "
+                f"{len(QUESTOES)}"
+            )
+        )
+
+        self.lbl_questao.config(
+            text=dados["questao"]
+        )
+
+        self.lbl_evento.config(
+            text=""
+        )
+
+        # Esconde o botão enquanto a questão
+        # ainda não foi respondida.
+        self.btn_proxima.pack_forget()
+
+        for widget in self.frame_opcoes.winfo_children():
+            widget.destroy()
+
+        for i, opcao in enumerate(
+            dados["opcoes"]
+        ):
+
+            botao = tk.Button(
+                self.frame_opcoes,
+                text=opcao,
+                font=("Segoe UI", 11, "bold"),
+                fg=WHITE,
+                bg=BUTTON,
+                activeforeground=WHITE,
+                activebackground=BUTTON_HOVER,
+                relief="flat",
+                anchor="w",
+                padx=15,
+                pady=10,
+                cursor="hand2",
+                takefocus=False,
+                command=lambda indice=i:
+                self.responder(indice)
+            )
+
+            botao.pack(
+                fill="x",
+                pady=5
+            )
+
+
+    # ========================================================
+    # RESPONDER
+    # ========================================================
+
+    def responder(self, escolha):
+
+        if self.respondida:
+            return
+
+        if self.fase_finalizada:
+            return
+
+        self.respondida = True
+
+        dados = QUESTOES[
+            self.questao_atual
+        ]
+
+        botoes = self.frame_opcoes.winfo_children()
+
+        for botao in botoes:
+            botao.config(
+                state="disabled"
+            )
+
+        # ====================================================
+        # ACERTO
+        # ====================================================
+
+        if escolha == dados["correta"]:
+
+            dano = random.randint(
+                22,
+                34
+            )
+
+            critico = (
+                random.random() < 0.15
+            )
+
+            if critico:
+
+                dano += random.randint(
+                    8,
+                    15
+                )
+
+                self.lbl_evento.config(
+                    text=(
+                        f"💥 ACERTO CRÍTICO!  "
+                        f"BOSS -{dano} HP"
+                    ),
+                    fg=YELLOW
+                )
+
             else:
-                messagebox.showwarning("DANO SOFRIDO!", f"❌ Incorreto! O sistema sofreu {dano} de dano.")
-        
-        self.atualizar_barras()
-        self.verificar_fim_de_jogo()
 
-    def atualizar_barras(self):
-        self.vida_jogador = max(0, self.vida_jogador)
-        self.vida_boss = max(0, self.vida_boss)
-        
-        p_largura = self.vida_jogador * 2
-        b_largura = self.vida_boss * 2
-        
-        self.canvas_status.coords(self.fill_jogador, 120, 35, 120 + p_largura, 55)
-        self.canvas_status.coords(self.fill_boss, 580 - b_largura, 35, 580, 55)
+                self.lbl_evento.config(
+                    text=(
+                        f"⚡ ATAQUE EFETIVO!  "
+                        f"BOSS -{dano} HP"
+                    ),
+                    fg=GREEN
+                )
 
-    def verificar_fim_de_jogo(self):
-        if self.vida_jogador <= 0:
-            messagebox.showerror("GAME OVER", "💀 A segurança falhou. O sistema foi comprometido!")
-            self.root.destroy()
-        elif self.vida_boss <= 0:
-            messagebox.showinfo("VITÓRIA", "🏆 O Boss foi contido! Você salvou a empresa.")
-            self.root.destroy()
+            self.vida_boss -= dano
+
+            botoes[escolha].config(
+                bg=GREEN,
+                fg="#001B0B"
+            )
+
+            self.animar_boss()
+
+        # ====================================================
+        # ERRO
+        # ====================================================
+
         else:
-            self.indice_questao += 1
-            if self.indice_questao < len(BOSS_BATTLE_DATA):
-                self.carregar_questao()
+
+            dano = random.randint(
+                18,
+                32
+            )
+
+            self.vida_jogador -= dano
+
+            self.lbl_evento.config(
+                text=(
+                    f"☠ CONTRA-ATAQUE!  "
+                    f"PLAYER -{dano} HP"
+                ),
+                fg=RED
+            )
+
+            botoes[escolha].config(
+                bg=RED_DARK
+            )
+
+            botoes[
+                dados["correta"]
+            ].config(
+                bg=GREEN,
+                fg="#001B0B"
+            )
+
+            self.animar_player()
+
+        # ====================================================
+        # ATUALIZAR STATUS
+        # ====================================================
+
+        self.atualizar_status()
+
+        # ====================================================
+        # DERROTA
+        # ====================================================
+
+        if self.vida_jogador <= 0:
+
+            self.root.after(
+                700,
+                self.derrota
+            )
+
+            return
+
+        # ====================================================
+        # VITÓRIA
+        # ====================================================
+
+        if self.vida_boss <= 0:
+
+            self.root.after(
+                700,
+                self.vitoria
+            )
+
+            return
+
+        # ====================================================
+        # MOSTRAR BOTÃO CENTRALIZADO
+        # ====================================================
+
+        self.btn_proxima.pack(
+            anchor="center",
+            pady=8
+        )
+
+
+    # ========================================================
+    # ANIMAÇÃO BOSS
+    # ========================================================
+
+    def animar_boss(self):
+
+        self.card.config(
+            bg="#5C0000"
+        )
+
+        self.root.after(
+            100,
+            lambda: (
+                self.card.winfo_exists()
+                and self.card.config(
+                    bg=CARD
+                )
+            )
+        )
+
+
+    # ========================================================
+    # ANIMAÇÃO PLAYER
+    # ========================================================
+
+    def animar_player(self):
+
+        self.root.configure(
+            bg="#550000"
+        )
+
+        self.root.after(
+            100,
+            lambda: self.root.configure(
+                bg=BG
+            )
+        )
+
+
+    # ========================================================
+    # ATUALIZAR STATUS
+    # ========================================================
+
+    def atualizar_status(self):
+
+        self.vida_jogador = max(
+            0,
+            min(
+                100,
+                self.vida_jogador
+            )
+        )
+
+        self.vida_boss = max(
+            0,
+            min(
+                100,
+                self.vida_boss
+            )
+        )
+
+        # ====================================================
+        # PLAYER
+        # ====================================================
+
+        largura_player = (
+            350 *
+            (
+                self.vida_jogador /
+                100
+            )
+        )
+
+        self.player_bar_bg.coords(
+            self.player_bar,
+            0,
+            0,
+            largura_player,
+            22
+        )
+
+        self.player_hp.config(
+            text=(
+                f"{self.vida_jogador} / 100 HP"
+            )
+        )
+
+        # ====================================================
+        # BOSS
+        # ====================================================
+
+        largura_boss = (
+            350 *
+            (
+                self.vida_boss /
+                100
+            )
+        )
+
+        self.boss_bar_bg.coords(
+            self.boss_bar,
+            0,
+            0,
+            largura_boss,
+            22
+        )
+
+        self.boss_hp.config(
+            text=(
+                f"{self.vida_boss} / 100 HP"
+            )
+        )
+
+
+    # ========================================================
+    # PRÓXIMA RODADA
+    # ========================================================
+
+    def proxima(self):
+
+        if self.fase_finalizada:
+            return
+
+        if self.vida_jogador <= 0:
+
+            self.derrota()
+
+            return
+
+        if self.vida_boss <= 0:
+
+            self.vitoria()
+
+            return
+
+        self.questao_atual += 1
+
+        # ====================================================
+        # TODAS AS QUESTÕES TERMINARAM
+        # ====================================================
+
+        if self.questao_atual >= len(QUESTOES):
+
+            self.questao_atual = 0
+
+            self.lbl_evento.config(
+                text=(
+                    "☠ O BOSS AINDA ESTÁ DE PÉ! "
+                    "A BATALHA CONTINUA!"
+                ),
+                fg=RED
+            )
+
+        self.carregar_questao()
+
+
+    # ========================================================
+    # VITÓRIA
+    # ========================================================
+
+    def vitoria(self):
+
+        if self.vida_boss > 0:
+            return
+
+        if self.fase_finalizada:
+            return
+
+        self.fase_finalizada = True
+
+        self.limpar_janela()
+
+        self.root.configure(
+            bg="#001A0A"
+        )
+
+        tk.Label(
+            self.root,
+            text="🏆",
+            font=("Arial", 80),
+            fg=GREEN,
+            bg="#001A0A"
+        ).pack(
+            pady=(120, 10)
+        )
+
+        tk.Label(
+            self.root,
+            text="BOSS DERROTADO",
+            font=("Consolas", 40, "bold"),
+            fg=GREEN,
+            bg="#001A0A"
+        ).pack()
+
+        tk.Label(
+            self.root,
+            text="CYBERSHIELD FOI SALVO",
+            font=("Consolas", 17, "bold"),
+            fg=WHITE,
+            bg="#001A0A"
+        ).pack(
+            pady=15
+        )
+
+        tk.Label(
+            self.root,
+            text=(
+                "A ameaça foi contida.\n"
+                "A infraestrutura está segura."
+            ),
+            font=("Segoe UI", 14),
+            fg=GRAY,
+            bg="#001A0A",
+            justify="center"
+        ).pack(
+            pady=20
+        )
+
+        # ====================================================
+        # MÚSICA DE VITÓRIA
+        # ====================================================
+
+        if self.music_started:
+            pygame.mixer.music.stop()
+
+        try:
+
+            vitoria_path = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.abspath(__file__)
+                    )
+                ),
+                "assets",
+                "vitoria.mp3"
+            )
+
+            pygame.mixer.music.load(
+                vitoria_path
+            )
+
+            pygame.mixer.music.set_volume(
+                0.35
+            )
+
+            pygame.mixer.music.play(0)
+
+        except Exception as e:
+
+            print(
+                f"Não foi possível iniciar a música de vitória: {e}"
+            )
+
+        # ====================================================
+        # PRÓXIMA FASE
+        # ====================================================
+
+        if self.proxima_fase is not None:
+
+            tk.Button(
+                self.root,
+                text="CONTINUAR ➜",
+                font=("Consolas", 12, "bold"),
+                fg=WHITE,
+                bg="#075C2B",
+                activeforeground=WHITE,
+                activebackground="#0A7A3A",
+                relief="flat",
+                padx=40,
+                pady=10,
+                takefocus=False,
+                cursor="hand2",
+                command=self.proxima_fase
+            ).pack(
+                pady=20
+            )
+
+        else:
+
+            tk.Label(
+                self.root,
+                text="🏆 MISSÃO CONCLUÍDA",
+                font=("Consolas", 12, "bold"),
+                fg=GREEN,
+                bg="#001A0A"
+            ).pack(
+                pady=15
+            )
+
+        tk.Label(
+            self.root,
+            text="ESC — SAIR DA TELA CHEIA",
+            font=("Consolas", 8),
+            fg="#285C3A",
+            bg="#001A0A"
+        ).pack(
+            pady=10
+        )
+
+
+    # ========================================================
+    # DERROTA
+    # ========================================================
+
+    def derrota(self):
+
+        if self.vida_jogador > 0:
+            return
+
+        if self.fase_finalizada:
+            return
+
+        self.fase_finalizada = True
+
+        # ====================================================
+        # PARAR MÚSICA DO BOSS
+        # ====================================================
+
+        if self.music_started:
+            pygame.mixer.music.stop()
+
+        # ====================================================
+        # MÚSICA DE DERROTA
+        # ====================================================
+
+        try:
+
+            derrota_path = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.abspath(__file__)
+                    )
+                ),
+                "assets",
+                "derrota.mp3"
+            )
+
+            pygame.mixer.music.load(
+                derrota_path
+            )
+
+            pygame.mixer.music.set_volume(
+                0.35
+            )
+
+            pygame.mixer.music.play(0)
+
+        except Exception as e:
+
+            print(
+                f"Não foi possível iniciar a música de derrota: {e}"
+            )
+
+        self.limpar_janela()
+
+        self.root.configure(
+            bg="#080000"
+        )
+
+        tk.Label(
+            self.root,
+            text="☠",
+            font=("Arial", 80),
+            fg=RED,
+            bg="#080000"
+        ).pack(
+            pady=(120, 10)
+        )
+
+        tk.Label(
+            self.root,
+            text="SISTEMA COMPROMETIDO",
+            font=("Consolas", 36, "bold"),
+            fg=RED,
+            bg="#080000"
+        ).pack()
+
+        tk.Label(
+            self.root,
+            text="BOSS FINAL — DERROTA",
+            font=("Consolas", 17, "bold"),
+            fg=WHITE,
+            bg="#080000"
+        ).pack(
+            pady=15
+        )
+
+        tk.Label(
+            self.root,
+            text=(
+                "A defesa falhou.\n"
+                "A infraestrutura foi comprometida."
+            ),
+            font=("Segoe UI", 14),
+            fg=GRAY,
+            bg="#080000",
+            justify="center"
+        ).pack(
+            pady=20
+        )
+
+        # ====================================================
+        # TENTAR NOVAMENTE
+        # ====================================================
+
+        tk.Button(
+            self.root,
+            text="TENTAR NOVAMENTE",
+            font=("Consolas", 12, "bold"),
+            fg=WHITE,
+            bg=RED_DARK,
+            activeforeground=WHITE,
+            activebackground=RED_HOVER,
+            relief="flat",
+            padx=40,
+            pady=10,
+            takefocus=False,
+            cursor="hand2",
+            command=self.iniciar
+        ).pack(
+            pady=20
+        )
+
+        tk.Label(
+            self.root,
+            text="ESC — SAIR DA TELA CHEIA",
+            font=("Consolas", 8),
+            fg="#441111",
+            bg="#080000"
+        ).pack(
+            pady=10
+        )
+
+
+# ============================================================
+# FUNÇÃO EXECUTAR
+# PADRÃO DO MAIN.PY
+# ============================================================
+
+def executar(
+    root,
+    proxima_fase
+):
+
+    BossFinal(
+        root,
+        proxima_fase
+    )
+
+
+# ============================================================
+# EXECUÇÃO INDIVIDUAL
+# ============================================================
 
 if __name__ == "__main__":
+
     root = tk.Tk()
-    app = BossFightApp(root)
+
+    executar(
+        root,
+        None
+    )
+
     root.mainloop()
