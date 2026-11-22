@@ -141,14 +141,36 @@ def limpar_janela(root):
 # TROCAR DE FASE
 # ============================================================
 
+
 def trocar_fase(root, proxima_fase_func):
 
     limpar_janela(root)
 
-    root.after(
-        50,
-        lambda: proxima_fase_func(root)
-    )
+    def carregar_proxima_fase():
+
+        # Mantém a janela visível
+        root.deiconify()
+
+        # Reativa a tela cheia
+        root.attributes("-fullscreen", True)
+
+        # Coloca o jogo na frente
+        root.lift()
+
+        # Abre a próxima fase
+        proxima_fase_func(root)
+
+        # Recupera o foco após carregar os elementos
+        root.after(150, recuperar_foco)
+
+    def recuperar_foco():
+
+        root.attributes("-fullscreen", True)
+        root.lift()
+        root.focus_force()
+
+    root.after(50, carregar_proxima_fase)
+
 
 
 # ============================================================
